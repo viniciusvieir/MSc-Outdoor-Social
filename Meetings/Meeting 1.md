@@ -98,7 +98,16 @@ Interesting Ideas:
 * Traffic information
 * COVID information
 
+### After the Meeting - Tasks
 
+* Write about what's good and bad about similar apps
+* Write what's pros and cons about the stack we have chosen
+* Write about how you can collaborate with your main role and other roles
+* Watch SCRUM videos
+* Look into datasets online (hike and bike trails, weather, forestry, user interests)
+* Create User Stories and Use Cases
+* Look into ZenHub
+* Email Andrea about User Interface Components (Vini)
 
 
 
