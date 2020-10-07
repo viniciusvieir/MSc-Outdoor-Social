@@ -7,9 +7,9 @@ let applicantA = {
 }
 
 let applicantB = {
-    experienceInYears: 2,
+    experienceInYears: 3,
     industry: "hospitality",
-    bachelorsDegree: true
+    bachelorsDegree: false
 }
 
 let applicantC = {
@@ -26,3 +26,6 @@ test('processApplicant - should return MAYBE if job applicant has 3 years or mor
     expect(jobApplicationService.processApplication(applicantB)).toBe("MAYBE");
 });
 
+test('processApplicant - should return NO if job applicant has less than 3 years experience in hospitality, and does not have a bachelors degree', () => {
+    expect(jobApplicationService.processApplication(applicantC)).toBe("NO");
+});
