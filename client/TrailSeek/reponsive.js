@@ -23,7 +23,7 @@ const listenToOrientationChanges = ref => {
 };
 
 const removeOrientationChanges = () =>{
-    Dimensions.removeEventListener( type: 'change');
+    Dimensions.removeEventListener( type:'change');
 };
     const getDynamicsStyles = (portraitStyle,landscapeStyle) =>{
     const isPortrait= height > width;

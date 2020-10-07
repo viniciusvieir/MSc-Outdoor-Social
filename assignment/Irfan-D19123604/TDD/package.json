@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "test": "jest"
+  },
+  "devDependencies": {
+    "jest": "^26.5.2"
+  },
+  "dependencies": {
+    "node.js": "0.0.1-security",
+    "yarn": "^1.22.10"
+  }
+}
