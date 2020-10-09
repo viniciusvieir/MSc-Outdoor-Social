@@ -1,6 +1,6 @@
 const JWT = require('jsonwebtoken')
 
-const { compareSync } = require('bcryptjs')
+const bcrypt = require('bcryptjs')
 const { DataTypes, Model } = require('sequelize')
 
 const JWT_SECRET = process.env.JWT_SECRET
@@ -10,7 +10,7 @@ class User extends Model {
     super.init(
       {
         id: {
-          type: DataTypes.INTEGER(11),
+          type: DataTypes.INTEGER,
           autoIncrement: true,
           primaryKey: true,
         },
@@ -44,14 +44,27 @@ class User extends Model {
             fields: ['email'],
           },
         ],
+        hooks: {
+          beforeCreate: (user) => {
+            user.password = bcrypt.hashSync(user.password, bcrypt.genSaltSync())
+          },
+          beforeUpdate: (user) => {
+            if (user.changed('password')) {
+              user.password = bcrypt.hashSync(
+                user.password,
+                bcrypt.genSaltSync()
+              )
+            }
+          },
+        },
       }
     )
 
     return this
   }
 
-  verifyPassword(password, encodedPassword) {
-    return compareSync(password, encodedPassword)
+  verifyPassword(password) {
+    return bcrypt.compareSync(password, this.password)
   }
 
   generateTokenPayload() {
