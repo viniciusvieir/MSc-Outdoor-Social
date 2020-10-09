@@ -13,14 +13,15 @@ class AuthController {
 
     const user = await User.findOne({
       where: { email },
-      attributes: ['id, email, password'],
+      attributes: ['id', 'email', 'password'],
     })
 
     if (!user)
       // user not found by email
       return res.status(401).json(errorHandler(['Invalid email or password']))
 
-    if (user.verifyPassword(password, user.password)) {
+    //user.verifyPassword(password, user.password)
+    if (user.password === password) {
       return res.json(user.generateTokenPayload())
     } else {
       return res.status(401).json(errorHandler(['Invalid email or password']))
@@ -28,14 +29,33 @@ class AuthController {
   }
 
   async signUp(req, res) {
-    res.send('Functionality not available')
+    const errors = validationResult(req)
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() })
+
+    const { email, password, name, gender } = req.body
+
+    const user = await User.create({
+      name,
+      dob: new Date(),
+      gender,
+      email,
+      password,
+    })
+
+    return res.json(user.generateTokenPayload())
   }
 
   // VALIDATION
   get validators() {
     return {
       signIn: [body('email').isEmail(), body('password').not().isEmpty()],
-      signUp: [body('email').isEmail(), body('password').not().isEmpty()],
+      signUp: [
+        body('email').isEmail(),
+        body('password').not().isEmpty(),
+        body('name').not().isEmpty().trim().escape(),
+        body('gender').isIn(['F', 'M']),
+      ],
     }
   }
 }

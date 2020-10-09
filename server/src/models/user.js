@@ -14,19 +14,7 @@ class User extends Model {
           autoIncrement: true,
           primaryKey: true,
         },
-        email: {
-          type: DataTypes.STRING,
-          allowNull: true,
-        },
-        password: {
-          type: DataTypes.STRING,
-          allowNull: false,
-        },
         name: {
-          type: DataTypes.STRING,
-          allowNull: false,
-        },
-        surname: {
           type: DataTypes.STRING,
           allowNull: false,
         },
@@ -38,10 +26,18 @@ class User extends Model {
           type: DataTypes.CHAR(1),
           allowNull: false,
         },
+        email: {
+          type: DataTypes.STRING,
+          allowNull: true,
+        },
+        password: {
+          type: DataTypes.STRING,
+          allowNull: false,
+        },
       },
       {
         sequelize,
-        timestamps: true,
+        timestamps: false,
         indexes: [
           {
             unique: true,
@@ -60,15 +56,15 @@ class User extends Model {
 
   generateTokenPayload() {
     const payload = {
-      id: this.Aluno.id,
-      email: this.Aluno.email,
+      id: this.id,
+      email: this.email,
     }
 
-    response.token = JWT.sign(payload, JWT_SECRET, {
+    const token = JWT.sign(payload, JWT_SECRET, {
       expiresIn: '28d',
     })
 
-    return response
+    return { token }
   }
 }
 
