@@ -21,7 +21,7 @@ class AuthController {
       return res.status(401).json(errorHandler(['Invalid email or password']))
 
     //user.verifyPassword(password, user.password)
-    if (user.password === password) {
+    if (user.verifyPassword(password)) {
       return res.json(user.generateTokenPayload())
     } else {
       return res.status(401).json(errorHandler(['Invalid email or password']))
