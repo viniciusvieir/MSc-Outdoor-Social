@@ -21,7 +21,7 @@ class AuthController {
       return res.status(401).json(errorHandler(['Invalid email or password']))
 
     //user.verifyPassword(password, user.password)
-    if (user.password === password) {
+    if (user.verifyPassword(password)) {
       return res.json(user.generateTokenPayload())
     } else {
       return res.status(401).json(errorHandler(['Invalid email or password']))
@@ -34,6 +34,15 @@ class AuthController {
       return res.status(400).json({ errors: errors.array() })
 
     const { email, password, name, gender } = req.body
+
+    const checkIfExists = await User.findOne({
+      where: { email },
+      attributes: ["id"]
+    })
+
+    // if user exists return error
+    if (checkIfExists)
+      return res.status(401).json(errorHandler(['User already exists']))
 
     const user = await User.create({
       name,
