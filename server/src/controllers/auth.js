@@ -40,6 +40,7 @@ class AuthController {
       attributes: ["id"]
     })
 
+    // if user exists return error
     if (checkIfExists)
       return res.status(401).json(errorHandler(['User already exists']))
 
