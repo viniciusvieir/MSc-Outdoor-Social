@@ -19,7 +19,7 @@ const ListEventScreen = ({ navigation }) => {
             {
                 list.map((l, i) => (
                 //ViewNavigation to be changes part of a different stack in navigation, maybe use navigation reset TBD
-                <ListItem key={i} bottomDivider onPress={()=>{navigation.navigate('EventFlow',{screen:'ViewEvent'})}}> 
+                <ListItem key={i} bottomDivider onPress={()=>{navigation.navigate('ViewEvent')}}> 
                     <ListItem.Content>
                     <ListItem.Title>{l.name}</ListItem.Title>
                     <ListItem.Subtitle>{l.subtitle}</ListItem.Subtitle>

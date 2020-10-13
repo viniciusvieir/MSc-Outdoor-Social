@@ -35,6 +35,15 @@ class AuthController {
 
     const { email, password, name, gender } = req.body
 
+    const checkIfExists = await User.findOne({
+      where: { email },
+      attributes: ["id"]
+    })
+
+    // if user exists return error
+    if (checkIfExists)
+      return res.status(401).json(errorHandler(['User already exists']))
+
     const user = await User.create({
       name,
       dob: new Date(),
