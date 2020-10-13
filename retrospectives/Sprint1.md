@@ -1,4 +1,4 @@
-# Outdoor Social
+# Sprint 1
 
 |  | **Planning** | **Team Work** | **Productivity** | **Technology** |
 | --- | --- | --- | --- | --- |
