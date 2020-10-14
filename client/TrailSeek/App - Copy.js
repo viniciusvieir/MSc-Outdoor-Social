@@ -18,9 +18,6 @@ import ViewProfileScreen from './src/screens/ViewProfileScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
-if(global.loggedin == undefined || global.loggedin == null){
-  global.loggedin = null
-}
 
 const AuthenticationFlow = ()=>{
   return(
