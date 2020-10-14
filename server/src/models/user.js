@@ -77,7 +77,11 @@ class User extends Model {
       expiresIn: '28d',
     })
 
-    return { token }
+    return {
+      name: this.name,
+      email: this.email,
+      token,
+    }
   }
 }
 
