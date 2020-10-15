@@ -5,7 +5,11 @@ const Trail = require('../models/trail')
 
 class TrailController {
   async trails(req, res) {
-    res.send('Functionality not available')
+    const { limit, skip } = req.query
+    const trails = await Trail.find()
+      .limit(parseInt(limit) || 20)
+      .skip(parseInt(skip) || 0)
+    res.json(trails)
   }
 
   async createTrail(req, res) {

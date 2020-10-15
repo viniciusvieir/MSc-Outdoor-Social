@@ -6,7 +6,7 @@ const mongoConfig = require('../config/mongodb.config')
 function startPostgreSQL() {
   return new Promise((res, rej) => {
     sequelize
-      .sync({ force: true })
+      .sync({ force: false })
       .then(() => {
         console.log('Postgres connected...')
         res()
@@ -24,7 +24,7 @@ function startMongoDB() {
         useFindAndModify: false,
         useCreateIndex: true,
       })
-      .then(() => {
+      .then(async () => {
         console.log('MongoDB connected...')
 
         // const Trail = require('../models/trail')

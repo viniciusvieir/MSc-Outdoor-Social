@@ -78,9 +78,9 @@ class User extends Model {
     })
 
     return {
+      token,
       name: this.name,
       email: this.email,
-      token,
     }
   }
 }
