@@ -10,28 +10,28 @@ on:
     branches: [master]
 
 jobs:
-  check:
-    name: Checking changed files
-    outputs:
-      run_job: ${{ steps.check_files.outputs.run_job }}
-    runs-on: self-hosted
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 2
+  # check:
+  #   name: Checking changed files
+  #   outputs:
+  #     run_job: ${{ steps.check_files.outputs.run_job }}
+  #   runs-on: self-hosted
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
+  #       with:
+  #         fetch-depth: 2
 
-      - name: Check modified files
-        id: check_files
-        run: |
-          echo "========== check paths of modified files =========="
-          files=$(git diff --name-only HEAD^ HEAD)
-          echo $files
-          if [[ $files == "server/"* ]]; then
-            echo "::set-output name=run_job::true"
-          else
-            echo "No modification for server deployment"
-          fi
+  #     - name: Check modified files
+  #       id: check_files
+  #       run: |
+  #         echo "========== check paths of modified files =========="
+  #         files=$(git diff --name-only HEAD^ HEAD)
+  #         echo $files
+  #         if [[ $files == "server/"* ]]; then
+  #           echo "::set-output name=run_job::true"
+  #         else
+  #           echo "No modification for server deployment"
+  #         fi
 
   job_for_server:
     needs: check
