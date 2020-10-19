@@ -2,6 +2,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
+import { Provider } from 'react-redux';
 
 import CreateEventScreen from './src/screens/CreateEventScreen';
 import ViewEventScreen from './src/screens/ViewEventScreen';
@@ -15,6 +16,7 @@ import SearchTrailScreen from './src/screens/SearchTrailScreen';
 import SigninScreen from './src/screens/SigninScreen';
 import SignupScreen from './src/screens/SignupScreen';
 import ViewProfileScreen from './src/screens/ViewProfileScreen';
+import store from './src/app/store';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -93,18 +95,20 @@ const MainTabFlow = () =>{
 
 const App = () => {
   return(
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name='Authentication' component={AuthenticationFlow} />
-        <Stack.Screen 
-          name='MainTab' 
-          component={MainTabFlow} 
-          options={{
-            headerShown:false
-          }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name='Authentication' component={AuthenticationFlow} />
+          <Stack.Screen 
+            name='MainTab' 
+            component={MainTabFlow} 
+            options={{
+              headerShown:false
+            }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
   );
 };
 

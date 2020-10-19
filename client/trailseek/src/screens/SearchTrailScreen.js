@@ -1,52 +1,45 @@
-import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
-import { Text, Button, SearchBar, Card } from 'react-native-elements';
+import React,{ useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { View, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import { Text, SearchBar } from 'react-native-elements';
+
+import { fetchTrails, selectAllTrails } from '../app/trailSlice';
+import TrailCard from '../components/TrailCards';
+
 
 const SearchTrailScreen = ({ navigation}) => {
+    const dispatch = useDispatch();
+    const trails = useSelector(selectAllTrails);
+
+    const trailStatus = useSelector(state=> state.trails.status);
+    const error = useSelector(state=>state.trails.error);
+
+    useEffect(()=>{
+        if (trailStatus ==='idle'){
+            dispatch(fetchTrails());
+        }
+    },[trailStatus,dispatch])
+
+    let content;
+
+    if (trailStatus === 'loading'){
+        content = <ActivityIndicator />
+    } else if (trailStatus==='failed'){
+        content=<Text>{error}</Text>
+    } else if (trailStatus==='succeeded'){
+        content = <ScrollView horizontal style={{maxHeight:275}} navigation={navigation}>
+                    <TrailCard title='All Trails' trailList={trails} />
+                </ScrollView>
+    }
+
     return(
-        <>
+        <View>
             <Text h3>SearchTrailScreen</Text>
-            <SearchBar />
-            <ScrollView horizontal style={{maxHeight:200}}>
-                <Card containerStyle={{width:300}}>
-                    <Card.Title>HELLO WORLD</Card.Title>
-                    <Card.Divider/>
-                    {/* <Card.Image source={require('../images/pic2.jpg')} /> */}
-                    <Text style={{marginBottom: 10}}>
-                        The idea with React Native Elements is more about component structure than actual design.
-                    </Text>
-                    <Button
-                        onPress={()=>navigation.navigate('ViewTrail')}
-                        // icon={<Icon name='code' color='#ffffff' />}
-                        // buttonStyle={{borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0}}
-                        title='VIEW NOW' />
-                </Card>
-                <Card containerStyle={{width:300}}>
-                    <Card.Title>HELLO WORLD</Card.Title>
-                    <Card.Divider/>
-                    {/* <Card.Image source={require('../images/pic2.jpg')} /> */}
-                    <Text style={{marginBottom: 10}}>
-                        The idea with React Native Elements is more about component structure than actual design.
-                    </Text>
-                    <Button
-                        // icon={<Icon name='code' color='#ffffff' />}
-                        // buttonStyle={{borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0}}
-                        title='VIEW NOW' />
-                </Card>
-                <Card containerStyle={{width:300}}>
-                    <Card.Title>HELLO WORLD</Card.Title>
-                    <Card.Divider/>
-                    {/* <Card.Image source={require('../images/pic2.jpg')} /> */}
-                    <Text style={{marginBottom: 10}}>
-                        The idea with React Native Elements is more about component structure than actual design.
-                    </Text>
-                    <Button
-                        // icon={<Icon name='code' color='#ffffff' />}
-                        // buttonStyle={{borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0}}
-                        title='VIEW NOW' />
-                </Card>
-            </ScrollView>
-        </>
+            <SearchBar 
+                lightTheme={true}
+            />
+            {content}
+        </View>
     );
 };
 
