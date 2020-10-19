@@ -5,13 +5,13 @@ name: Server CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   check:
-    name: Check files
+    name: Checking changed files
     outputs:
       run_job: ${{ steps.check_files.outputs.run_job }}
     runs-on: self-hosted
@@ -26,7 +26,7 @@ jobs:
         run: |
           echo "========== check paths of modified files =========="
           files=$(git diff --name-only HEAD^ HEAD)
-
+          echo $files
           if [[ $files == "server/"* ]]; then
             echo "::set-output name=run_job::true"
           else
@@ -38,7 +38,7 @@ jobs:
     if: needs.check.outputs.run_job == 'true'
     runs-on: self-hosted
     steps:
-      - name: run for 'server' folder
+      - name: Updating server
         uses: actions/checkout@v2
       - run: echo "This job runs only when modified files are under the 'server' folder."
       - run: npm --prefix ./server install
