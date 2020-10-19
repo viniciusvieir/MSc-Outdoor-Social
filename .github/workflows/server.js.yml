@@ -1,0 +1,45 @@
+# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Node.js CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    name: Check files
+    outputs:
+      run_job: ${{ steps.check_files.outputs.run_job }}
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+
+      - name: Check modified files
+        id: check_files
+        run: |
+          echo "========== check paths of modified files =========="
+          files=$(git diff --name-only HEAD^ HEAD)
+
+          if [[ $files == "server/"* ]]; then
+            echo "::set-output name=run_job::true"
+          else
+            echo "No modification for server deployment"
+          fi
+
+  job_for_server:
+    needs: check
+    if: needs.check.outputs.run_job == 'true'
+    runs-on: self-hosted
+    steps:
+      - name: run for 'server' folder
+        uses: actions/checkout@v2
+      - run: echo "This job runs only when modified files are under the 'server' folder."
+      - run: npm install
+      - run: pm2 reload trailseek --update-env
