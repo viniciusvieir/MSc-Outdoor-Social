@@ -1,7 +1,7 @@
 import React from 'react';
 import { Alert, TextInput, View, StyleSheet, Image} from 'react-native';
 import { Text, Button, ButtonGroup  } from 'react-native-elements';
-
+import jsonServer from '../files/JsonServer';
 // const constructor = (props) =>  {
 //   super(props);
   
@@ -12,12 +12,22 @@ import { Text, Button, ButtonGroup  } from 'react-native-elements';
 
 // }
 
-
-
 const SigninScreen = ({ navigation}) => {
 
   // this.setState({email:'', password:''});
 
+  const addBlogPost = (dispatch) =>{
+    console.log('danish jamil')
+    return async (title, content, callback)=>{
+        await jsonServer.post('/signin',{email:title, password:content}).then((response) =>{
+            console.log(response);
+          })
+        // dispatch({ type: 'add_blogpost', payload: {title, content} });
+        if (callback){
+            callback();
+        }
+    };
+  };
 
   return(
       <>
@@ -36,7 +46,7 @@ const SigninScreen = ({ navigation}) => {
       <View style={styles.containerform}>
         
         <TextInput
-          value={this.props.email}
+          // value={this.props.email}
           // onChangeText={(email) => this.setState({ email })}
           placeholder={'Email'}
           style={styles.input}
@@ -56,15 +66,14 @@ const SigninScreen = ({ navigation}) => {
             style={styles.input}
             buttonStyle={styles.button}
             // onPress={this.onLogin.bind(this)}
-            // onPress={()=>this.addBlogPost}
+            onPress={()=>this.addBlogPost}
           />            
           <Button 
             title={'Sign up'} 
-            // onPress={()=>navigation.navigate('Signup')} 
+            onPress={()=>navigation.navigate('Signup')} 
             type={'outline'} 
             buttonStyle={styles.button}
           />
-
 
         </View>
       </View>
