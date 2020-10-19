@@ -41,5 +41,5 @@ jobs:
       - name: run for 'server' folder
         uses: actions/checkout@v2
       - run: echo "This job runs only when modified files are under the 'server' folder."
-      - run: npm install
+      - run: npm --prefix ./server install
       - run: pm2 reload trailseek --update-env
