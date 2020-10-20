@@ -110,7 +110,6 @@ describe('Authentication', () => {
 
   it('should not be able to access private routes without bearer token', async () => {
     const response = await supertest(app).get('/privateRoute')
-    console.log(response.body)
     expect(response.body).toHaveProperty('errors')
   })
 
