@@ -11,14 +11,6 @@ class TrailController {
       .skip(parseInt(skip) || 0)
     res.json(trails)
   }
-
-  // async createTrail(req, res) {
-  //   Trail.create({
-  //     name: 'Test',
-  //     location: 'Test location',
-  //     imageUrl: 'testurl',
-  //   })
-  // }
 }
 
 module.exports = new TrailController()
