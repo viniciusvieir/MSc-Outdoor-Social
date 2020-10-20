@@ -41,6 +41,22 @@ describe('Authentication', () => {
     expect(response.body).toHaveProperty('token')
   })
 
+  it('should not create a duplicated user', async () => {
+    await supertest(app).post('/signup').send({
+      email: 'duplicated@test.com',
+      password: 'authentication',
+      name: 'Duplicated',
+      gender: 'F',
+    })
+    const response = await supertest(app).post('/signup').send({
+      email: 'duplicated@test.com',
+      password: 'authentication',
+      name: 'Duplicated',
+      gender: 'F',
+    })
+    expect(response.body).toHaveProperty('errors')
+  })
+
   // SIGN IN
   it('should authenticate with valid credentials and reply with a token', async () => {
     const response = await supertest(app).post('/signin').send({
@@ -80,11 +96,28 @@ describe('Authentication', () => {
     expect(response.body).toHaveProperty('errors')
   })
 
+  // Authentication token
   it('should be able to access private routes when authenticated', async () => {
-    // const response = await (await supertest(app).get('/signup')).set(
-    //   'Authorization',
-    //   `bearer token`
-    // )
-    expect(2).toBe(2)
+    const login = await supertest(app).post('/signin').send({
+      email: 'auth@test.com',
+      password: 'authentication',
+    })
+    const response = await supertest(app)
+      .get('/privateRoute')
+      .set('Authorization', `bearer ${login.body.token}`)
+    expect(response.body).toHaveProperty('success')
+  })
+
+  it('should not be able to access private routes without bearer token', async () => {
+    const response = await supertest(app).get('/privateRoute')
+    console.log(response.body)
+    expect(response.body).toHaveProperty('errors')
+  })
+
+  it('should not be able to access private routes with custom tokens', async () => {
+    const response = await supertest(app)
+      .get('/privateRoute')
+      .set('Authorization', `bearer random_token`)
+    expect(response.body).toHaveProperty('errors')
   })
 })

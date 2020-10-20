@@ -1,4 +1,12 @@
-node_modules
-dist
+# ignore some folders
+node_modules/
+dist/
+**/coverage/
+
+# ignore system files
+Thumbs.db
 .DS_Store
 .env
+
+# ignore temp database
+database.sqlite
