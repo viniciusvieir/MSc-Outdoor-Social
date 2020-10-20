@@ -27,7 +27,7 @@ jobs:
           echo "========== check paths of modified files =========="
           files=$(git diff --name-only HEAD^ HEAD)
           echo $files
-          if [[ $files == "server/"* ]]; then
+          if [[ $files == *"server/"* ]]; then
             echo "::set-output name=run_job::true"
           else
             echo "No modification for server deployment"

@@ -12,6 +12,8 @@ class EventController {
 
     res.json(events)
   }
+
+  async createEvent(req, res) {}
 }
 
 module.exports = new EventController()
