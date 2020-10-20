@@ -37,7 +37,7 @@ class AuthController {
 
     const checkIfExists = await User.findOne({
       where: { email },
-      attributes: ["id"]
+      attributes: ['id'],
     })
 
     // if user exists return error
@@ -53,6 +53,10 @@ class AuthController {
     })
 
     return res.json(user.generateTokenPayload())
+  }
+
+  async privateRoute(req, res) {
+    res.json({ success: true })
   }
 
   // VALIDATION

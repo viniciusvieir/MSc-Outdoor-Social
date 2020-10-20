@@ -22,7 +22,6 @@ class AppController {
     // this.express.use(express.static(__dirname + '../public'))
 
     const jest = path.join(__dirname, '../../__tests__/coverage/lcov-report')
-    console.log(jest)
     this.express.use('/jest', express.static(jest))
   }
 
