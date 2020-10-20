@@ -1,5 +1,4 @@
 const router = require('express').Router()
-const path = require('path')
 
 const verifyToken = require('../middlewares/verify-token').verifyToken
 
@@ -9,12 +8,6 @@ const eventController = require('../controllers/event')
 
 router.get('/hello', (req, res) => {
   res.send('GTFO')
-})
-
-router.get('/testResult', (req, res) => {
-  res.sendFile(
-    path.join(__dirname + '../../__tests__/coverage/lcov-report/index.html')
-  )
 })
 
 // Format router.post(<route>, <verifyToken>, <validation>, <function>)
