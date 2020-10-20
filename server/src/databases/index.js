@@ -26,16 +26,6 @@ function startMongoDB() {
       })
       .then(async () => {
         console.log('MongoDB connected...')
-
-        // const Trail = require('../models/trail')
-
-        // Trail.create({
-        //   name: 'Test',
-        //   description: null,
-        //   location: 'Test location',
-        //   imageUrl: 'testurl',
-        // })
-
         res()
       })
       .catch((e) => rej(e))

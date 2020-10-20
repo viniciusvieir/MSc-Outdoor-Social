@@ -10,7 +10,6 @@ models.forEach((model) => model.init(sequelize))
 models.forEach((model) => model.associate && model.associate(sequelize.models))
 
 // const options = { force: process.env.NODE_ENV === 'test' }
-
 // sequelize
 //   .sync(options)
 //   .then(async () => {
