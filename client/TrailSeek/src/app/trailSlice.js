@@ -52,6 +52,10 @@ export default trailSlice.reducer;
 
 export const selectAllTrails = (state) => state.trails.trails;
 
-export const selectTrailsByID = (state, trailId) => {
-    state.trails.trails.find(item=>item.id===trailId)
-}; 
+
+// IDK dosent work need to check
+// export const selectTrailsByID = (state, trailId) => {
+//     // console.log(trailId)
+//     // console.log(state.trails)
+//     state.trails.trails.find(item=>item.id==trailId)
+// }; 

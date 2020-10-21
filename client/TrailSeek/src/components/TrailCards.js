@@ -17,12 +17,11 @@ const TrailCards =  ({ title, trailList }) =>{
                 renderItem={({ item })=>{
                     return(
                         <TouchableOpacity
-                            onPress={()=>{navigation.navigate('ViewTrail',{id:item.id, name: item.name})}}
-                            
+                            onPress={()=>{navigation.navigate('ViewTrail',{id:item.id, name: item.name})}}      
                         >
                             <View style={{flexShrink: 1}}>
                             <Image
-                                source={{ uri: item.image }}
+                                source={{ uri: item.imgUrl }}
                                 style={styles.imageStyle}
                                 PlaceholderContent={<ActivityIndicator />}
                                 resizeMethod='auto'
