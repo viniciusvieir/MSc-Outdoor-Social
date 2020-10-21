@@ -6,8 +6,7 @@ import { Text, SearchBar } from 'react-native-elements';
 import { fetchTrails, selectAllTrails } from '../app/trailSlice';
 import TrailCard from '../components/TrailCards';
 
-
-const SearchTrailScreen = ({ navigation}) => {
+    const SearchTrailScreen = ({ navigation}) => {
     const dispatch = useDispatch();
     const trails = useSelector(selectAllTrails);
 
@@ -33,16 +32,41 @@ const SearchTrailScreen = ({ navigation}) => {
     }
 
     return(
-        <View>
-            <Text h3>SearchTrailScreen</Text>
+        <View style={styles.container}>
+            <Text style={styles.texth3}>Search Trail</Text>
+            <View style={styles.searchbarcontainer}>
             <SearchBar 
+                style={styles.searchbar}
                 lightTheme={true}
+                
             />
             {content}
+            </View>
         </View>
     );
 };
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+
+    container: {
+        flex: 1,
+        backgroundColor: '#ecf0f1',
+        width:'100%',
+    },
+    texth3: {
+        fontSize:30,
+        fontWeight:'bold',
+        textAlign:'center',
+        width:'80%',
+        alignSelf:'center',
+    },
+    searchbarcontainer:{
+        width:'90%',
+        alignSelf:'center',
+    },
+    
+
+
+});
 
 export default SearchTrailScreen;

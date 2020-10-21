@@ -15,6 +15,7 @@ import MyEventScreen from './src/screens/MyEventScreen';
 import SearchTrailScreen from './src/screens/SearchTrailScreen';
 import SigninScreen from './src/screens/SigninScreen';
 import SignupScreen from './src/screens/SignupScreen';
+import SplashScreen from './src/screens/SplashScreen';
 import ViewProfileScreen from './src/screens/ViewProfileScreen';
 import store from './src/app/store';
 
@@ -103,6 +104,8 @@ const App = () => {
     <Provider store={store}>
       <NavigationContainer>
         <Stack.Navigator>
+          <Stack.Screen name='TrailFlow' component={TrailFlow} />
+          <Stack.Screen name=' ' component={SplashFlow} />
           <Stack.Screen name='Authentication' component={AuthenticationFlow} />
           <Stack.Screen 
             name='MainTab' 
