@@ -15,6 +15,11 @@ router.get('/privateRoute', verifyToken, authController.privateRoute)
 
 // =============== TRAIL ==============
 router.get('/trails', trailController.validators.trails, trailController.trails)
+router.get(
+  '/trails/:id',
+  trailController.validators.trailById,
+  trailController.trailById
+)
 router.get('/trailsfix', trailController.trailsFix)
 
 // =============== EVENT ==============

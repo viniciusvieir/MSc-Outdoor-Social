@@ -1,4 +1,4 @@
-const { query, body, validationResult } = require('express-validator')
+const { query, param, validationResult } = require('express-validator')
 const { errorHandler } = require('../utils/error-handling')
 
 const Trail = require('../models/trail')
@@ -9,13 +9,35 @@ class TrailController {
     if (!errors.isEmpty())
       return res.status(400).json({ errors: errors.array() })
 
-    const { q: query, params, limit, skip } = req.query
+    const { q: query, fields, limit, skip } = req.query
 
     const trails = await Trail.find(query || {})
       .limit(limit || 20)
       .skip(skip || 0)
-      .select((params && params.replace(/,|;/g, ' ')) || '-path')
+      .select((fields && fields.replace(/,|;/g, ' ')) || '-path')
     res.json(trails)
+  }
+
+  async trailById(req, res) {
+    const errors = validationResult(req)
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() })
+
+    const { id } = req.params
+    const { fields } = req.query
+
+    const trail = await Trail.findById(id).select(
+      (fields && fields.replace(/,|;/g, ' ')) || '-path'
+    )
+
+    if (trail.path) {
+      trail.path = trail.path.map((loc) => ({
+        latitude: loc.coordinates[0],
+        longitude: loc.coordinates[1],
+      }))
+    }
+
+    res.json(trail)
   }
 
   // FIX
@@ -93,9 +115,13 @@ class TrailController {
               return null
             }
           }),
-        query('params').optional().isString(),
+        query('fields').optional().isString(),
         query('limit').optional().isInt().toInt(),
         query('skip').optional().isInt().toInt(),
+      ],
+      trailById: [
+        param('id').isString().isLength(24),
+        query('fields').optional().isString(),
       ],
     }
   }
