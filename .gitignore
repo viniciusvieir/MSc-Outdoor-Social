@@ -10,3 +10,6 @@ Thumbs.db
 
 # ignore temp database
 database.sqlite
+
+# ignore dev files
+*.http

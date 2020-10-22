@@ -16,7 +16,7 @@ on:
       - 'server/**'
 
 jobs:
-  job_for_server:
+  serverUpdate:
     runs-on: self-hosted
     steps:
       - name: Updating server

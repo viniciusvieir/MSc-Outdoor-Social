@@ -1,6 +1,10 @@
 const mongoose = require('mongoose')
 
 const TrailSchema = new mongoose.Schema({
+  id: {
+    type: Number,
+    required: true,
+  },
   name: {
     type: String,
     required: true,
@@ -9,18 +13,92 @@ const TrailSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  description: {
+  difficulty: {
     type: String,
+    required: true,
+    index: true,
+  },
+  length_km: {
+    type: Number,
     required: false,
   },
-  imageUrl: {
+  estimate_time_min: {
+    type: Number,
+    required: false,
+  },
+  description: {
     type: String,
     required: true,
   },
-  createdAt: {
+  activity_type: {
+    type: String,
+    required: true,
+  },
+  elevationGain_ft: {
+    type: Number,
+    required: false,
+  },
+  avg_rating: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
+  image_url: {
+    type: String,
+    required: false,
+  },
+  start: {
+    type: {
+      type: String,
+      enum: ['Point'],
+      required: true,
+    },
+    coordinates: {
+      type: [Number],
+      required: true,
+    },
+    elevation: {
+      type: Number,
+      required: true,
+    },
+  },
+  end: {
+    type: {
+      type: String,
+      enum: ['Point'],
+      required: true,
+    },
+    coordinates: {
+      type: [Number],
+      required: true,
+    },
+    elevation: {
+      type: Number,
+      required: true,
+    },
+  },
+  path: {
+    type: [Object],
+    required: true,
+  },
+  bbox: {
+    type: {
+      type: String,
+      enum: ['Polygon'],
+      required: true,
+    },
+    coordinates: {
+      type: [[[Number]]],
+      required: true,
+    },
+  },
+  created_at: {
     type: Date,
     default: Date.now,
   },
 })
 
-module.exports = mongoose.model('Trail', TrailSchema)
+TrailSchema.index({ start: '2dsphere' })
+TrailSchema.index({ end: '2dsphere' })
+
+module.exports = mongoose.model('Trail_dev', TrailSchema)
