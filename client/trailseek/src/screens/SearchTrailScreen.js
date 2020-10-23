@@ -1,44 +1,27 @@
-import React,{ useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { View, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
 import { Text, SearchBar } from 'react-native-elements';
 
-import { fetchTrails, selectAllTrails } from '../app/trailSlice';
 import TrailCard from '../components/TrailCards';
 
 
-const SearchTrailScreen = ({ navigation}) => {
-    const dispatch = useDispatch();
-    const trails = useSelector(selectAllTrails);
+const SearchTrailScreen = () => {
+    
+    const reqFields = 'name,avg_rating,location,img_url'
 
-    const trailStatus = useSelector(state=> state.trails.status);
-    const error = useSelector(state=>state.trails.error);
-
-    useEffect(()=>{
-        if (trailStatus ==='idle'){
-            dispatch(fetchTrails());
-        }
-    },[trailStatus,dispatch])
-
-    let content;
-
-    if (trailStatus === 'loading'){
-        content = <ActivityIndicator />
-    } else if (trailStatus==='failed'){
-        content=<Text>{error}</Text>
-    } else if (trailStatus==='succeeded'){
-        content = <ScrollView horizontal style={{maxHeight:275}} navigation={navigation}>
-                    <TrailCard title='All Trails' trailList={trails} />
-                </ScrollView>
+    const easyParams = {
+        title:'Easy Trails',
+        fields:reqFields,
+        query:{"difficulty":"Easy"}
     }
 
     return(
-        <View>
-            <Text h3>SearchTrailScreen</Text>
+        <View style={{marginTop:30}}>
+            <Text h3 style={{marginLeft:5}}>Hi! User</Text>
             <SearchBar 
                 lightTheme={true}
             />
-            {content}
+            <TrailCard getParams={easyParams}/>
         </View>
     );
 };

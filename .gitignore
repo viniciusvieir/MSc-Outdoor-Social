@@ -10,3 +10,4 @@ Thumbs.db
 
 # ignore temp database
 database.sqlite
+client/TrailSeek/trail.http
