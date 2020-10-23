@@ -20,7 +20,6 @@ export const fetchTrails = createAsyncThunk('trails/fetchTrails',async ({fields,
             q:query
           }
         });
-        // const response = await trailSeek.get(`/trails?fields=${fields}&limit=${limit}`);
         return response.data
     }
     catch(error){
