@@ -1,86 +1,95 @@
-import React,{useEffect} from 'react';
+import React,{useEffect,useState} from 'react';
 import { View, StyleSheet, ActivityIndicator, TouchableOpacity, FlatList,Image, ScrollView } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux';
-import { fetchTrails, selectAllTrails } from '../app/trailSlice';
+import { useSelector } from 'react-redux';
 import { Text, Rating } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
 
+import trailSeek from '../api/trailSeek'
+import {Intersect} from '../util/Intersect'
+
 const TrailCards =  ({getParams}) =>{
 
-    const { fields, query, title} = getParams;
+    const { query, title} = getParams;
+    const [data, setData] = useState([]);
 
     const navigation = useNavigation();
 
-    const dispatch = useDispatch();
-    const trails = useSelector(selectAllTrails);
-
-    const trailStatus = useSelector(state=> state.trails.status);
-    const error = useSelector(state=>state.trails.error);
-
-
-    getParams.title
-
     useEffect(()=>{
-        if (trailStatus ==='idle'){    
-            dispatch(fetchTrails({fields,query}));
+        async function fetchIDs(){
+            try{
+                const response = await trailSeek.get('/trails',{
+                params:{
+                    fields:"_id",
+                    limit:10,
+                    q:query
+                }
+                });
+                setData(response.data)
+            }
+            catch(error){
+                console.log(error);
+            };
         }
-    },[trailStatus,dispatch])
+        fetchIDs();
+    },[trails])
 
-    let content = <ActivityIndicator />;
+    const trails = useSelector(state=>Intersect(state.trails.trails,data))
 
-    if (trailStatus === 'loading'){
-        content = <ActivityIndicator />
-    } else if (trailStatus==='failed'){
-        content=<Text>{error}</Text>
-    } else if (trailStatus==='succeeded'){
-        content = <View>
-                    <Text h4 style={styles.titleStyle}>{title}</Text>
-                    <FlatList
-                        horizontal
-                        data={trails}
-                        keyExtractor={(trails)=>{
-                            return trails._id
-                        }}
-                        renderItem={({ item })=>{
-                            return(
-                                <ScrollView horizontal style={{maxHeight:275}}>
-                                    <TouchableOpacity
-                                        onPress={()=>{navigation.navigate('ViewTrail',{id:item._id, name: item.name})}}      
-                                    >
-                                        <View style={{flexShrink: 1}}>
-                                        <Image
-                                            source={{ uri: item.img_url }}
-                                            style={styles.imageStyle}
-                                            PlaceholderContent={<ActivityIndicator />}
-                                            resizeMethod='auto'
-                                            resizeMode='cover'
-                                        />
-                                            <View style={styles.caption}>
-                                                <Text style={styles.nameStyle}>{item.name}</Text>
-                                                <View style={styles.rateloc}>
-                                                    <Text style={styles.locationStyle}>{item.location}</Text>
-                                                    <Rating 
-                                                        imageSize={15} 
-                                                        readonly 
-                                                        startingValue={item.avg_rating} 
-                                                        style={styles.rating} 
-                                                        // ratingBackgroundColor='red'
-                                                        // tintColor='none'
-                                                        type='custom'
-                                                    />
-                                                </View>
-                                            </View>
+    // if (trailStatus === 'loading'){
+    //     content = <ActivityIndicator />
+    // } else if (trailStatus==='failed'){
+    //     content=<Text>{error}</Text>
+    // } else if (trailStatus==='succeeded'){
+ 
+    // }
+
+    return (
+        <View>
+            <Text h4 style={styles.titleStyle}>{title}</Text>
+            <FlatList
+                horizontal
+                data={trails}
+                keyExtractor={(trails)=>{
+                    return trails._id
+                }}
+                renderItem={({ item })=>{
+                    return(
+                        <ScrollView horizontal style={{maxHeight:275}}>
+                            <TouchableOpacity
+                                onPress={()=>{navigation.navigate('ViewTrail',{id:item._id, name: item.name})}}      
+                            >
+                                <View style={{flexShrink: 1}}>
+                                <Image
+                                    source={{ uri: item.img_url }}
+                                    style={styles.imageStyle}
+                                    PlaceholderContent={<ActivityIndicator />}
+                                    resizeMethod='auto'
+                                    resizeMode='cover'
+                                />
+                                    <View style={styles.caption}>
+                                        <Text style={styles.nameStyle}>{item.name}</Text>
+                                        <View style={styles.rateloc}>
+                                            <Text style={styles.locationStyle}>{item.location}</Text>
+                                            <Rating 
+                                                imageSize={15} 
+                                                readonly 
+                                                startingValue={item.avg_rating} 
+                                                style={styles.rating} 
+                                                // ratingBackgroundColor='red'
+                                                // tintColor='none'
+                                                type='custom'
+                                            />
                                         </View>
-                                    </TouchableOpacity>
-                                </ScrollView>
-                            );
-                        }}
-                        showsHorizontalScrollIndicator={false}
-                    />
-                </View>
-    }
-
-    return content;
+                                    </View>
+                                </View>
+                            </TouchableOpacity>
+                        </ScrollView>
+                    );
+                }}
+                showsHorizontalScrollIndicator={false}
+            />
+        </View>
+    );
 
 };
 

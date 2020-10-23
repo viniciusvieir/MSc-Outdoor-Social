@@ -46,6 +46,7 @@ const ViewTrailScreen = ({ route, navigation }) => {
            
     <Text>Difficulty : {trailData.difficulty}</Text>
     <Text>Length : {trailData.length_km}</Text>
+    <Text>Rating : {trailData.avg_rating}</Text>
             <MapView style={styles.mapStyle}
             // initialRegion={{
             //     latitude:(trailData.bbox.coordinates[0][0][0] + trailData.bbox.coordinates[0][2][0])/2,

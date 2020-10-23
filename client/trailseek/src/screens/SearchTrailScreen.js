@@ -1,18 +1,76 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import React,{ useState,useEffect } from 'react';
+import { View, StyleSheet,ScrollView } from 'react-native';
 import { Text, SearchBar } from 'react-native-elements';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchTrails } from '../app/trailSlice'
+import * as Location from 'expo-location';
 
 import TrailCard from '../components/TrailCards';
 
 
 const SearchTrailScreen = () => {
+
+    const dispatch = useDispatch();
+
+    const trailStatus = useSelector(state=> state.trails.status);
+    const error = useSelector(state=>state.trails.error);
+
+    //Initial Trail Fetch
+    useEffect(()=>{
+        if (trailStatus ==='idle'){
+            const fields='name,avg_rating,location,img_url';
+            const limit = 100000
+            dispatch(fetchTrails({fields,limit}));
+        }
+    },[trailStatus,dispatch])
     
-    const reqFields = 'name,avg_rating,location,img_url'
+    const [location, setLocation] = useState(null);
+    const [errorMsg, setErrorMsg] = useState(null);
+
+    //Location
+    useEffect(() => {
+        (async () => {
+        let { status } = await Location.requestPermissionsAsync();
+        if (status !== 'granted') {
+            setErrorMsg('Permission to access location was denied');
+        }
+
+        let location = await Location.getCurrentPositionAsync({});
+        setLocation(location);
+        })();
+    }, []);
+
+    let loc = false;
+    if (location) {
+        loc = location.coords.latitude
+    }
 
     const easyParams = {
         title:'Easy Trails',
-        fields:reqFields,
-        query:{"difficulty":"Easy"}
+        query:{
+                "difficulty":"Easy",
+                "length_km":{"$lt":5}
+            }
+    }
+
+    const bestParams = {
+        title:'Best Rated',
+        query:{
+                "avg_rating":{"$gt":4},
+            }
+    }
+
+    let content;
+
+    if (trailStatus === 'loading'){
+        content = <ActivityIndicator />
+    } else if (trailStatus==='failed'){
+        content=<Text>{error}</Text>
+    } else if (trailStatus==='succeeded'){
+        content=<ScrollView>
+                    <TrailCard getParams={easyParams}/>
+                    <TrailCard getParams={bestParams}/>
+                </ScrollView>
     }
 
     return(
@@ -21,7 +79,7 @@ const SearchTrailScreen = () => {
             <SearchBar 
                 lightTheme={true}
             />
-            <TrailCard getParams={easyParams}/>
+            {content}
         </View>
     );
 };

@@ -11,16 +11,17 @@ const initialState = {
 };
 
 export const fetchTrails = createAsyncThunk('trails/fetchTrails',async ({fields,limit=10,query={}})=>{
-
     try{
         const response = await trailSeek.get('/trails',{
           params:{
-            fileds:fields,
+            fields:fields,
             limit:limit,
             q:query
           }
         });
+        // console.log(response.data)
         return response.data
+        
     }
     catch(error){
         console.log(error);
@@ -28,7 +29,7 @@ export const fetchTrails = createAsyncThunk('trails/fetchTrails',async ({fields,
 })
 
 export const fetchTrailsByID = createAsyncThunk('trails/fetchTrailsByID',async ({fields,id})=>{
-  console.log(`/trails/${id}?fields=${fields}`);
+  // console.log(`/trails/${id}?fields=${fields}`);
   try{
       const response = await trailSeek.get(`/trails/${id}?fields=${fields}`);
       return response.data
@@ -82,7 +83,7 @@ export const {ratingAdded} = trailSlice.actions;
 
 export default trailSlice.reducer;
 
-export const selectAllTrails = (state) => state.trails.trails;
+// export const selectAllTrails = (state) => state.trails.trails;
 
 
 // IDK dosent work need to check
