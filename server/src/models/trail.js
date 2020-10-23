@@ -45,7 +45,7 @@ const TrailSchema = new mongoose.Schema({
     required: true,
     default: 0,
   },
-  image_url: {
+  img_url: {
     type: String,
     required: false,
   },
@@ -84,15 +84,8 @@ const TrailSchema = new mongoose.Schema({
     required: true,
   },
   bbox: {
-    type: {
-      type: String,
-      enum: ['Polygon'],
-      required: true,
-    },
-    coordinates: {
-      type: [[[Number]]],
-      required: true,
-    },
+    type: [Number],
+    required: false,
   },
   created_at: {
     type: Date,

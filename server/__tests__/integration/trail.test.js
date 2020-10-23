@@ -7,6 +7,8 @@ const mongoose = require('mongoose')
 const app = require('../../src/app')
 const supertest = require('supertest')
 
+const id = '5f91c9034a8c574503df46a7'
+
 describe('Trails', () => {
   beforeAll(async () => {
     await mongoose.connect(process.env.MONGO_URL_TEST_READER, {
@@ -58,27 +60,30 @@ describe('Trails', () => {
 
   // ####### /trails/:id
   it('should get trail by id', async () => {
-    const id = '5f91094b4103311e6379d93a'
     const response = await supertest(app).get(`/trails/${id}`)
-    expect(response.body.name).toBe(
-      "Carrauntoohil Mountain Via Devil's Ladder Trail"
-    )
+    expect(response.body.name).toBe('Howth Loop Trail')
   })
 
   it('should return name field when requested on /trails/:id', async () => {
-    const id = '5f91094b4103311e6379d93a'
     const response = await supertest(app).get(`/trails/${id}?fields=name`)
     expect(response.body).toHaveProperty('name')
   })
 
   it('should return errors when id is less than 24 chars', async () => {
-    const id = 'f91094b4103311e6379d93a'
-    const response = await supertest(app).get(`/trails/${id}?fields=name`)
+    const response = await supertest(app).get(
+      `/trails/${id.slice(0, -1)}?fields=name`
+    )
     expect(response.body).toHaveProperty('errors')
   })
 
+  it('should return empty array when id does not exist', async () => {
+    const response = await supertest(app).get(
+      `/trails/${id.replace('8', '1')}?fields=name`
+    )
+    expect(response.body).toBe(null)
+  })
+
   it('should return path with lat lon', async () => {
-    const id = '5f91094b4103311e6379d93a'
     const response = await supertest(app).get(`/trails/${id}?fields=path`)
     expect(response.body.path.length).toBeGreaterThan(0)
   })
