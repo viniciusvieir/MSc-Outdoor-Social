@@ -30,7 +30,7 @@ class TrailController {
       (fields && fields.replace(/,|;/g, ' ')) || '-path'
     )
 
-    if (trail.path) {
+    if (trail && trail.path) {
       trail.path = trail.path.map((loc) => ({
         latitude: loc.coordinates[0],
         longitude: loc.coordinates[1],
@@ -67,12 +67,14 @@ class TrailController {
       }
 
       return {
+        path,
+        estimate_time_min,
+
         id: trail.id,
         name: trail.name,
         location: trail.location,
         difficulty: trail.difficulty,
         length_km: trail.length_km,
-        estimate_time_min,
         description: trail.description,
         activity_type: trail.activityType,
         elevation_gain_ft: trail.elevationGain_ft,
@@ -80,19 +82,7 @@ class TrailController {
         img_url: trail.imgUrl,
         start: path[0],
         end: path[path.length - 1],
-        path,
-        bbox: {
-          type: 'Polygon',
-          coordinates: [
-            [
-              [trail.geoLoc.bbox[0], trail.geoLoc.bbox[1]],
-              [trail.geoLoc.bbox[0], trail.geoLoc.bbox[3]],
-              [trail.geoLoc.bbox[2], trail.geoLoc.bbox[3]],
-              [trail.geoLoc.bbox[2], trail.geoLoc.bbox[1]],
-              [trail.geoLoc.bbox[0], trail.geoLoc.bbox[1]],
-            ],
-          ],
-        },
+        bbox: trail.bbox,
       }
     })
 
