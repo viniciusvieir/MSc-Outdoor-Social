@@ -1,140 +1,111 @@
-// import React from 'react';
-// import { View, StyleSheet } from 'react-native';
-// import { Text, Button } from 'react-native-elements';
-
-// const SignupScreen = ({ navigation }) => {
-//     return(
-//         <>
-//             <Text h3>SignupScreen</Text>
-//             <Button title='Submit' onPress={()=>{navigation.navigate('Signin')}} />
-//         </>
-//     );
-// };
-
-// const styles = StyleSheet.create({});
-
-// export default SignupScreen;
-
-
-import React, { Component } from 'react';
-import { Alert, TextInput, View, StyleSheet } from 'react-native';
-import { Text, Button, ButtonGroup  } from 'react-native-elements';
+import React, { useState } from 'react';
+import { TextInput, View, StyleSheet, Image, AsyncStorage } from 'react-native';
+import { Text, Button } from 'react-native-elements';
 import axios from 'axios';
-import ReactDOM from "react-dom";
 
 
-export default class SignupScreen extends Component {
-  constructor(props) {
-    super(props);
-    
-    this.state = {
-      email: '',
-      password: '',
-    };
-  }
-  
-  onSignup() {
-    // const { email, password } = this.state;
-    const name = this.state.name;
-    const dob = this.state.dob;
-    const gender = this.state.gender;
-    const email = this.state.email;
-    const password = this.state.password;
+const SignupScreen = ({ navigation }) => {
+  const list = [
+    {
+      name: 'Event0',
+      subtitle: 'Location'
+    },
+    {
+      name: 'Event1',
+      subtitle: 'Location'
+    },
+  ];
+  const [inputs, setInputs] = useState({});
+  const [error, setError] = useState(null);
 
-    fetch('https://api.trailseek.eu/v1/signup', {
-      method: 'POST',
-      body: JSON.stringify({
-        name:name,
-        dob:dob,
-        gender:gender,
-        email: email,
-        password: password,
-      }),
-    }).then(response => {
-      if (response.status === 200) {
-        global.loggedin = response;
-        this.props.navigation.navigate('MainTab');
-      } else {
-        throw new Error('Something went wrong on api server!');
-      }
-    })
-    .then(response => {
-      console.debug(response);
-      // ...
-    }).catch(error => {
-      console.error(error);
-    });
-
-    //this.props.navigation.navigate('MainTab');
-
+  const inputsHandler = (e, field) => {
+    setInputs(inputs => ({ ...inputs, [field]: e }));
   }
 
-  render() {
+  const onSignup = () => {
+    setError(null);
+    axios.post("https://api.trailseek.eu/v1/signup", inputs)
+      .then(async (response) => {
+        try {
+          await AsyncStorage.setItem(
+            '@trailSeek:token',
+            response.data.token
+          );
+        } catch (error) {
+          // Error saving data
+          console.log(error);
+        }
+        navigation.navigate('MainTab');
+      })
+      .catch(function (error) {
+        console.log(error)
+        if (error.response) {
+          setError(error.response.data.errors[0].msg);
+        }
+      });
+  }
 
-    if(global.loggedin == null){
-      console.log('stay here');
-    }else{
-      console.log('navigate to profile');
-    }
+  return (
+    <View style={styles.container}>
 
-    const buttons = [ 'Sign up', 'Login']
-    const { selectedIndex } = this.state
-
-    return (
-      <View style={styles.container}>
-
+      <View style={styles.containerhead}>
+        <Image
+          source={require("../images/sublogo.png")}
+          resizeMode="contain"
+          style={styles.image}
+        ></Image>
+      </View>
+      <View style={styles.containerform}>
+        {error &&
+          <Text style={{ color: "red" }}>{error}</Text>
+        }
         <TextInput
-          value={this.state.name}
-          onChangeText={(name) => this.setState({ name })}
+          onChangeText={(e) => inputsHandler(e, "name")}
           placeholder={'Name'}
           style={styles.input}
         />
-                <TextInput
-          value={this.state.dob}
-          onChangeText={(dob) => this.setState({ dob })}
+        <TextInput
+          onChangeText={(e) => inputsHandler(e, "dob")}
           placeholder={'DOB'}
           style={styles.input}
         />
         <TextInput
-          value={this.state.gender}
-          onChangeText={(gender) => this.setState({ gender })}
           placeholder={'Gender'}
+          onChangeText={(e) => inputsHandler(e, "gender")}
           style={styles.input}
         />
 
         <TextInput
-          value={this.state.email}
-          onChangeText={(email) => this.setState({ email })}
+          onChangeText={(e) => inputsHandler(e, "email")}
           placeholder={'Email'}
           style={styles.input}
         />
         <TextInput
-          value={this.state.password}
-          onChangeText={(password) => this.setState({ password })}
+          onChangeText={(e) => inputsHandler(e, "password")}
           placeholder={'Password'}
           secureTextEntry={true}
           style={styles.input}
         />
- 
+
         <View style={styles.flexxx}>
-          <Button 
-            title={'Sign up'} 
-            // onPress={()=>this.props.navigation.navigate('Signup')} 
-            onPress={this.onSignup.bind(this)}
-            buttonStyle={styles.button}            
-          />              
+          <Button
+            title={'Sign up'}
+            onPress={onSignup}
+            buttonStyle={styles.button}
+          />
           <Button
             title={'Login'}
-            type={'clear'} 
-            // onPress={this.onLogin.bind(this)}
-            onPress={()=>this.props.navigation.navigate('Signin')} 
-          /> 
-      
+            type={'clear'}
+            onPress={() => navigation.navigate('Signin')}
+          />
+
         </View>
       </View>
-    );
-  }
-}
+    </View>
+  );
+};
+
+export default SignupScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -143,7 +114,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#ecf0f1',
   },
-  
+  containerhead: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+  },
+  containerform: {
+    flex: 2,
+    alignItems: 'center',
+    // justifyContent: 'center',
+    width: '100%',
+    flexDirection: 'column',
+  },
+
   input: {
     width: '80%',
     height: 44,
@@ -153,9 +137,18 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 
-  flexxx:{
-    width:'80%',
+  flexxx: {
+    width: '80%',
     flexDirection: 'column',
-    alignItems:'stretch',
-  }
+    alignItems: 'stretch',
+  },
+  image: {
+    width: '100%',
+    height: 120,
+    alignSelf: 'center',
+  },
+
+  button: {
+    marginBottom: 10,
+  },
 });

@@ -53,6 +53,11 @@ export const trailSlice = createSlice({
           existingTrail.rating[rating]++;
         }
       }
+    }
+  },
+  extraReducers: {
+    [fetchTrails.pending]: (state, action) => {
+      state.status = 'loading'
     },
     extraReducers: {
         [fetchTrails.pending]: (state, action) => {

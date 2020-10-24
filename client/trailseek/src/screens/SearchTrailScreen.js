@@ -7,9 +7,7 @@ import * as Location from 'expo-location';
 
 import TrailCard from '../components/TrailCards';
 
-
 const SearchTrailScreen = () => {
-
     const dispatch = useDispatch();
 
     const trailStatus = useSelector(state=> state.trails.status);
@@ -77,13 +75,37 @@ const SearchTrailScreen = () => {
         <View style={{marginTop:30}}>
             <Text h3 style={{marginLeft:5}}>Hi! User</Text>
             <SearchBar 
+                style={styles.searchbar}
                 lightTheme={true}
+                
             />
             {content}
+            </View>
         </View>
     );
 };
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+
+    container: {
+        flex: 1,
+        backgroundColor: '#ecf0f1',
+        width:'100%',
+    },
+    texth3: {
+        fontSize:30,
+        fontWeight:'bold',
+        textAlign:'center',
+        width:'80%',
+        alignSelf:'center',
+    },
+    searchbarcontainer:{
+        width:'90%',
+        alignSelf:'center',
+    },
+    
+
+
+});
 
 export default SearchTrailScreen;

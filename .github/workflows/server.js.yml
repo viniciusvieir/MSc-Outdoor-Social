@@ -9,14 +9,9 @@ on:
       - master
     paths:
       - 'server/**'
-  pull_request:
-    branches:
-      - master
-    paths:
-      - 'server/**'
 
 jobs:
-  job_for_server:
+  serverUpdate:
     runs-on: self-hosted
     steps:
       - name: Updating server

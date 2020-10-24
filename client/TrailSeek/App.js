@@ -17,19 +17,31 @@ import MyEventScreen from './src/screens/MyEventScreen';
 import SearchTrailScreen from './src/screens/SearchTrailScreen';
 import SigninScreen from './src/screens/SigninScreen';
 import SignupScreen from './src/screens/SignupScreen';
+import SplashScreen from './src/screens/SplashScreen';
 import ViewProfileScreen from './src/screens/ViewProfileScreen';
 
 import store from './src/app/store';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+
 if(global.loggedin == undefined || global.loggedin == null){
   global.loggedin = null
 }
 
+const SplashFlow = ()=>{
+  return(
+    <Stack.Navigator>
+      <Stack.Screen name='Splash' component={SplashScreen} />
+  
+    </Stack.Navigator>
+  );
+};
+
 const AuthenticationFlow = ()=>{
   return(
     <Stack.Navigator>
+      
       <Stack.Screen name='Signin' component={SigninScreen} />
       <Stack.Screen name='Signup' component={SignupScreen} />
     </Stack.Navigator>
@@ -39,13 +51,7 @@ const AuthenticationFlow = ()=>{
 const ProfileFlow = () => {
   return(
     <Stack.Navigator>
-      <Stack.Screen 
-      name='ViewProfile' 
-      component={ViewProfileScreen} 
-      options={{
-          headerLeft:null
-        }}
-      />
+      <Stack.Screen name='ViewProfile' component={ViewProfileScreen} options={{headerLeft:null}}/>
       <Stack.Screen name='EditProfile' component={EditProfileScreen} />
     </Stack.Navigator>
   );
@@ -165,6 +171,8 @@ const App = () => {
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen name='Authentication' component={AuthenticationFlow} />
+          <Stack.Screen name='TrailFlow' component={TrailFlow} />
+          <Stack.Screen name=' ' component={SplashFlow} />
           <Stack.Screen 
             name='MainTab' 
             component={MainTabFlow} 

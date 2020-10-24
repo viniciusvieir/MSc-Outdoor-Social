@@ -1,32 +1,34 @@
-import React, {component} From 'react';
-import {View,ImageBackground,Image} from 'react-native';
+import React, { Component } from "react";
+import { StyleSheet, View, Image } from "react-native";
 
+function SplashScreen(props) {
+    
+    setInterval(function(){
+        props.navigation.navigate('Authentication');
+    }, 2000)
 
-var bg-require ('./background.png');
-var logo-require('./logo.png');
-
-export default class Splash extends component
-{
-    constructor(props)
-    {
-        super(props);
-        setTimeout(() => {
-            this.props.navigation.navigate("Login");
-        },5000); 
-    }
-    render()
-    {
-        return(
-                <ImageBackground
-                source={bg}
-                style={{height:'100%,width:'100%}}>
-                <view
-                style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-                    <image source={logo}
-                    style={{height:100,width:100}}></image>
-                </view>
-                </ImageBackground> 
-
-        );
-        }
+    return (
+        <View style={styles.container}>
+            <Image
+                source={require("../images/tslogo.png")}
+                resizeMode="contain"
+                style={styles.image}
+            ></Image>
+        </View>
+    );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+      },
+      image: {
+        width: 200,
+        height: 200,
+        alignSelf:'center'
+      }
+});
+
+export default SplashScreen;
