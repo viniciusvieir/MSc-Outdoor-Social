@@ -84,7 +84,11 @@ describe('Trails', () => {
 
   it('should return empty array when id does not exist', async () => {
     const response = await supertest(app).get(
-      `/trails/${id.replace('8', '1')}?fields=name`
+      `/trails/${id
+        .replace('8', '1')
+        .replace('5', 'a')
+        .replace('b', '8')
+        .replace('c', '3')}?fields=name`
     )
     expect(response.body).toBe(null)
   })
