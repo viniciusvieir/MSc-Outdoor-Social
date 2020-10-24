@@ -1,8 +1,10 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { MaterialIcons } from '@expo/vector-icons';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Provider } from 'react-redux';
+import { TouchableOpacity, StyleSheet } from 'react-native';
 
 import CreateEventScreen from './src/screens/CreateEventScreen';
 import ViewEventScreen from './src/screens/ViewEventScreen';
@@ -17,6 +19,7 @@ import SigninScreen from './src/screens/SigninScreen';
 import SignupScreen from './src/screens/SignupScreen';
 import SplashScreen from './src/screens/SplashScreen';
 import ViewProfileScreen from './src/screens/ViewProfileScreen';
+
 import store from './src/app/store';
 
 const Tab = createBottomTabNavigator();
@@ -61,11 +64,38 @@ const TrailFlow = () => {
         name='SearchTrail' 
         component={SearchTrailScreen} 
         options={{
-          headerLeft:null
+          headerLeft:null,
+          title:'',
+          headerTransparent:true
         }}
       />
-      <Stack.Screen name='ListTrail' component={ListTrailScreen} />
-      <Stack.Screen name='ViewTrail' component={ViewTrailScreen} />
+      <Stack.Screen 
+        name='ListTrail' 
+        component={ListTrailScreen} 
+        options={({ route,navigation }) => ({
+          title:route.params.getParams.title
+        })}
+      />
+      <Stack.Screen 
+        name='ViewTrail' 
+        component={ViewTrailScreen} 
+        options={({ route,navigation }) => ({
+          title:'',
+          headerTransparent:true,
+          headerBackImage:()=>(<MaterialIcons 
+                                  name="arrow-back" 
+                                  size={24} 
+                                  color="white" 
+                                  style={styles.shadow} />),
+          headerTitleStyle: {
+              fontWeight: '600',
+              color:'white',
+              textShadowColor: 'rgba(0, 0, 0, 0.75)',
+              textShadowOffset: {width: -1, height: 1},
+              textShadowRadius: 10
+            },
+          })}
+      />
       <Stack.Screen name='CreateEvent' component={CreateEventScreen} />
       <Stack.Screen name='ListEvent' component={ListEventScreen} />
     </Stack.Navigator>
@@ -91,10 +121,46 @@ const EventFlow = () => {
 
 const MainTabFlow = () =>{
   return(
-    <Tab.Navigator>
-      <Tab.Screen name='TrailFlow' component={TrailFlow} />
-      <Tab.Screen name='EventFlow' component={EventFlow} />
-      <Tab.Screen name='ProfileFlow' component={ProfileFlow} />
+    <Tab.Navigator
+      // initialRouteName="TrailFlow"
+      tabBarOptions={{
+        activeTintColor: '#e91e63',
+        tabStyle:{
+          paddingTop: 8}
+      }}
+    >
+      <Tab.Screen 
+        name='TrailFlow' 
+        component={TrailFlow} 
+        options={{
+          tabBarLabel: 'Explore',
+          tabBarButton: props => <TouchableOpacity {...props} /> ,
+          tabBarIcon: ({ color, size }) => (
+            <MaterialIcons name="search" size={24} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen 
+        name='EventFlow' 
+        component={EventFlow}
+        options={{
+          tabBarLabel: 'Events',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialIcons name="event" size={24} color={color} />
+          ),
+        }}
+        
+      />
+      <Tab.Screen 
+        name='ProfileFlow' 
+        component={ProfileFlow} 
+        options={{
+          tabBarLabel: 'Profile',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialIcons name="account-circle" size={24} color={color} />
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 };
@@ -119,5 +185,17 @@ const App = () => {
     </Provider>
   );
 };
+
+const styles = StyleSheet.create({
+  shadow: {
+      shadowColor: 'black',
+      shadowOpacity: 0.5,
+      shadowRadius: 5,
+      shadowOffset: {
+          width: 0,            // These can't both be 0
+          height: 1,           // i.e. the shadow has to be offset in some way
+      }},
+    });
+
 
 export default App;

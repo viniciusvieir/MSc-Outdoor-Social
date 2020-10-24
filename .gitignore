@@ -14,3 +14,4 @@ database.sqlite
 
 # ignore dev files
 *.http
+client/TrailSeek/trail.http

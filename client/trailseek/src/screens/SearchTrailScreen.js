@@ -1,40 +1,79 @@
-import React,{ useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { View, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import React,{ useState,useEffect } from 'react';
+import { View, StyleSheet,ScrollView, ActivityIndicator } from 'react-native';
 import { Text, SearchBar } from 'react-native-elements';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchTrails } from '../app/trailSlice'
+import * as Location from 'expo-location';
 
-import { fetchTrails, selectAllTrails } from '../app/trailSlice';
 import TrailCard from '../components/TrailCards';
 
-    const SearchTrailScreen = ({ navigation}) => {
+const SearchTrailScreen = () => {
     const dispatch = useDispatch();
-    const trails = useSelector(selectAllTrails);
 
     const trailStatus = useSelector(state=> state.trails.status);
     const error = useSelector(state=>state.trails.error);
 
+    //Initial Trail Fetch
     useEffect(()=>{
         if (trailStatus ==='idle'){
-            dispatch(fetchTrails());
+            const fields='name,avg_rating,location,img_url';
+            const limit = 100000
+            dispatch(fetchTrails({fields,limit}));
         }
     },[trailStatus,dispatch])
+    
+    const [location, setLocation] = useState(null);
+    const [errorMsg, setErrorMsg] = useState(null);
+
+    //Location
+    useEffect(() => {
+        (async () => {
+        let { status } = await Location.requestPermissionsAsync();
+        if (status !== 'granted') {
+            setErrorMsg('Permission to access location was denied');
+        }
+
+        let location = await Location.getCurrentPositionAsync({});
+        setLocation(location);
+        })();
+    }, []);
+
+    let loc = false;
+    if (location) {
+        loc = location.coords.latitude
+    }
+
+    const easyParams = {
+        title:'Easy Trails',
+        query:{
+                "difficulty":"Easy",
+                "length_km":{"$lt":5}
+            }
+    }
+
+    const bestParams = {
+        title:'Best Rated',
+        query:{
+                "avg_rating":{"$gt":4},
+            }
+    }
 
     let content;
 
     if (trailStatus === 'loading'){
         content = <ActivityIndicator />
     } else if (trailStatus==='failed'){
-        content=<Text>{error}</Text>
+        content=<Text>{errorMsg}</Text>
     } else if (trailStatus==='succeeded'){
-        content = <ScrollView horizontal style={{maxHeight:275}} navigation={navigation}>
-                    <TrailCard title='All Trails' trailList={trails} />
+        content=<ScrollView>
+                    <TrailCard getParams={easyParams}/>
+                    <TrailCard getParams={bestParams}/>
                 </ScrollView>
     }
 
     return(
-        <View style={styles.container}>
-            <Text style={styles.texth3}>Search Trail</Text>
-            <View style={styles.searchbarcontainer}>
+        <View style={{marginTop:30}}>
+            <Text h3 style={{marginLeft:5}}>Hi! User</Text>
             <SearchBar 
                 style={styles.searchbar}
                 lightTheme={true}
