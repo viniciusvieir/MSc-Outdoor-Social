@@ -1,3 +1,6 @@
+const path = require('path')
+const { homedir } = require('os')
+
 const mongoose = require('mongoose')
 
 const app = require('../../src/app')
@@ -9,7 +12,9 @@ describe('Trails', () => {
   beforeAll(async () => {
     require('dotenv').config({
       path:
-        process.env.USER === 'trailseek' ? '~/ecosystem/test.env' : 'test.env',
+        process.env.USER === 'trailseek'
+          ? path.join(homedir(), 'ecosystem/test.env')
+          : 'test.env',
     })
 
     await mongoose.connect(process.env.MONGO_URL_TEST_READER, {
