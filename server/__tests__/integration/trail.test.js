@@ -16,19 +16,24 @@ describe('Trails', () => {
           ? path.join(homedir(), 'ecosystem/test.env')
           : 'test.env',
     })
-    console.log('env', process.env.MONGO_URL_TEST_READER)
+    const url = `mongodb://${process.env.MONGO_READER_USER}:${process.env.MONGO_READER_PASS}@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_COLLECTION}`
+    console.log('env-mongo', url)
+
     await mongoose
-      .connect(process.env.MONGO_URL_TEST_READER, {
+      .connect(url, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useFindAndModify: false,
         useCreateIndex: true,
       })
+      .then(() => console.log('MongoDB connected...'))
       .catch((e) => console.log(e))
   })
 
   afterAll(async () => {
-    await mongoose.disconnect()
+    await mongoose
+      .disconnect()
+      .then(() => console.log('MongoDB disconected...'))
   })
 
   // ####### /trails
