@@ -16,13 +16,15 @@ describe('Trails', () => {
           ? path.join(homedir(), 'ecosystem/test.env')
           : 'test.env',
     })
-
-    await mongoose.connect(process.env.MONGO_URL_TEST_READER, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      useFindAndModify: false,
-      useCreateIndex: true,
-    })
+    console.log('env', process.env.MONGO_URL_TEST_READER)
+    await mongoose
+      .connect(process.env.MONGO_URL_TEST_READER, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        useFindAndModify: false,
+        useCreateIndex: true,
+      })
+      .catch((e) => console.log(e))
   })
 
   afterAll(async () => {
