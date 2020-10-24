@@ -20,7 +20,7 @@ const SearchTrailScreen = () => {
             const limit = 100000
             dispatch(fetchTrails({fields,limit}));
         }
-    },[trailStatus,dispatch])
+    },[])
     
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);

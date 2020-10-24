@@ -33,14 +33,18 @@ const TrailCards =  ({getParams}) =>{
             };
         }
         fetchIDs();
-    },[trails])
+    },[])
 
     const trails = useSelector(state=>Intersect(state.trails.trails,data))
 
     return (
         <View>
             <Text h4 style={styles.titleStyle}>{title}</Text>
-            <ScrollView horizontal style={{maxHeight:275}}>
+            <ScrollView 
+                horizontal 
+                style={{maxHeight:275}}
+                showsHorizontalScrollIndicator={false}
+            >
             <FlatList
                 horizontal
                 data={trails}
@@ -51,7 +55,7 @@ const TrailCards =  ({getParams}) =>{
                     return(
                         
                             <TouchableOpacity
-                                onPress={()=>{navigation.navigate('ViewTrail',{id:item._id, name: item.name})}}      
+                                onPress={()=>{navigation.push('ViewTrail',{id:item._id, name: item.name})}}      
                             >
                                 <View style={{flexShrink: 1}}>
                                 <Image
@@ -76,13 +80,6 @@ const TrailCards =  ({getParams}) =>{
                                                 fullStarColor={'gold'}
                                                 starSize={20}
                                             />
-                                            {/* <Rating
-                                                type='custom'
-                                                readonly
-                                                ratingImage={{uri:'./images/star.png'}}
-                                                startingValue={item.avg_rating}
-                                                starContainerStyle={styles.rating}
-                                            /> */}
                                         </View>
                                     </View>
                                 </View>
@@ -91,15 +88,15 @@ const TrailCards =  ({getParams}) =>{
                         
                     );
                 }}
-                showsHorizontalScrollIndicator={false}
+                
             />
-            <TouchableOpacity 
-                style={styles.viewMore}
-                onPress={()=>{navigation.navigate('ListTrail',{getParams})}}
-            >
-                <AntDesign name="right" size={24} color="black" style={{alignSelf:'center'}}/>
-                <Text style={{fontSize:10}}>View More</Text>
-            </TouchableOpacity>
+                <TouchableOpacity 
+                    style={styles.viewMore}
+                    onPress={()=>{navigation.push('ListTrail',{getParams})}}
+                >
+                    <AntDesign name="right" size={24} color="black" style={{alignSelf:'center'}}/>
+                    <Text style={{fontSize:10}}>View More</Text>
+                </TouchableOpacity>
             </ScrollView>
         </View>
     );
