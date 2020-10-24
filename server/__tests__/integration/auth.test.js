@@ -1,6 +1,4 @@
-require('dotenv').config({
-  path: process.env.NODE_ENV === 'test' ? 'test.env' : '.env',
-})
+require('dotenv').config()
 
 const sequelize = require('../../src/databases/postgres')
 const app = require('../../src/app')
@@ -18,7 +16,7 @@ describe('Authentication', () => {
       users.push({
         name: faker.name.findName(),
         dob: faker.date.past(),
-        gender: 'X',
+        gender: 'M',
         email: faker.internet.email(),
         password: faker.internet.password(),
       })

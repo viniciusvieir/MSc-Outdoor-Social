@@ -1,6 +1,4 @@
-require('dotenv').config({
-  path: process.env.NODE_ENV === 'test' ? 'test.env' : '.env',
-})
+require('dotenv').config()
 
 const sequelize = require('../../src/databases/postgres')
 
