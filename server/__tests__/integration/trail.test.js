@@ -6,7 +6,7 @@ const mongoose = require('mongoose')
 const app = require('../../src/app')
 const supertest = require('supertest')
 
-const id = '5f93ca9d5df0e269bb6a299c'
+const id = '5f93f638c453707e17cc85a9'
 
 describe('Trails', () => {
   beforeAll(async () => {
@@ -16,9 +16,8 @@ describe('Trails', () => {
           ? path.join(homedir(), 'ecosystem/test.env')
           : 'test.env',
     })
-    const url = `mongodb://${process.env.MONGO_READER_USER}:${process.env.MONGO_READER_PASS}@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_COLLECTION}`
-    console.log('env-mongo', url)
 
+    const url = `mongodb://${process.env.MONGO_READER_USER}:${process.env.MONGO_READER_PASS}@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_COLLECTION}`
     await mongoose
       .connect(url, {
         useNewUrlParser: true,

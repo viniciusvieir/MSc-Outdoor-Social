@@ -1,7 +1,6 @@
 const { query, param, validationResult } = require('express-validator')
 const { errorHandler } = require('../utils/error-handling')
 
-const mongoose = require('mongoose')
 const Trail = require('../models/trail')
 
 class TrailController {
@@ -31,7 +30,7 @@ class TrailController {
           $geoNear: {
             near: {
               type: 'Point',
-              coordinates: [latLon.lon, latLon.lat],
+              coordinates: [latLon.lat, latLon.lon],
             },
             query: query || {},
             maxDistance: 1_000 * 1_000,
@@ -68,8 +67,8 @@ class TrailController {
 
     if (trail && trail.path) {
       trail.path = trail.path.map((loc) => ({
-        latitude: loc.coordinates[1],
-        longitude: loc.coordinates[0],
+        latitude: loc.coordinates[0],
+        longitude: loc.coordinates[1],
       }))
     }
 
@@ -78,7 +77,7 @@ class TrailController {
 
   // FIX
   async trailsFix(req, res) {
-    const trails = require('./trails.json')
+    const trails = require('../../../trails.json')
 
     const trailsValidated = trails.map((trail) => {
       const currentPath = trail.geoLoc.coordinates[0]
@@ -86,7 +85,7 @@ class TrailController {
       const path = currentPath.map((coordinates) => {
         return {
           type: 'Point',
-          coordinates: [coordinates[0], coordinates[1]],
+          coordinates: [coordinates[1], coordinates[0]],
           elevation: coordinates[2],
         }
       })
