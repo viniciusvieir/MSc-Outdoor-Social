@@ -32,8 +32,8 @@ class TrailController {
 
     if (trail && trail.path) {
       trail.path = trail.path.map((loc) => ({
-        latitude: loc.coordinates[0],
-        longitude: loc.coordinates[1],
+        latitude: loc.coordinates[1],
+        longitude: loc.coordinates[0],
       }))
     }
 
@@ -78,11 +78,12 @@ class TrailController {
         description: trail.description,
         activity_type: trail.activityType,
         elevation_gain_ft: trail.elevationGain_ft,
+        no_of_ratings: trail.no_of_ratings,
         avg_rating: trail.avgRating,
         img_url: trail.imgUrl,
         start: path[0],
         end: path[path.length - 1],
-        bbox: trail.bbox,
+        bbox: trail.geoLoc.bbox,
       }
     })
 

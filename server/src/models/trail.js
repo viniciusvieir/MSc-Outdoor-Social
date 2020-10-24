@@ -40,6 +40,11 @@ const TrailSchema = new mongoose.Schema({
     type: Number,
     required: false,
   },
+  no_of_ratings: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
   avg_rating: {
     type: Number,
     required: true,
