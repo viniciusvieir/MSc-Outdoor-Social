@@ -19,31 +19,31 @@ export const fetchTrails = createAsyncThunk('trails/fetchTrails',async ()=>{
 })
 
 export const trailSlice = createSlice({
-    name: 'trails',
-    initialState,
-    reducers:{
-      ratingAdded(state, action){
-        const { trailId, rating } = action.payload;
-        const existingTrail = state.trails.find((trail)=>{trail.id===trailId});
-        if (existingTrail){
-          existingTrail.rating[rating]++;
-        }
+  name: 'trails',
+  initialState,
+  reducers:{
+    ratingAdded(state, action){
+      const { trailId, rating } = action.payload;
+      const existingTrail = state.trails.find((trail)=>{trail.id===trailId});
+      if (existingTrail){
+        existingTrail.rating[rating]++;
       }
+    }
+  },
+  extraReducers: {
+    [fetchTrails.pending]: (state, action) => {
+      state.status = 'loading'
     },
-    extraReducers: {
-        [fetchTrails.pending]: (state, action) => {
-          state.status = 'loading'
-        },
-        [fetchTrails.fulfilled]: (state, action) => {
-          state.status = 'succeeded'
-          // Add any fetched posts to the array
-          state.trails = state.trails.concat(action.payload)
-        },
-        [fetchTrails.rejected]: (state, action) => {
-          state.status = 'failed'
-          state.error = action.error.message
-        }
-      }
+    [fetchTrails.fulfilled]: (state, action) => {
+      state.status = 'succeeded'
+      // Add any fetched posts to the array
+      state.trails = state.trails.concat(action.payload)
+    },
+    [fetchTrails.rejected]: (state, action) => {
+      state.status = 'failed'
+      state.error = action.error.message
+    }
+  }
 });
 
 export const {ratingAdded} = trailSlice.actions;
