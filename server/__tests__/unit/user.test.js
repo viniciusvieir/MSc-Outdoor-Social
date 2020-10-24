@@ -1,5 +1,3 @@
-require('dotenv').config()
-
 const sequelize = require('../../src/databases/postgres')
 
 const User = require('../../src/models/user')

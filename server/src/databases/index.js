@@ -1,7 +1,6 @@
 const sequelize = require('./postgres')
 
 const mongoose = require('mongoose')
-const mongoConfig = require('../config/mongodb.config')
 
 function startPostgreSQL() {
   return new Promise((res, rej) => {
@@ -18,7 +17,7 @@ function startPostgreSQL() {
 function startMongoDB() {
   return new Promise((res, rej) => {
     mongoose
-      .connect(mongoConfig.connectionString, {
+      .connect(process.env.MONGO_URL, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useFindAndModify: false,

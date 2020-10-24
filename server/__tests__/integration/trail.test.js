@@ -1,5 +1,3 @@
-require('dotenv').config()
-
 const mongoose = require('mongoose')
 
 const app = require('../../src/app')
@@ -9,6 +7,11 @@ const id = '5f91c9034a8c574503df46a7'
 
 describe('Trails', () => {
   beforeAll(async () => {
+    require('dotenv').config({
+      path:
+        process.env.USER === 'trailseek' ? '~/ecosystem/test.env' : 'test.env',
+    })
+
     await mongoose.connect(process.env.MONGO_URL_TEST_READER, {
       useNewUrlParser: true,
       useUnifiedTopology: true,

@@ -1,5 +1,3 @@
-require('dotenv').config()
-
 const sequelize = require('../../src/databases/postgres')
 const app = require('../../src/app')
 const supertest = require('supertest')
