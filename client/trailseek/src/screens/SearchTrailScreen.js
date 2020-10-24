@@ -80,7 +80,6 @@ const SearchTrailScreen = () => {
                 
             />
             {content}
-            </View>
         </View>
     );
 };

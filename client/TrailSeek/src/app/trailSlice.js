@@ -43,49 +43,44 @@ export const fetchTrailsByID = createAsyncThunk('trails/fetchTrailsByID',async (
 })
 
 export const trailSlice = createSlice({
-    name: 'trails',
-    initialState,
-    reducers:{
-      ratingAdded(state, action){
-        const { trailId, rating } = action.payload;
-        const existingTrail = state.trails.find((trail)=>{trail._id===trailId});
-        if (existingTrail){
-          existingTrail.rating[rating]++;
-        }
+  name: 'trails',
+  initialState,
+  reducers:{
+    ratingAdded(state, action){
+      const { trailId, rating } = action.payload;
+      const existingTrail = state.trails.find((trail)=>{trail._id===trailId});
+      if (existingTrail){
+        existingTrail.rating[rating]++;
       }
     }
   },
   extraReducers: {
-    [fetchTrails.pending]: (state, action) => {
-      state.status = 'loading'
-    },
-    extraReducers: {
-        [fetchTrails.pending]: (state, action) => {
-          state.status = 'loading'
-        },
-        [fetchTrails.fulfilled]: (state, action) => {
-          state.status = 'succeeded'
-          state.trails = action.payload
-        },
-        [fetchTrails.rejected]: (state, action) => {
-          state.status = 'failed'
-          state.error = action.error.message
-        },
-        [fetchTrailsByID.pending]: (state, action) => {
-          state.statusID = 'loading'
-        },
-        [fetchTrailsByID.fulfilled]: (state, action) => {
-          state.statusID = 'succeeded'
-          state.loadedID.push(action.payload._id);
-          // console.log(state.loadedID)
-          const idx = state.trails.findIndex(a=>a._id===action.payload._id)
-          state.trails[idx] = action.payload
-        },
-        [fetchTrailsByID.rejected]: (state, action) => {
-          state.statusID = 'failed'
-          state.errorID = action.error.message
-        }
+      [fetchTrails.pending]: (state, action) => {
+        state.status = 'loading'
+      },
+      [fetchTrails.fulfilled]: (state, action) => {
+        state.status = 'succeeded'
+        state.trails = action.payload
+      },
+      [fetchTrails.rejected]: (state, action) => {
+        state.status = 'failed'
+        state.error = action.error.message
+      },
+      [fetchTrailsByID.pending]: (state, action) => {
+        state.statusID = 'loading'
+      },
+      [fetchTrailsByID.fulfilled]: (state, action) => {
+        state.statusID = 'succeeded'
+        state.loadedID.push(action.payload._id);
+        // console.log(state.loadedID)
+        const idx = state.trails.findIndex(a=>a._id===action.payload._id)
+        state.trails[idx] = action.payload
+      },
+      [fetchTrailsByID.rejected]: (state, action) => {
+        state.statusID = 'failed'
+        state.errorID = action.error.message
       }
+    }
 });
 
 export const {ratingAdded} = trailSlice.actions;
