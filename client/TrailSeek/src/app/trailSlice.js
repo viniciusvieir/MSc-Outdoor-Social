@@ -7,7 +7,8 @@ const initialState = {
   status:'idle',
   error:null,
   statusID:'idle',
-  errorID:null
+  errorID:null,
+  trailDetails:[],
 };
 
 export const fetchTrails = createAsyncThunk('trails/fetchTrails',async ({fields,limit=10,query={}})=>{
@@ -19,7 +20,6 @@ export const fetchTrails = createAsyncThunk('trails/fetchTrails',async ({fields,
             q:query
           }
         });
-        // console.log(response.data)
         return response.data
         
     }
@@ -28,13 +28,10 @@ export const fetchTrails = createAsyncThunk('trails/fetchTrails',async ({fields,
     };
 })
 
-export const fetchTrailsByID = createAsyncThunk('trails/fetchTrailsByID',async ({fields,id})=>{
-  // console.log(`/trails/${id}?fields=${fields}`);
+export const fetchTrailsByID = createAsyncThunk('trails/fetchTrailsByID',async ({fields,id},{getState})=>{
   try{
       const response = await trailSeek.get(`/trails/${id}?fields=${fields}`);
-      // console.log("IN")
-
-      // console.log(response.data)
+      console.log("Got Milk")
       return response.data
   }
   catch(error){
@@ -73,8 +70,10 @@ export const trailSlice = createSlice({
         state.statusID = 'succeeded'
         state.loadedID.push(action.payload._id);
         // console.log(state.loadedID)
-        const idx = state.trails.findIndex(a=>a._id===action.payload._id)
-        state.trails[idx] = action.payload
+        
+        state.trailDetails.push(action.payload);
+        // const idx = state.trails.findIndex(a=>a._id===action.payload._id)
+        // state.trails[idx] = action.payload
       },
       [fetchTrailsByID.rejected]: (state, action) => {
         state.statusID = 'failed'

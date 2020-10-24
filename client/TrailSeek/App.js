@@ -72,7 +72,7 @@ const TrailFlow = () => {
       <Stack.Screen 
         name='ListTrail' 
         component={ListTrailScreen} 
-        options={({ route,navigation }) => ({
+        options={({ route }) => ({
           title:route.params.getParams.title
         })}
       />
@@ -189,10 +189,7 @@ const App = () => {
 const styles = StyleSheet.create({
   shadow: {
       shadowColor: 'black',
-      shadowOpacity: 0.5,
-      shadowRadius: 5,
       shadowOffset: {
-          width: 0,            // These can't both be 0
           height: 1,           // i.e. the shadow has to be offset in some way
       }},
     });
