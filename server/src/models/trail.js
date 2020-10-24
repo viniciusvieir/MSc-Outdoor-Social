@@ -18,10 +18,11 @@ const TrailSchema = new mongoose.Schema({
     type: String,
     required: true,
     index: true,
+    default: 'Unknown',
   },
   length_km: {
     type: Number,
-    required: false,
+    required: true,
   },
   estimate_time_min: {
     type: Number,
@@ -90,7 +91,7 @@ const TrailSchema = new mongoose.Schema({
   },
   bbox: {
     type: [Number],
-    required: false,
+    required: true,
   },
   created_at: {
     type: Date,

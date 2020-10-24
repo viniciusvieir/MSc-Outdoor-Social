@@ -1,6 +1,7 @@
 const { query, param, validationResult } = require('express-validator')
 const { errorHandler } = require('../utils/error-handling')
 
+const mongoose = require('mongoose')
 const Trail = require('../models/trail')
 
 class TrailController {
@@ -10,6 +11,41 @@ class TrailController {
       return res.status(400).json({ errors: errors.array() })
 
     const { q: query, fields, limit, skip } = req.query
+
+    if (query && query.near && query.near.lat && query.near.lon) {
+      const project = {}
+
+      if (fields) {
+        fields.split(/,|;/g).forEach((field) => {
+          project[field] = true
+        })
+      } else {
+        project.path = false
+      }
+
+      const latLon = query.near
+      delete query.near
+
+      const trails = await Trail.aggregate([
+        {
+          $geoNear: {
+            near: {
+              type: 'Point',
+              coordinates: [latLon.lon, latLon.lat],
+            },
+            query: query || {},
+            maxDistance: 1_000 * 1_000,
+            key: 'start',
+            spherical: true,
+            distanceField: 'distance_meters',
+          },
+        },
+        { $project: project },
+      ])
+        .limit(limit || 20)
+        .skip(skip || 0)
+      return res.json(trails)
+    }
 
     const trails = await Trail.find(query || {})
       .limit(limit || 20)
@@ -58,22 +94,27 @@ class TrailController {
       let estimate_time_min = null
       if (trail.estimateTime.includes(' h ')) {
         const items = trail.estimateTime.split(' h ')
-        const hours = parseInt(items[0])
-        const min = parseInt(items[1].replace(' m'))
+        const hours = isNaN(parseInt(items[0])) ? 0 : parseInt(items[0])
+        const min = isNaN(parseInt(items[1].replace(' m')))
+          ? 0
+          : parseInt(items[1].replace(' m'))
         estimate_time_min = hours * 60 + min
       } else if (trail.estimateTime.includes(' m')) {
         const min = parseInt(trail.estimateTime.replace(' m'))
         estimate_time_min = min
       }
 
+      if (isNaN(estimate_time_min)) {
+        console.log(trail)
+      }
+
       return {
         path,
         estimate_time_min,
-
         id: trail.id,
         name: trail.name,
         location: trail.location,
-        difficulty: trail.difficulty,
+        difficulty: trail.difficulty || 'Unknown',
         length_km: trail.length_km,
         description: trail.description,
         activity_type: trail.activityType,
