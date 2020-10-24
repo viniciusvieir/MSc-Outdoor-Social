@@ -63,12 +63,18 @@ const TrailFlow = () => {
           headerTransparent:true
         }}
       />
-      <Stack.Screen name='ListTrail' component={ListTrailScreen} />
+      <Stack.Screen 
+        name='ListTrail' 
+        component={ListTrailScreen} 
+        options={({ route,navigation }) => ({
+          title:route.params.getParams.title
+        })}
+      />
       <Stack.Screen 
         name='ViewTrail' 
         component={ViewTrailScreen} 
         options={({ route,navigation }) => ({
-          title:route.params.name,
+          title:'',
           headerTransparent:true,
           headerBackImage:()=>(<MaterialIcons 
                                   name="arrow-back" 

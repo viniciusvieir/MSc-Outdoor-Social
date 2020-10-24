@@ -1,14 +1,16 @@
 import React,{useEffect,useState} from 'react';
 import { View, StyleSheet, ActivityIndicator, TouchableOpacity, FlatList,Image, ScrollView } from 'react-native';
 import { useSelector } from 'react-redux';
-import { Text, Rating } from 'react-native-elements';
+import { Button, Text } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
+import StarRating from 'react-native-star-rating';
+import { AntDesign } from '@expo/vector-icons';
+
 
 import trailSeek from '../api/trailSeek'
 import {Intersect} from '../util/Intersect'
 
 const TrailCards =  ({getParams}) =>{
-
     const { query, title} = getParams;
     const [data, setData] = useState([]);
 
@@ -35,17 +37,10 @@ const TrailCards =  ({getParams}) =>{
 
     const trails = useSelector(state=>Intersect(state.trails.trails,data))
 
-    // if (trailStatus === 'loading'){
-    //     content = <ActivityIndicator />
-    // } else if (trailStatus==='failed'){
-    //     content=<Text>{error}</Text>
-    // } else if (trailStatus==='succeeded'){
- 
-    // }
-
     return (
         <View>
             <Text h4 style={styles.titleStyle}>{title}</Text>
+            <ScrollView horizontal style={{maxHeight:275}}>
             <FlatList
                 horizontal
                 data={trails}
@@ -54,7 +49,7 @@ const TrailCards =  ({getParams}) =>{
                 }}
                 renderItem={({ item })=>{
                     return(
-                        <ScrollView horizontal style={{maxHeight:275}}>
+                        
                             <TouchableOpacity
                                 onPress={()=>{navigation.navigate('ViewTrail',{id:item._id, name: item.name})}}      
                             >
@@ -70,24 +65,42 @@ const TrailCards =  ({getParams}) =>{
                                         <Text style={styles.nameStyle}>{item.name}</Text>
                                         <View style={styles.rateloc}>
                                             <Text style={styles.locationStyle}>{item.location}</Text>
-                                            <Rating 
-                                                imageSize={15} 
-                                                readonly 
-                                                startingValue={item.avg_rating} 
-                                                style={styles.rating} 
-                                                // ratingBackgroundColor='red'
-                                                // tintColor='none'
-                                                type='custom'
+                                            <StarRating
+                                                disabled={true}
+                                                emptyStar={'ios-star-outline'}
+                                                fullStar={'ios-star'}
+                                                halfStar={'ios-star-half'}
+                                                iconSet={'Ionicons'}
+                                                maxStars={5}
+                                                rating={item.avg_rating}
+                                                fullStarColor={'gold'}
+                                                starSize={20}
                                             />
+                                            {/* <Rating
+                                                type='custom'
+                                                readonly
+                                                ratingImage={{uri:'./images/star.png'}}
+                                                startingValue={item.avg_rating}
+                                                starContainerStyle={styles.rating}
+                                            /> */}
                                         </View>
                                     </View>
                                 </View>
                             </TouchableOpacity>
-                        </ScrollView>
+                            
+                        
                     );
                 }}
                 showsHorizontalScrollIndicator={false}
             />
+            <TouchableOpacity 
+                style={styles.viewMore}
+                onPress={()=>{navigation.navigate('ListTrail',{getParams})}}
+            >
+                <AntDesign name="right" size={24} color="black" style={{alignSelf:'center'}}/>
+                <Text style={{fontSize:10}}>View More</Text>
+            </TouchableOpacity>
+            </ScrollView>
         </View>
     );
 
@@ -123,9 +136,16 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     rating:{
-        
+        height:5,
+        width:10
+    },
+    viewMore:{
+        height:200,
+        // borderWidth:5,
+        // borderColor:'red',
+        justifyContent:'center',
+        marginLeft:5
     }
-
 
 });
 

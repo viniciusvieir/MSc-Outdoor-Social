@@ -1,5 +1,5 @@
 import React,{ useState,useEffect } from 'react';
-import { View, StyleSheet,ScrollView } from 'react-native';
+import { View, StyleSheet,ScrollView, ActivityIndicator } from 'react-native';
 import { Text, SearchBar } from 'react-native-elements';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchTrails } from '../app/trailSlice'
@@ -65,7 +65,7 @@ const SearchTrailScreen = () => {
     if (trailStatus === 'loading'){
         content = <ActivityIndicator />
     } else if (trailStatus==='failed'){
-        content=<Text>{error}</Text>
+        content=<Text>{errorMsg}</Text>
     } else if (trailStatus==='succeeded'){
         content=<ScrollView>
                     <TrailCard getParams={easyParams}/>

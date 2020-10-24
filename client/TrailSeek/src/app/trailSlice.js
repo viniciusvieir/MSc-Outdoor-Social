@@ -32,6 +32,9 @@ export const fetchTrailsByID = createAsyncThunk('trails/fetchTrailsByID',async (
   // console.log(`/trails/${id}?fields=${fields}`);
   try{
       const response = await trailSeek.get(`/trails/${id}?fields=${fields}`);
+      // console.log("IN")
+
+      // console.log(response.data)
       return response.data
   }
   catch(error){
@@ -69,6 +72,7 @@ export const trailSlice = createSlice({
         [fetchTrailsByID.fulfilled]: (state, action) => {
           state.statusID = 'succeeded'
           state.loadedID.push(action.payload._id);
+          // console.log(state.loadedID)
           const idx = state.trails.findIndex(a=>a._id===action.payload._id)
           state.trails[idx] = action.payload
         },
