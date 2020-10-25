@@ -3,6 +3,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Provider } from 'react-redux';
+import { PersistGate } from "redux-persist/integration/react";
+
 
 import CreateEventScreen from './src/screens/CreateEventScreen';
 import ViewEventScreen from './src/screens/ViewEventScreen';
@@ -17,20 +19,20 @@ import SigninScreen from './src/screens/SigninScreen';
 import SignupScreen from './src/screens/SignupScreen';
 import SplashScreen from './src/screens/SplashScreen';
 import ViewProfileScreen from './src/screens/ViewProfileScreen';
-import store from './src/app/store';
+import { DataStore, StorePersistor } from "./src/app";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-if(global.loggedin == undefined || global.loggedin == null){
+if (global.loggedin == undefined || global.loggedin == null) {
   global.loggedin = null
 }
 
-const SplashFlow = ()=>{
-  return(
+const SplashFlow = () => {
+  return (
     <Stack.Navigator>
       <Stack.Screen name='Splash' component={SplashScreen} />
-  
+
     </Stack.Navigator>
   );
 };
@@ -100,22 +102,24 @@ const MainTabFlow = () =>{
 };
 
 const App = () => {
-  return(
-    <Provider store={store}>
-      <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen name='Authentication' component={AuthenticationFlow} />
-          <Stack.Screen name='TrailFlow' component={TrailFlow} />
-          <Stack.Screen name=' ' component={SplashFlow} />
-          <Stack.Screen 
-            name='MainTab' 
-            component={MainTabFlow} 
-            options={{
-              headerShown:false
-            }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
+  return (
+    <Provider store={DataStore}>
+      <PersistGate persistor={StorePersistor}>
+        <NavigationContainer>
+          <Stack.Navigator>            
+            <Stack.Screen name=' ' component={SplashFlow} />
+            <Stack.Screen name='Authentication' component={AuthenticationFlow} />
+            <Stack.Screen name='TrailFlow' component={TrailFlow} />
+            <Stack.Screen
+              name='MainTab'
+              component={MainTabFlow}
+              options={{
+                headerShown: false
+              }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </PersistGate>
     </Provider>
   );
 };

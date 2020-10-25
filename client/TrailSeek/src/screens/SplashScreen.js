@@ -1,12 +1,14 @@
 import React, { Component } from "react";
 import { StyleSheet, View, Image } from "react-native";
+import { useSelector } from "react-redux";
 
 function SplashScreen(props) {
     
+    const token = useSelector(state => state.user.token);
     setInterval(function(){
-        props.navigation.navigate('Authentication');
+        props.navigation.navigate(!!token ? 'TrailFlow' : 'Authentication' );
     }, 2000)
-
+    
     return (
         <View style={styles.container}>
             <Image
