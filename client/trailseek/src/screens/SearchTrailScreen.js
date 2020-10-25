@@ -1,9 +1,9 @@
 import React,{ useState,useEffect } from 'react';
-import { View, StyleSheet,ScrollView, ActivityIndicator } from 'react-native';
+import { View, StyleSheet,ScrollView } from 'react-native';
 import { Text, SearchBar } from 'react-native-elements';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchTrails } from '../app/trailSlice'
-import * as Location from 'expo-location';
+import LoadSpinner from '../components/LoadSpinner';
 
 import TrailCard from '../components/TrailCards';
 
@@ -13,6 +13,9 @@ const SearchTrailScreen = () => {
     const trailStatus = useSelector(state=> state.trails.status);
     const error = useSelector(state=>state.trails.error);
 
+    let content,
+        spinner = true
+        
     //Initial Trail Fetch
     useEffect(()=>{
         if (trailStatus ==='idle'){
@@ -21,27 +24,6 @@ const SearchTrailScreen = () => {
             dispatch(fetchTrails({fields,limit}));
         }
     },[])
-    
-    const [location, setLocation] = useState(null);
-    const [errorMsg, setErrorMsg] = useState(null);
-
-    //Location
-    useEffect(() => {
-        (async () => {
-        let { status } = await Location.requestPermissionsAsync();
-        if (status !== 'granted') {
-            setErrorMsg('Permission to access location was denied');
-        }
-
-        let location = await Location.getCurrentPositionAsync({});
-        setLocation(location);
-        })();
-    }, []);
-
-    let loc = false;
-    if (location) {
-        loc = location.coords.latitude
-    }
 
     const easyParams = {
         title:'Easy Trails',
@@ -58,26 +40,31 @@ const SearchTrailScreen = () => {
             }
     }
 
-    let content;
+    const nearMe = {
+        title:'Near You',
+    }
 
     if (trailStatus === 'loading'){
-        content = <ActivityIndicator />
+        spinner = true
     } else if (trailStatus==='failed'){
+        spinner = false
         content=<Text>{errorMsg}</Text>
     } else if (trailStatus==='succeeded'){
+        spinner = false
         content=<ScrollView>
-                    <TrailCard getParams={easyParams}/>
-                    <TrailCard getParams={bestParams}/>
+                    <TrailCard getParams={nearMe} gps={true}/>
+                    <TrailCard getParams={easyParams} gps={false}/>
+                    <TrailCard getParams={bestParams} gps={false}/>
                 </ScrollView>
     }
 
     return(
-        <View style={{marginTop:30}}>
+        <View style={{marginTop:30,flex:1}}>
+            <LoadSpinner visible={spinner} />
             <Text h3 style={{marginLeft:5}}>Hi! User</Text>
             <SearchBar 
                 style={styles.searchbar}
                 lightTheme={true}
-                
             />
             {content}
         </View>
@@ -101,10 +88,7 @@ const styles = StyleSheet.create({
     searchbarcontainer:{
         width:'90%',
         alignSelf:'center',
-    },
-    
-
-
+    }
 });
 
 export default SearchTrailScreen;

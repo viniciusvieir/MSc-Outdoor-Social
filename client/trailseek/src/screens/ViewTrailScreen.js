@@ -1,30 +1,36 @@
-import React, { useEffect } from 'react';
-import { View, StyleSheet, Dimensions, Image,ActivityIndicator } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, Dimensions } from 'react-native';
 import MapView,{ Polyline } from 'react-native-maps';
 import { Text, Button, Tile } from 'react-native-elements';
 import { useSelector, useDispatch } from 'react-redux';
 import StarRating from 'react-native-star-rating';
 import { fetchTrailsByID} from '../app/trailSlice';
 
+import LoadSpinner from '../components/LoadSpinner';
+
 
 const ViewTrailScreen = ({ route, navigation }) => {
     const { id } = route.params;
+    let spinner = true
+    let content;
     const dispatch = useDispatch();
+    
 
     const trailStatus = useSelector(state=> state.trails.statusID);
     const loadedID = useSelector(state=> state.trails.loadedID);
     const error = useSelector(state=>state.trails.errorID);
     const fields = 'name,avg_rating,location,path,bbox,img_url,difficulty,length_km,description,activity_type,estimate_time_min';
-    let idx;
+    
     useEffect(()=>{
-        idx = loadedID.findIndex(a=>a===id)
+        const idx = loadedID.findIndex(a=>a===id)
         if (idx === -1){  
             dispatch(fetchTrailsByID({fields,id}));
         }
     },[])
     const trailData = useSelector(state=>state.trails.trailDetails.find(item=>item._id===id))
-    let content;
-    if(trailData){
+    
+    if(trailData && trailStatus ==='succeeded'){
+        spinner=false
         content = <>
                     <Tile
                             imageSrc={{ uri: trailData.img_url }}
@@ -70,15 +76,20 @@ const ViewTrailScreen = ({ route, navigation }) => {
                             strokeWidth={3}
                         />
                     </MapView>
+                    <Button title='Create Event' onPress={()=>{navigation.navigate('CreateEvent')}}/>
+                    <Button title='Join Event' onPress={()=>{navigation.navigate('ListEvent')}}/>
                 </>
+    } else if (trailStatus ==='loading') {
+        spinner = true
     } else {
-        content=<ActivityIndicator size="large" />
+        spinner = false
+        content = error
     }
     return(
         <View>
+            <LoadSpinner visible={spinner}/>
             {content}
-            <Button title='Create Event' onPress={()=>{navigation.navigate('CreateEvent')}}/>
-            <Button title='Join Event' onPress={()=>{navigation.navigate('ListEvent')}}/>
+            
         </View>
     );
 };
@@ -92,7 +103,7 @@ const styles = StyleSheet.create({
         width:Dimensions.get('window').width,
         height:175,
         marginBottom:5,
-    },
+    }
 });
 
 export default ViewTrailScreen;

@@ -17,9 +17,10 @@ export const fetchTrails = createAsyncThunk('trails/fetchTrails',async ({fields,
           params:{
             fields:fields,
             limit:limit,
-            q:query
+            q:JSON.stringify(query)
           }
         });
+        console.log(response.data)
         return response.data
         
     }
@@ -31,7 +32,6 @@ export const fetchTrails = createAsyncThunk('trails/fetchTrails',async ({fields,
 export const fetchTrailsByID = createAsyncThunk('trails/fetchTrailsByID',async ({fields,id},{getState})=>{
   try{
       const response = await trailSeek.get(`/trails/${id}?fields=${fields}`);
-      console.log("Got Milk")
       return response.data
   }
   catch(error){
