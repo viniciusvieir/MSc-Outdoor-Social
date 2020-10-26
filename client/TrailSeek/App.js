@@ -73,7 +73,7 @@ const TrailFlow = () => {
         name='ListTrail' 
         component={ListTrailScreen} 
         options={({ route }) => ({
-          title:route.params.getParams.title
+          title:(typeof(route.params.getParams?.title)==='undefined')?"Search":route.params.getParams.title
         })}
       />
       <Stack.Screen 
@@ -87,13 +87,13 @@ const TrailFlow = () => {
                                   size={24} 
                                   color="white" 
                                   style={styles.shadow} />),
-          headerTitleStyle: {
-              fontWeight: '600',
-              color:'white',
-              textShadowColor: 'rgba(0, 0, 0, 0.75)',
-              textShadowOffset: {width: -1, height: 1},
-              textShadowRadius: 10
-            },
+          // headerTitleStyle: {
+          //     fontWeight: '600',
+          //     color:'white',
+          //     textShadowColor: 'rgba(0, 0, 0, 0.75)',
+          //     textShadowOffset: {width: -1, height: 1},
+          //     textShadowRadius: 10
+          //   },
           })}
       />
       <Stack.Screen name='CreateEvent' component={CreateEventScreen} />

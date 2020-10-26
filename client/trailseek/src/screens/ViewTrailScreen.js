@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, StyleSheet, Dimensions, ScrollView, ToastAndroid } from 'react-native';
 import MapView,{ Polyline } from 'react-native-maps';
 import { Text, Button, Tile } from 'react-native-elements';
 import { useSelector, useDispatch } from 'react-redux';
 import StarRating from 'react-native-star-rating';
 import { fetchTrailsByID} from '../app/trailSlice';
-
+import Toast from 'react-native-simple-toast';
 import LoadSpinner from '../components/LoadSpinner';
 
 
@@ -16,9 +16,9 @@ const ViewTrailScreen = ({ route, navigation }) => {
     const dispatch = useDispatch();
     
 
-    const trailStatus = useSelector(state=> state.trails.statusID);
+    const trailStatus = useSelector(state=> state.trails.status);
     const loadedID = useSelector(state=> state.trails.loadedID);
-    const error = useSelector(state=>state.trails.errorID);
+    const error = useSelector(state=>state.trails.error);
     const fields = 'name,avg_rating,location,path,bbox,img_url,difficulty,length_km,description,activity_type,estimate_time_min';
     
     useEffect(()=>{
@@ -33,17 +33,17 @@ const ViewTrailScreen = ({ route, navigation }) => {
         spinner=false
         content = <>
                     <Tile
-                            imageSrc={{ uri: trailData.img_url }}
-                            title={trailData.name}
-                            featured
-                            activeOpacity={1}
-                            height={230}
-                            titleStyle={{fontWeight: '600',
-                                        color:'white',
-                                        textShadowColor: 'rgba(0, 0, 0, 0.75)',
-                                        textShadowOffset: {width: -1, height: 1},
-                                        textShadowRadius: 10}}
-                        />
+                        imageSrc={{ uri: trailData.img_url }}
+                        title={trailData.name}
+                        featured
+                        activeOpacity={1}
+                        height={230}
+                        titleStyle={{fontWeight: '600',
+                                    color:'white',
+                                    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+                                    textShadowOffset: {width: -1, height: 1},
+                                    textShadowRadius: 10}}
+                    />
                     <Text>Difficulty : {trailData.difficulty}</Text>
                     <Text>Length : {trailData.length_km}</Text>
                     <StarRating
@@ -69,6 +69,9 @@ const ViewTrailScreen = ({ route, navigation }) => {
                             latitudeDelta: 0.0422,
                             longitudeDelta: 0.0121,
                         }}
+                        provider="google"
+                        mapType="terrain"
+                        loadingEnabled
                     >
                         <Polyline
                             coordinates={trailData.path}
@@ -81,15 +84,17 @@ const ViewTrailScreen = ({ route, navigation }) => {
                 </>
     } else if (trailStatus ==='loading') {
         spinner = true
-    } else {
+    } else if (trailStatus ==='failed'){
         spinner = false
+        Toast.show(error,Toast.LONG);
         content = error
     }
     return(
-        <View>
-            <LoadSpinner visible={spinner}/>
-            {content}
-            
+        <View style={{felx:1}}>
+            <ScrollView>
+                <LoadSpinner visible={spinner}/>
+                {content}
+            </ScrollView>
         </View>
     );
 };

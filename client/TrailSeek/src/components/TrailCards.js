@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import StarRating from 'react-native-star-rating';
 import { AntDesign } from '@expo/vector-icons';
 import * as Location from 'expo-location';
+import Toast from 'react-native-simple-toast';
 
 
 import trailSeek from '../api/trailSeek'
@@ -25,6 +26,7 @@ const TrailCards =  ({getParams,gps}) =>{
         let { status } = await Location.requestPermissionsAsync();
         if (status !== 'granted') {
             setErrorMsg('Permission to access location was denied');
+            Toast.show(errorMsg,Toast.LONG);
         }
         let location1 = await Location.getCurrentPositionAsync({});
         setLocation(location1);
@@ -61,6 +63,7 @@ const TrailCards =  ({getParams,gps}) =>{
                 setData(response.data);
             }
             catch (error) {
+                Toast.show(error,Toast.LONG);
                 console.log(error);
             };
         }
@@ -143,7 +146,7 @@ const TrailCards =  ({getParams,gps}) =>{
             { trails.length>=10?
                 <TouchableOpacity 
                         style={styles.viewMore}
-                        onPress={()=>{navigation.navigate('ListTrail',{getParams})}}
+                        onPress={()=>{navigation.navigate('ListTrail',{query:query})}}
                     >
                         <AntDesign name="right" size={24} color="black" style={{alignSelf:'center'}}/>
                         <Text style={{fontSize:10}}>View More</Text>
