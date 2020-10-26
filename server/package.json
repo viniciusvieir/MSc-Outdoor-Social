@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js --ignore __tests__",
-    "test": "NODE_ENV=test jest",
+    "test": "NODE_ENV=test JWT_SECRET=test jest",
     "posttest": "echo \"TrailSeek test completed\""
   },
   "author": "",

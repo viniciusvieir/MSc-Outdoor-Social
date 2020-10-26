@@ -1,7 +1,3 @@
-require('dotenv').config({
-  path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
-})
-
 const sequelize = require('../../src/databases/postgres')
 const app = require('../../src/app')
 const supertest = require('supertest')
@@ -18,7 +14,7 @@ describe('Authentication', () => {
       users.push({
         name: faker.name.findName(),
         dob: faker.date.past(),
-        gender: 'X',
+        gender: 'M',
         email: faker.internet.email(),
         password: faker.internet.password(),
       })
@@ -110,7 +106,6 @@ describe('Authentication', () => {
 
   it('should not be able to access private routes without bearer token', async () => {
     const response = await supertest(app).get('/privateRoute')
-    console.log(response.body)
     expect(response.body).toHaveProperty('errors')
   })
 

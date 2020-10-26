@@ -1,8 +1,11 @@
 const errorHandler = (errors) => {
+  if (typeof errors === 'string') {
+    return { success: false, msg: errors }
+  }
   const errorsArray = errors.map((error) => {
     return { msg: error }
   })
-  return { errors: errorsArray }
+  return { success: false, errors: errorsArray }
 }
 
 module.exports = { errorHandler }
