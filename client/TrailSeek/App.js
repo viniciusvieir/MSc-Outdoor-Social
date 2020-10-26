@@ -172,9 +172,10 @@ const App = () => {
       <PersistGate persistor={StorePersistor}>
         <NavigationContainer>
           <Stack.Navigator>            
+            <Stack.Screen name='TrailFlow' component={TrailFlow} />
             <Stack.Screen name=' ' component={SplashFlow} />
             <Stack.Screen name='Authentication' component={AuthenticationFlow} />
-            <Stack.Screen name='TrailFlow' component={TrailFlow} />
+            
             <Stack.Screen
               name='MainTab'
               component={MainTabFlow}
