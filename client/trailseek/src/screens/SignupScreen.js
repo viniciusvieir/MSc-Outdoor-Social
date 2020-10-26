@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
-import { TextInput, View, StyleSheet, Image, AsyncStorage } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { TextInput, View, StyleSheet, Image } from 'react-native';
 import { Text, Button } from 'react-native-elements';
 import axios from 'axios';
+import { useSelector, useDispatch } from "react-redux";
+import { setToken, setUser } from "../app/actions/index";
 
 
 const SignupScreen = ({ navigation }) => {
+
   const list = [
     {
       name: 'Event0',
@@ -15,26 +18,21 @@ const SignupScreen = ({ navigation }) => {
       subtitle: 'Location'
     },
   ];
-  const [inputs, setInputs] = useState({});
+  const [inputs, setInputs] = useState({ });
   const [error, setError] = useState(null);
 
   const inputsHandler = (e, field) => {
     setInputs(inputs => ({ ...inputs, [field]: e }));
   }
+  const dispatch = useDispatch();
+  const token = useSelector(state => state.user.token);
 
   const onSignup = () => {
     setError(null);
-    axios.post("https://api.trailseek.eu/v1/signup", inputs)
-      .then(async (response) => {
-        try {
-          await AsyncStorage.setItem(
-            '@trailSeek:token',
-            response.data.token
-          );
-        } catch (error) {
-          // Error saving data
-          console.log(error);
-        }
+    return axios.post("https://api.trailseek.eu/v1/signup", inputs)
+      .then((response) => {
+        dispatch(setUser(response.data));
+        dispatch(setToken(response.data.token));
         navigation.navigate('MainTab');
       })
       .catch(function (error) {
@@ -90,7 +88,7 @@ const SignupScreen = ({ navigation }) => {
         <View style={styles.flexxx}>
           <Button
             title={'Sign up'}
-            onPress={onSignup}
+            onPress={() => dispatch(onSignup)}
             buttonStyle={styles.button}
           />
           <Button
@@ -105,6 +103,16 @@ const SignupScreen = ({ navigation }) => {
   );
 };
 
+const mapStateToProps = ({ user }) => ({
+  token: user.totken,
+  user: user.user
+})
+
+const mapDispatchToProps = ({ dispatch }) => ({
+  dispatch: func => dispatch(func)
+})
+
+// export default connect(mapStateToProps, mapDispatchToProps)(SignupScreen);
 export default SignupScreen;
 
 const styles = StyleSheet.create({
