@@ -4,12 +4,14 @@ import { Text, SearchBar } from 'react-native-elements';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchTrails } from '../app/trailSlice'
 import LoadSpinner from '../components/LoadSpinner';
+import Toast from 'react-native-simple-toast';
 
 import TrailCard from '../components/TrailCards';
 
-const SearchTrailScreen = () => {
+const SearchTrailScreen = ({navigation}) => {
     const dispatch = useDispatch();
 
+    const [searchTerm, setSearchTerm] = useState('');
     const trailStatus = useSelector(state=> state.trails.status);
     const error = useSelector(state=>state.trails.error);
 
@@ -36,7 +38,7 @@ const SearchTrailScreen = () => {
     const bestParams = {
         title:'Best Rated',
         query:{
-                "avg_rating":{"$gt":4},
+                "avg_rating":{"$gt":4}
             }
     }
 
@@ -44,11 +46,21 @@ const SearchTrailScreen = () => {
         title:'Near You',
     }
 
+    let searchParam = {
+        titel:'Search Results',
+        query:{
+                "$text":
+                {
+                    "$search":`${searchTerm}`
+                }
+        }
+    }
     if (trailStatus === 'loading'){
         spinner = true
     } else if (trailStatus==='failed'){
         spinner = false
-        content=<Text>{errorMsg}</Text>
+        Toast.show(error,Toast.LONG);
+        content=<Text>{error}</Text>
     } else if (trailStatus==='succeeded'){
         spinner = false
         content=<ScrollView>
@@ -65,6 +77,14 @@ const SearchTrailScreen = () => {
             <SearchBar 
                 style={styles.searchbar}
                 lightTheme={true}
+                placeholder='Search'
+                value={searchTerm}
+                onChangeText={(text) => {setSearchTerm(text)}}
+                autoCapitalize='none'
+                platform="android"
+                autoCompleteType="name"
+                enablesReturnKeyAutomatically
+                onSubmitEditing={()=>{navigation.navigate('ListTrail',{query:searchParam.query})}}
             />
             {content}
         </View>

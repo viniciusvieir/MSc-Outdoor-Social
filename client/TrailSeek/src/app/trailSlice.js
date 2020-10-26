@@ -1,17 +1,17 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import trailSeek from '../api/trailSeek';
+import {Intersect} from '../util/Intersect'
 
 const initialState = {
   trails:[],
-  loadedID:[],
-  status:'idle',
-  error:null,
-  statusID:'idle',
-  errorID:null,
   trailDetails:[],
+  filteredTrails:[],
+  loadedID:[],//Redundent, refactore code todo
+  status:'idle',
+  error:null
 };
 
-export const fetchTrails = createAsyncThunk('trails/fetchTrails',async ({fields,limit=10,query={}})=>{
+export const fetchTrails = createAsyncThunk('trails/fetchTrails',async ({fields="",limit=10,query={}})=>{
     try{
         const response = await trailSeek.get('/trails',{
           params:{
@@ -20,13 +20,29 @@ export const fetchTrails = createAsyncThunk('trails/fetchTrails',async ({fields,
             q:JSON.stringify(query)
           }
         });
-        console.log(response.data)
+        // console.log(response.data)
         return response.data
         
     }
     catch(error){
         console.log(error);
     };
+})
+
+export const fetchTrailsByQuery = createAsyncThunk('trails/fetchTrailsByQuery',async ({limit=10,query={}})=>{
+  try{
+      const response = await trailSeek.get('/trails',{
+        params:{
+          fields:"_id",
+          limit:limit,
+          q:JSON.stringify(query)
+        }
+      });
+      return response.data
+  }
+  catch(error){
+      console.log(error);
+  };
 })
 
 export const fetchTrailsByID = createAsyncThunk('trails/fetchTrailsByID',async ({fields,id},{getState})=>{
@@ -68,17 +84,25 @@ export const trailSlice = createSlice({
       },
       [fetchTrailsByID.fulfilled]: (state, action) => {
         state.statusID = 'succeeded'
-        state.loadedID.push(action.payload._id);
+        state.loadedID.push(action.payload._id);//redundned refactore code
         // console.log(state.loadedID)
-        
         state.trailDetails.push(action.payload);
-        // const idx = state.trails.findIndex(a=>a._id===action.payload._id)
-        // state.trails[idx] = action.payload
       },
       [fetchTrailsByID.rejected]: (state, action) => {
         state.statusID = 'failed'
         state.errorID = action.error.message
-      }
+      },
+      [fetchTrailsByQuery.pending]: (state, action) => {
+        state.status = 'loading'
+      },
+      [fetchTrailsByQuery.fulfilled]: (state, action) => {
+        state.status = 'succeeded'
+        state.filteredTrails = Intersect(state.trails,action.payload)
+      },
+      [fetchTrailsByQuery.rejected]: (state, action) => {
+        state.status = 'failed'
+        state.error = action.error.message
+      },
     }
 });
 
