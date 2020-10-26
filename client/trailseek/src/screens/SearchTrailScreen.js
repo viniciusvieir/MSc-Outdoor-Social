@@ -49,9 +49,12 @@ const SearchTrailScreen = ({ navigation }) => {
   let searchParam = {
     titel: "Search Results",
     query: {
-      $text: {
-        $search: `${searchTerm}`,
+      name: {
+        $regex: `/${searchTerm}/gi`,
       },
+      // $text: {
+      //   $search: `${searchTerm}`,
+      // },
     },
   };
   if (trailStatus === "loading") {

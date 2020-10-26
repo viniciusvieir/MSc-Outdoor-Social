@@ -97,7 +97,7 @@ const TrailCards = ({ getParams, gps }) => {
         }
       }
       fetchIDs();
-    }, [data]);
+    }, []);
   }
   const trails = useSelector((state) => Intersect(state.trails.trails, data));
 
