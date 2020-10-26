@@ -4,14 +4,12 @@ import { Text, SearchBar } from 'react-native-elements';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchTrails } from '../app/trailSlice'
 import LoadSpinner from '../components/LoadSpinner';
-import Toast from 'react-native-simple-toast';
 
 import TrailCard from '../components/TrailCards';
 
-const SearchTrailScreen = ({navigation}) => {
+const SearchTrailScreen = () => {
     const dispatch = useDispatch();
 
-    const [searchTerm, setSearchTerm] = useState('');
     const trailStatus = useSelector(state=> state.trails.status);
     const error = useSelector(state=>state.trails.error);
 
@@ -38,7 +36,7 @@ const SearchTrailScreen = ({navigation}) => {
     const bestParams = {
         title:'Best Rated',
         query:{
-                "avg_rating":{"$gt":4}
+                "avg_rating":{"$gt":4},
             }
     }
 
@@ -46,21 +44,11 @@ const SearchTrailScreen = ({navigation}) => {
         title:'Near You',
     }
 
-    let searchParam = {
-        titel:'Search Results',
-        query:{
-                "$text":
-                {
-                    "$search":`${searchTerm}`
-                }
-        }
-    }
     if (trailStatus === 'loading'){
         spinner = true
     } else if (trailStatus==='failed'){
         spinner = false
-        Toast.show(error,Toast.LONG);
-        content=<Text>{error}</Text>
+        content=<Text>{errorMsg}</Text>
     } else if (trailStatus==='succeeded'){
         spinner = false
         content=<ScrollView>
@@ -71,22 +59,19 @@ const SearchTrailScreen = ({navigation}) => {
     }
 
     return(
-        <View style={{marginTop:30,flex:1}}>
-            <LoadSpinner visible={spinner} />
-            <Text h3 style={{marginLeft:5}}>Hi! User</Text>
-            <SearchBar 
-                style={styles.searchbar}
-                lightTheme={true}
-                placeholder='Search'
-                value={searchTerm}
-                onChangeText={(text) => {setSearchTerm(text)}}
-                autoCapitalize='none'
-                platform="android"
-                autoCompleteType="name"
-                enablesReturnKeyAutomatically
-                onSubmitEditing={()=>{navigation.navigate('ListTrail',{query:searchParam.query})}}
-            />
-            {content}
+        
+        <View style={styles.container}>
+            <View style={styles.subcontainer}>
+            
+                <LoadSpinner visible={spinner} />
+                <Text h3 style={{marginLeft:5}}>Hi! User</Text>
+                <SearchBar 
+                    style={styles.searchbar}
+                    lightTheme={true}
+                />
+                {content}
+            
+            </View>
         </View>
     );
 };
@@ -97,6 +82,13 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#ecf0f1',
         width:'100%',
+        alignItems:'center',
+        
+    },
+    subcontainer: {
+        flex: 1,
+        backgroundColor: '#ecf0f1',
+        width:'90%',
     },
     texth3: {
         fontSize:30,
