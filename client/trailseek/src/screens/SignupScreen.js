@@ -19,7 +19,6 @@ const SignupScreen = ({ navigation }) => {
   // const token = useSelector((state) => state.user.token);
   const userStatus = useSelector((state) => state.user.status);
   const error = useSelector((state) => state.user.error);
-  const authError = useSelector((state) => state.user.authError);
   const isAuth = useSelector((state) => state.user.isAuth);
 
   // const onSignup = () => {
@@ -32,20 +31,18 @@ const SignupScreen = ({ navigation }) => {
       ToastAlert(err.message);
     });
     setLog(res);
-    if (userStatus === "succeeded" && !isAuth) {
+    if (userStatus === "succeeded" && isAuth) {
       navigation.navigate("Signin");
-    } else {
-      // ToastAlert(error);
     }
   };
 
-  // useEffect(() => {
-  //   if (userStatus === "succeeded") {
-  //     navigation.navigate("MainTab");
-  //   } else if (userStatus === "failed" || authError) {
-  //     Toast.show(error, Toast.LONG);
-  //   }
-  // }, [userStatus]);
+  useEffect(() => {
+    if (userStatus === "succeeded" && isAuth) {
+      navigation.navigate("MainTab");
+    } else if (userStatus === "failed") {
+      ToastAlert(error);
+    }
+  }, [userStatus]);
 
   return (
     <View style={styles.container}>

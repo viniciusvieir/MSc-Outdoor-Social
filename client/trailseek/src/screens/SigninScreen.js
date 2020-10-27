@@ -18,8 +18,8 @@ const SigninScreen = ({ navigation }) => {
 
   // const token = useSelector((state) => state.user.token);
   const userStatus = useSelector((state) => state.user.status);
-  const authError = useSelector((state) => state.user.authError);
   const error = useSelector((state) => state.user.error);
+  const isAuth = useSelector((state) => state.user.isAuth);
 
   // TODO
   // const login = async () => {
@@ -46,34 +46,32 @@ const SigninScreen = ({ navigation }) => {
   // }, []);
 
   const login = async () => {
-    try {
-      let res = await dispatch(signIn({ inputs }));
-      if (res.payload.token) {
-        setLog(res);
-        navigation.navigate("MainTab");
-      }
-    } catch (e) {
-      ToastAlert(e.message);
+    let res = await dispatch(signIn({ inputs })).catch((e) =>
+      ToastAlert(e.message)
+    );
+    setLog(res);
+    if (userStatus === "succeeded" && isAuth) {
+      navigation.navigate("MainTab");
     }
 
-    console.log("Signin");
-    // console.log(res);
-    if (userStatus === "succeeded" && !authError) {
-      navigation.navigate("MainTab");
-    } else if (userStatus === "failed" || authError) {
-      ToastAlert(error);
-      // Toast.show(error, Toast.LONG);
-    }
+    // console.log("Signin");
+    // // console.log(res);
+    // if (userStatus === "succeeded" && isAuth) {
+    //   navigation.navigate("MainTab");
+    // } else if (userStatus === "failed" || !isAuth) {
+    //   ToastAlert(error);
+    //   // Toast.show(error, Toast.LONG);
+    // }
   };
 
-  // useEffect(() => {
-  //   if (userStatus === "succeeded") {
-  //     navigation.navigate("MainTab");
-  //   } else if (userStatus === "failed" || authError) {
-  //     ToastAlert(error);
-  //     // Toast.show(error, Toast.LONG);
-  //   }
-  // }, [userStatus]);
+  useEffect(() => {
+    if (userStatus === "succeeded" && isAuth) {
+      navigation.navigate("MainTab");
+    } else if (userStatus === "failed" || !isAuth) {
+      // ToastAlert(error);
+      // Toast.show(error, Toast.LONG);
+    }
+  }, [userStatus]);
 
   return (
     <>

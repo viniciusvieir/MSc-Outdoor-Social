@@ -15,16 +15,16 @@ const initialState = {
 export const signUp = createAsyncThunk(
   "user/signUp",
   async ({ inputs }, { dispatch }) => {
-    try {
-      const response = await trailSeek.post("/signup", inputs);
+    const response = await trailSeek
+      .post("/signup", inputs)
+      .catch((error) => dispatch(signUpFailed({ error: error.message })));
+    if (response.payload?.error) {
       dispatch(signUpSucceded({ data: response.data }));
-      dispatch(saveToken());
-      return response.data;
-    } catch (error) {
-      dispatch(signUpFailed({ error: error.message }));
-      // console.log(error);
-      throw error;
+      const savToken = await dispatch(saveToken()).catch((err) => {
+        console.log("SaveToken : " + err.message);
+      });
     }
+    return response.data;
   }
 );
 
@@ -34,7 +34,7 @@ export const signIn = createAsyncThunk(
     const response = await trailSeek
       .post("/signin", inputs)
       .catch((e) => dispatch(loginFailed({ error: e.message })));
-    if (response.payload?.error) {
+    if (!response.payload?.error) {
       dispatch(loginSucceded({ data: response.data }));
       const savToken = await dispatch(saveToken()).catch((err) => {
         console.log("SaveToken : " + err.message);
