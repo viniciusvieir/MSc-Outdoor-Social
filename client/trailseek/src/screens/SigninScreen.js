@@ -3,11 +3,13 @@ import { View, StyleSheet, TextInput, Image } from "react-native";
 import { Text, Button } from "react-native-elements";
 import { useSelector, useDispatch, unwrapResult } from "react-redux";
 import { signIn } from "../app/userSlice";
-import Toast from "react-native-simple-toast";
+// import Toast from "react-native-simple-toast";
+import ToastAlert from "../components/ToastAlert";
 // import { setToken, setUser } from "../app/actions/index";
 
 const SigninScreen = ({ navigation }) => {
   const [inputs, setInputs] = useState({});
+  const [log, setLog] = useState(null);
 
   const inputsHandler = (e, field) => {
     setInputs((inputs) => ({ ...inputs, [field]: e }));
@@ -36,23 +38,42 @@ const SigninScreen = ({ navigation }) => {
 
   //   //
   // };
+  // useEffect(() => {
+  //   // each useEffect can return a cleanup function
+  //   return () => {
+  //     componentIsMounted.current = false;
+  //   };
+  // }, []);
 
   const login = async () => {
-    await dispatch(signIn({ inputs }));
+    try {
+      let res = await dispatch(signIn({ inputs }));
+      if (res.payload.token) {
+        setLog(res);
+        navigation.navigate("MainTab");
+      }
+    } catch (e) {
+      ToastAlert(e.message);
+    }
+
+    console.log("Signin");
+    // console.log(res);
     if (userStatus === "succeeded" && !authError) {
       navigation.navigate("MainTab");
-    } else {
-      Toast.show(error, Toast.LONG);
+    } else if (userStatus === "failed" || authError) {
+      ToastAlert(error);
+      // Toast.show(error, Toast.LONG);
     }
   };
 
-  useEffect(() => {
-    if (userStatus === "succeeded") {
-      navigation.navigate("MainTab");
-    } else if (userStatus === "failed" || authError) {
-      Toast.show(error, Toast.LONG);
-    }
-  }, [userStatus]);
+  // useEffect(() => {
+  //   if (userStatus === "succeeded") {
+  //     navigation.navigate("MainTab");
+  //   } else if (userStatus === "failed" || authError) {
+  //     ToastAlert(error);
+  //     // Toast.show(error, Toast.LONG);
+  //   }
+  // }, [userStatus]);
 
   return (
     <>

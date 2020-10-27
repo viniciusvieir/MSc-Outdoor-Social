@@ -1,14 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TextInput, View, StyleSheet, Image } from "react-native";
 import { Text, Button } from "react-native-elements";
 import { useSelector, useDispatch } from "react-redux";
+import ToastAlert from "../components/ToastAlert";
 
 import { signUp } from "../app/userSlice";
 // import { setToken, setUser } from "../app/actions/index";
 
 const SignupScreen = ({ navigation }) => {
   const [inputs, setInputs] = useState({});
-  // const [error, setError] = useState(null);
+  const [log, setLog] = useState(null);
 
   const inputsHandler = (e, field) => {
     setInputs((inputs) => ({ ...inputs, [field]: e }));
@@ -18,6 +19,8 @@ const SignupScreen = ({ navigation }) => {
   // const token = useSelector((state) => state.user.token);
   const userStatus = useSelector((state) => state.user.status);
   const error = useSelector((state) => state.user.error);
+  const authError = useSelector((state) => state.user.authError);
+  const isAuth = useSelector((state) => state.user.isAuth);
 
   // const onSignup = () => {
   //   dispatch(signUp({ inputs }));
@@ -25,21 +28,24 @@ const SignupScreen = ({ navigation }) => {
   // };
 
   const onSignup = async () => {
-    await dispatch(signUp({ inputs }));
-    if (userStatus === "succeeded" && !authError) {
-      navigation.navigate("MainTab");
+    let res = await dispatch(signUp({ inputs })).catch((err) => {
+      ToastAlert(err.message);
+    });
+    setLog(res);
+    if (userStatus === "succeeded" && !isAuth) {
+      navigation.navigate("Signin");
     } else {
-      Toast.show(error, Toast.LONG);
+      // ToastAlert(error);
     }
   };
 
-  useEffect(() => {
-    if (userStatus === "succeeded") {
-      navigation.navigate("MainTab");
-    } else if (userStatus === "failed" || authError) {
-      Toast.show(error, Toast.LONG);
-    }
-  }, [userStatus]);
+  // useEffect(() => {
+  //   if (userStatus === "succeeded") {
+  //     navigation.navigate("MainTab");
+  //   } else if (userStatus === "failed" || authError) {
+  //     Toast.show(error, Toast.LONG);
+  //   }
+  // }, [userStatus]);
 
   return (
     <View style={styles.container}>

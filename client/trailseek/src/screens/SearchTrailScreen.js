@@ -4,7 +4,8 @@ import { Text, SearchBar } from "react-native-elements";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTrails } from "../app/trailSlice";
 import LoadSpinner from "../components/LoadSpinner";
-import Toast from "react-native-simple-toast";
+// import Toast from "react-native-simple-toast";
+import ToastAlert from "../components/ToastAlert";
 
 import TrailCard from "../components/TrailCards";
 
@@ -61,7 +62,8 @@ const SearchTrailScreen = ({ navigation }) => {
     spinner = true;
   } else if (trailStatus === "failed") {
     spinner = false;
-    Toast.show(error, Toast.LONG);
+    ToastAlert(error);
+    // Toast.show(error, Toast.LONG);
     content = <Text>{error}</Text>;
   } else if (trailStatus === "succeeded") {
     spinner = false;

@@ -5,7 +5,8 @@ import { Text, Button, Tile } from "react-native-elements";
 import { useSelector, useDispatch } from "react-redux";
 import StarRating from "react-native-star-rating";
 import { fetchTrailsByID } from "../app/trailSlice";
-import Toast from "react-native-simple-toast";
+// import Toast from "react-native-simple-toast";
+import ToastAlert from "../components/ToastAlert";
 import LoadSpinner from "../components/LoadSpinner";
 
 const ViewTrailScreen = ({ route, navigation }) => {
@@ -101,7 +102,8 @@ const ViewTrailScreen = ({ route, navigation }) => {
     spinner = true;
   } else if (trailStatus === "failed") {
     spinner = false;
-    Toast.show(error, Toast.LONG);
+    ToastAlert(error);
+    // Toast.show(error, Toast.LONG);
     content = error;
   }
   return (

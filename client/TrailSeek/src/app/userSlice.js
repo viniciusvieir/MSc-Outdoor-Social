@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import AsyncStorage from "@react-native-community/async-storage";
 import { useDispatch } from "react-redux";
 import trailSeek from "../api/trailSeek";
 import { Intersect } from "../util/Intersect";
@@ -10,7 +10,6 @@ const initialState = {
   status: "idle",
   error: null,
   isAuth: false,
-  authError: false,
 };
 
 export const signUp = createAsyncThunk(
@@ -32,37 +31,38 @@ export const signUp = createAsyncThunk(
 export const signIn = createAsyncThunk(
   "user/signIn",
   async ({ inputs }, { dispatch, getState }) => {
-    // const currentUserState = getState().user;
-    try {
-      const response = await trailSeek.post("/signin", inputs);
+    const response = await trailSeek
+      .post("/signin", inputs)
+      .catch((e) => dispatch(loginFailed({ error: e.message })));
+    if (response.payload?.error) {
       dispatch(loginSucceded({ data: response.data }));
-      dispatch(saveToken({ data: response.data.token }));
-      return response.data;
-    } catch (error) {
-      dispatch(loginFailed({ error: error.message }));
-      console.log(error);
+      const savToken = await dispatch(saveToken()).catch((err) => {
+        console.log("SaveToken : " + err.message);
+      });
     }
+    return response.data;
   }
 );
 
 //Write reducer for saveToken
 export const saveToken = createAsyncThunk(
   "user/saveToken",
-  async ({ data }, { dispatch, getState }) => {
-    // console.log(data);
+  async (_, { dispatch, getState }) => {
     try {
-      const response = await AsyncStorage.setItem("@token", data);
-      console.log(response);
-      return response;
+      const response = await AsyncStorage.setItem(
+        "@token",
+        getState().user.token
+      );
+      return response.data;
     } catch (error) {
-      console.log(error);
+      console.log(error.response);
     }
   }
 );
 
 export const getToken = createAsyncThunk("user/getToken", async () => {
   try {
-    const value = await AsyncStorage.getItem("token");
+    const value = await AsyncStorage.getItem("@token");
     if (value) {
       return value;
     }
@@ -79,8 +79,9 @@ export const userSlice = createSlice({
     },
     loginSucceded(state, action) {
       state.isAuth = true;
-      state.token = action.payload.data.token;
-      state.user = action.payload.data;
+      console.log(action.payload);
+      state.token = action.payload.token;
+      state.user = action.payload;
     },
     signUpFailed(state, action) {
       state.isAuth = false;
@@ -88,8 +89,8 @@ export const userSlice = createSlice({
     },
     signUpSucceded(state, action) {
       state.isAuth = true;
-      state.token = action.payload.data.token;
-      state.user = action.payload.data;
+      state.token = action.payload.token;
+      state.user = action.payload;
     },
   },
   extraReducers: {
@@ -98,8 +99,6 @@ export const userSlice = createSlice({
     },
     [signUp.fulfilled]: (state, action) => {
       state.status = "succeeded";
-      state.user = action.payload;
-      state.token = action.payload.token;
     },
     [signUp.rejected]: (state, action) => {
       state.status = "failed";
@@ -110,18 +109,10 @@ export const userSlice = createSlice({
     },
     [signIn.fulfilled]: (state, action) => {
       state.status = "succeeded";
-      if (state.authError) {
-        state.isAuth = false;
-      } else {
-        state.user = action.payload;
-        state.token = action.payload.token;
-      }
-      // console.log(action.payload);
     },
     [signIn.rejected]: (state, action) => {
       state.status = "failed";
       state.isAuth = false;
-      // console.log(action.error.message);
       state.error = action.error.message;
     },
     [getToken.pending]: (state, action) => {
@@ -141,6 +132,11 @@ export const userSlice = createSlice({
   },
 });
 
-export const { loginSucceded, loginFailed } = userSlice.actions;
+export const {
+  loginSucceded,
+  loginFailed,
+  signUpFailed,
+  signUpSucceded,
+} = userSlice.actions;
 
 export default userSlice.reducer;
