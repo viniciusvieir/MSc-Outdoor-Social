@@ -14,7 +14,8 @@ import { useNavigation } from "@react-navigation/native";
 import StarRating from "react-native-star-rating";
 import { AntDesign } from "@expo/vector-icons";
 import * as Location from "expo-location";
-import Toast from "react-native-simple-toast";
+import ToastAlert from "./ToastAlert";
+// import Toast from "react-native-simple-toast";
 
 import trailSeek from "../api/trailSeek";
 import { Intersect } from "../util/Intersect";
@@ -33,7 +34,8 @@ const TrailCards = ({ getParams, gps }) => {
     let { status } = await Location.requestPermissionsAsync();
     if (status !== "granted") {
       setErrorMsg("Permission to access location was denied");
-      Toast.show(errorMsg, Toast.LONG);
+      ToastAlert(error);
+      // Toast.show(errorMsg, Toast.LONG);
     }
     let location1 = await Location.getCurrentPositionAsync({});
     setLocation(location1);
@@ -71,7 +73,8 @@ const TrailCards = ({ getParams, gps }) => {
           });
           setData(response.data);
         } catch (error) {
-          Toast.show(error, Toast.LONG);
+          ToastAlert(error);
+          // Toast.show(error, Toast.LONG);
           console.log(error);
         }
       }
@@ -97,7 +100,7 @@ const TrailCards = ({ getParams, gps }) => {
         }
       }
       fetchIDs();
-    }, [data]);
+    }, []);
   }
   const trails = useSelector((state) => Intersect(state.trails.trails, data));
 

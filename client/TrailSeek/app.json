@@ -17,7 +17,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.neels198.trailseek"
     },
     "web": {
       "favicon": "./assets/favicon.png"

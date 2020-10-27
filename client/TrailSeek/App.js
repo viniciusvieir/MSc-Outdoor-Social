@@ -5,7 +5,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Provider } from "react-redux";
 import { StyleSheet } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import AsyncStorage from "@react-native-community/async-storage";
 
 import CreateEventScreen from "./src/screens/CreateEventScreen";
 import ViewEventScreen from "./src/screens/ViewEventScreen";
@@ -169,8 +169,8 @@ class App extends React.Component {
   componentDidMount() {
     let tempToken;
     const getTokenNavigator = async () => {
-      tempToken = await AsyncStorage.getItem("token");
-      console.log(tempToken);
+      tempToken = await AsyncStorage.getItem("@token");
+      // console.log(tempToken);
       this.setState({ token: tempToken });
     };
     getTokenNavigator();

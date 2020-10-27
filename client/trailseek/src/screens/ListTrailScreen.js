@@ -3,7 +3,8 @@ import { ScrollView, StyleSheet } from "react-native";
 import { ListItem, Text } from "react-native-elements";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
-import Toast from "react-native-simple-toast";
+import ToastAlert from "../components/ToastAlert";
+// import Toast from "react-native-simple-toast";
 
 // import trailSeek from '../api/trailSeek';
 // import {Intersect} from '../util/Intersect';
@@ -30,7 +31,8 @@ const ListTrailScreen = ({ route }) => {
     spinner = true;
   } else if (trailStatus === "failed") {
     spinner = false;
-    Toast.show(error, Toast.LONG);
+    ToastAlert(error);
+    // Toast.show(error, Toast.LONG);
     content = <Text>{error}</Text>;
   } else if (trailStatus === "succeeded") {
     spinner = false;
