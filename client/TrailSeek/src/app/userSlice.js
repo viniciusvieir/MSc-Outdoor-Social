@@ -1,0 +1,142 @@
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import AsyncStorage from "@react-native-community/async-storage";
+import { useDispatch } from "react-redux";
+import trailSeek from "../api/trailSeek";
+import { Intersect } from "../util/Intersect";
+
+const initialState = {
+  user: null,
+  token: null,
+  status: "idle",
+  error: null,
+  isAuth: false,
+};
+
+export const signUp = createAsyncThunk(
+  "user/signUp",
+  async ({ inputs }, { dispatch }) => {
+    try {
+      const response = await trailSeek.post("/signup", inputs);
+      dispatch(signUpSucceded({ data: response.data }));
+      dispatch(saveToken());
+      return response.data;
+    } catch (error) {
+      dispatch(signUpFailed({ error: error.message }));
+      // console.log(error);
+      throw error;
+    }
+  }
+);
+
+export const signIn = createAsyncThunk(
+  "user/signIn",
+  async ({ inputs }, { dispatch, getState }) => {
+    const response = await trailSeek
+      .post("/signin", inputs)
+      .catch((e) => dispatch(loginFailed({ error: e.message })));
+    if (response.payload?.error) {
+      dispatch(loginSucceded({ data: response.data }));
+      const savToken = await dispatch(saveToken()).catch((err) => {
+        console.log("SaveToken : " + err.message);
+      });
+    }
+    return response.data;
+  }
+);
+
+//Write reducer for saveToken
+export const saveToken = createAsyncThunk(
+  "user/saveToken",
+  async (_, { dispatch, getState }) => {
+    try {
+      const response = await AsyncStorage.setItem(
+        "@token",
+        getState().user.token
+      );
+      return response.data;
+    } catch (error) {
+      console.log(error.response);
+    }
+  }
+);
+
+export const getToken = createAsyncThunk("user/getToken", async () => {
+  try {
+    const value = await AsyncStorage.getItem("@token");
+    if (value) {
+      return value;
+    }
+  } catch (error) {}
+});
+
+export const userSlice = createSlice({
+  name: "user",
+  initialState,
+  reducers: {
+    loginFailed(state, action) {
+      state.isAuth = false;
+      state.error = action.payload.error;
+    },
+    loginSucceded(state, action) {
+      state.isAuth = true;
+      console.log(action.payload);
+      state.token = action.payload.token;
+      state.user = action.payload;
+    },
+    signUpFailed(state, action) {
+      state.isAuth = false;
+      state.error = action.payload.error;
+    },
+    signUpSucceded(state, action) {
+      state.isAuth = true;
+      state.token = action.payload.token;
+      state.user = action.payload;
+    },
+  },
+  extraReducers: {
+    [signUp.pending]: (state, action) => {
+      state.status = "loading";
+    },
+    [signUp.fulfilled]: (state, action) => {
+      state.status = "succeeded";
+    },
+    [signUp.rejected]: (state, action) => {
+      state.status = "failed";
+      state.error = action.error.message;
+    },
+    [signIn.pending]: (state, action) => {
+      state.status = "loading";
+    },
+    [signIn.fulfilled]: (state, action) => {
+      state.status = "succeeded";
+    },
+    [signIn.rejected]: (state, action) => {
+      state.status = "failed";
+      state.isAuth = false;
+      state.error = action.error.message;
+    },
+    [getToken.pending]: (state, action) => {
+      state.status = "loading";
+    },
+    [getToken.fulfilled]: (state, action) => {
+      //Todo
+      state.status = "succeeded";
+      state.isAuth = true;
+      state.token = action.payload;
+    },
+    [getToken.rejected]: (state, action) => {
+      state.status = "failed";
+      state.token = null;
+      state.error = action.error.message;
+    },
+  },
+});
+
+export const {
+  loginSucceded,
+  loginFailed,
+  signUpFailed,
+  signUpSucceded,
+} = userSlice.actions;
+
+export default userSlice.reducer;
