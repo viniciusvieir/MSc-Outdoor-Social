@@ -77,7 +77,6 @@ const SearchTrailScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-            <View style={styles.subcontainer}>
       <LoadSpinner visible={spinner} />
       <Text h3 style={{ marginLeft: 5 }}>
         Hi! User
@@ -100,34 +99,33 @@ const SearchTrailScreen = ({ navigation }) => {
       />
       {content}
     </View>
-</View>
   );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#ecf0f1',
-        width:'100%',
-        alignItems:'center',
-        
-    },
-    subcontainer: {
-        flex: 1,
-        backgroundColor: '#ecf0f1',
-        width:'90%',
-    },
-    texth3: {
-        fontSize:30,
-        fontWeight:'bold',
-        textAlign:'center',
-        width:'80%',
-        alignSelf:'center',
-    },
-    searchbarcontainer:{
-        width:'90%',
-        alignSelf:'center',
-    }
+  container: {
+    flex: 1,
+    backgroundColor: "#ecf0f1",
+    width: "100%",
+    alignItems: "center",
+    marginTop: 20,
+  },
+  subcontainer: {
+    flex: 1,
+    backgroundColor: "#ecf0f1",
+    width: "90%",
+  },
+  texth3: {
+    fontSize: 30,
+    fontWeight: "bold",
+    textAlign: "center",
+    width: "80%",
+    alignSelf: "center",
+  },
+  searchbarcontainer: {
+    width: "90%",
+    alignSelf: "center",
+  },
 });
 
 export default SearchTrailScreen;
