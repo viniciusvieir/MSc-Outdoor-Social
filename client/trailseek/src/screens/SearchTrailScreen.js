@@ -14,6 +14,7 @@ const SearchTrailScreen = ({ navigation }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const trailStatus = useSelector((state) => state.trails.status);
   const error = useSelector((state) => state.trails.error);
+  const user = useSelector((state) => state.user.user);
 
   let content,
     spinner = true;
@@ -76,7 +77,7 @@ const SearchTrailScreen = ({ navigation }) => {
     <View style={styles.container}>
       <LoadSpinner visible={spinner} />
       <Text h3 style={{ marginLeft: 5 }}>
-        Hi! User
+        Hi! {user ? user : "User"}
       </Text>
       <SearchBar
         style={styles.searchbar}
@@ -105,7 +106,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ecf0f1",
     width: "100%",
     alignItems: "center",
-    marginTop: 20,
+    marginTop: 25,
   },
   subcontainer: {
     flex: 1,

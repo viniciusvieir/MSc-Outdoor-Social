@@ -18,7 +18,7 @@ export const signUp = createAsyncThunk(
     const response = await trailSeek
       .post("/signup", inputs)
       .catch((error) => dispatch(signUpFailed({ error: error.message })));
-    if (response.payload?.error) {
+    if (!response.payload?.error) {
       dispatch(signUpSucceded({ data: response.data }));
       const savToken = await dispatch(saveToken()).catch((err) => {
         console.log("SaveToken : " + err.message);
@@ -79,9 +79,10 @@ export const userSlice = createSlice({
     },
     loginSucceded(state, action) {
       state.isAuth = true;
-      console.log(action.payload);
-      state.token = action.payload.token;
-      state.user = action.payload;
+      console.log("log success");
+      console.log(action.payload.data.email);
+      state.token = action.payload.data.token;
+      state.user = action.payload.data.email;
     },
     signUpFailed(state, action) {
       state.isAuth = false;
@@ -89,8 +90,11 @@ export const userSlice = createSlice({
     },
     signUpSucceded(state, action) {
       state.isAuth = true;
-      state.token = action.payload.token;
-      state.user = action.payload;
+      state.token = action.payload.data.token;
+      state.user = action.payload.data.email;
+    },
+    logOut(state, action) {
+      state = initialState;
     },
   },
   extraReducers: {
@@ -137,6 +141,7 @@ export const {
   loginFailed,
   signUpFailed,
   signUpSucceded,
+  logOut,
 } = userSlice.actions;
 
 export default userSlice.reducer;
