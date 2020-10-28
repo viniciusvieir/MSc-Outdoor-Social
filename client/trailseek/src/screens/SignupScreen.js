@@ -1,15 +1,37 @@
 import React, { useState, useEffect } from "react";
-import { TextInput, View, StyleSheet, Image } from "react-native";
+import { TextInput, View, StyleSheet, Image, Keyboard } from "react-native";
 import { Text, Button } from "react-native-elements";
 import { useSelector, useDispatch } from "react-redux";
 import ToastAlert from "../components/ToastAlert";
-
 import { signUp } from "../app/userSlice";
 // import { setToken, setUser } from "../app/actions/index";
+import DateTimePicker from '@react-native-community/datetimepicker';
+import moment from 'moment';
+
 
 const SignupScreen = ({ navigation }) => {
   const [inputs, setInputs] = useState({});
   const [log, setLog] = useState(null);
+
+  const [date, setDate] = useState(new Date());
+  const [mode, setMode] = useState('date');
+  const [show, setShow] = useState(false);
+  const [dobval, setDobval] = useState("");
+  const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setShow(Platform.OS === 'ios');
+    setDate(currentDate);
+    setDobval(moment(currentDate).format("DD-MMMM-YYYY"));
+  };
+  const showMode = (currentMode) => {
+    setShow(true);
+    setMode(currentMode);
+  };
+  const showDatepicker = () => {
+    showMode('date');
+    Keyboard.dismiss(); 
+  };
+
 
   const inputsHandler = (e, field) => {
     setInputs((inputs) => ({ ...inputs, [field]: e }));
@@ -46,6 +68,16 @@ const SignupScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      {show && (
+        <DateTimePicker
+          testID="dateTimePicker"
+          value={date}
+          mode={mode}
+          is24Hour={true}
+          display="default"
+          onChange={onChange}
+        />
+      )}
       <View style={styles.containerhead}>
         <Image
           source={require("../images/sublogo.png")}
@@ -62,6 +94,8 @@ const SignupScreen = ({ navigation }) => {
         />
         <TextInput
           onChangeText={(e) => inputsHandler(e, "dob")}
+          onFocus={()=>showDatepicker()}
+          value = {dobval}
           placeholder={"DOB"}
           style={styles.input}
         />
