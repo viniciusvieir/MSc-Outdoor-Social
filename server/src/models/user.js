@@ -71,6 +71,7 @@ class User extends Model {
     const payload = {
       id: this.id,
       email: this.email,
+      name: this.name,
     }
 
     const token = JWT.sign(payload, JWT_SECRET, {

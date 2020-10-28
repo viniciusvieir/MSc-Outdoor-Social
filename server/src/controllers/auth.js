@@ -62,10 +62,9 @@ class AuthController {
   // VALIDATION
   get validators() {
     return {
-      // body('email').isEmail(),
-      signIn: [body('password').not().isEmpty()],
+      signIn: [body('email').isEmail(), body('password').not().isEmpty()],
       signUp: [
-        // body('email').isEmail(),
+        body('email').isEmail(),
         body('password').not().isEmpty(),
         body('name').not().isEmpty().trim().escape(),
         body('gender').isIn(['F', 'M']),
