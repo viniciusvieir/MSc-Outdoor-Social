@@ -1,8 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import AsyncStorage from "@react-native-community/async-storage";
-import { useDispatch } from "react-redux";
 import trailSeek from "../api/trailSeek";
-import { Intersect } from "../util/Intersect";
 
 const initialState = {
   user: null,
@@ -35,6 +33,7 @@ export const signIn = createAsyncThunk(
       .post("/signin", inputs)
       .catch((e) => dispatch(loginFailed({ error: e.message })));
     if (!response.payload?.error) {
+      console.log(response.data);
       dispatch(loginSucceded({ data: response.data }));
       const savToken = await dispatch(saveToken()).catch((err) => {
         console.log("SaveToken : " + err.message);
@@ -94,7 +93,11 @@ export const userSlice = createSlice({
       state.user = action.payload.data.email;
     },
     logOut(state, action) {
-      state = initialState;
+      state.isAuth = false;
+      state.status = "idle";
+      state.token = null;
+      state.user = null;
+      state.error = null;
     },
   },
   extraReducers: {

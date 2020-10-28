@@ -22,7 +22,7 @@ const ViewProfileScreen = ({ navigation }) => {
         <Button
           title="Logout"
           onPress={() => {
-            dispatch(logOut);
+            dispatch(logOut()), navigation.navigate("Signin");
           }}
         />
       ) : null}

@@ -94,6 +94,7 @@ const SigninScreen = ({ navigation }) => {
         <View style={styles.containerform}>
           <TextInput
             onChangeText={(e) => inputsHandler(e, "email")}
+            autoCompleteType="email"
             // value={this.state.email}
             // onChangeText={(email) => this.setState({ email })}
             placeholder={"Email"}
