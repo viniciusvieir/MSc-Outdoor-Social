@@ -5,21 +5,20 @@ import { useSelector, useDispatch } from "react-redux";
 import ToastAlert from "../components/ToastAlert";
 import { signUp } from "../app/userSlice";
 // import { setToken, setUser } from "../app/actions/index";
-import DateTimePicker from '@react-native-community/datetimepicker';
-import moment from 'moment';
-
+import DateTimePicker from "@react-native-community/datetimepicker";
+import moment from "moment";
 
 const SignupScreen = ({ navigation }) => {
   const [inputs, setInputs] = useState({});
   const [log, setLog] = useState(null);
 
   const [date, setDate] = useState(new Date());
-  const [mode, setMode] = useState('date');
+  const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
   const [dobval, setDobval] = useState("");
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
-    setShow(Platform.OS === 'ios');
+    setShow(Platform.OS === "ios");
     setDate(currentDate);
     setDobval(moment(currentDate).format("DD-MMMM-YYYY"));
   };
@@ -28,10 +27,9 @@ const SignupScreen = ({ navigation }) => {
     setMode(currentMode);
   };
   const showDatepicker = () => {
-    showMode('date');
-    Keyboard.dismiss(); 
+    showMode("date");
+    Keyboard.dismiss();
   };
-
 
   const inputsHandler = (e, field) => {
     setInputs((inputs) => ({ ...inputs, [field]: e }));
@@ -59,8 +57,8 @@ const SignupScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    if (userStatus === "succeeded" && isAuth) {
-      navigation.navigate("MainTab");
+    if (isAuth && userStatus === "succeeded") {
+      navigation.navigate("Signin");
     } else if (userStatus === "failed") {
       ToastAlert(error);
     }
@@ -94,8 +92,8 @@ const SignupScreen = ({ navigation }) => {
         />
         <TextInput
           onChangeText={(e) => inputsHandler(e, "dob")}
-          onFocus={()=>showDatepicker()}
-          value = {dobval}
+          onFocus={() => showDatepicker()}
+          value={dobval}
           placeholder={"DOB"}
           style={styles.input}
         />

@@ -23,12 +23,23 @@ import store from "./src/app/store";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+import { LogBox } from "react-native"; //Remove after demo
+LogBox.ignoreLogs(["Warning: ..."]); // Ignore log notification by message//Remove after demo
+LogBox.ignoreAllLogs(); //Remove after demo
 
 const AuthenticationFlow = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Signin" component={SigninScreen} />
-      <Stack.Screen name="Signup" component={SignupScreen} />
+      <Stack.Screen
+        name="Signin"
+        component={SigninScreen}
+        options={{ headerTransparent: true, title: "" }}
+      />
+      <Stack.Screen
+        name="Signup"
+        component={SignupScreen}
+        options={{ headerTransparent: true, title: "" }}
+      />
     </Stack.Navigator>
   );
 };
@@ -153,6 +164,19 @@ const MainTabFlow = () => {
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="account-circle" size={24} color={color} />
           ),
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("EditProfile", { id: route.params.id });
+              }}
+            >
+              <Ionicons
+                name="md-create"
+                size={30}
+                style={{ marginRight: 10 }}
+              />
+            </TouchableOpacity>
+          ),
         }}
       />
     </Tab.Navigator>
@@ -186,12 +210,14 @@ class App extends React.Component {
             <Stack.Screen
               name="Authentication"
               component={AuthenticationFlow}
+              options={{ headerTransparent: true, title: "" }}
             />
             <Stack.Screen
               name="MainTab"
               component={MainTabFlow}
               options={{
                 headerShown: false,
+                headerRight: null,
               }}
             />
           </Stack.Navigator>
