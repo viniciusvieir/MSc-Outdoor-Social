@@ -105,6 +105,7 @@ const SignupScreen = ({ navigation }) => {
 
         <TextInput
           onChangeText={(e) => inputsHandler(e, "email")}
+          autoCompleteType="email"
           placeholder={"Email"}
           style={styles.input}
         />
