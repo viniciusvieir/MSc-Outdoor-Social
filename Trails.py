@@ -10,14 +10,10 @@ import os
 import csv
 import json
 
-#client = pymongo.MongoClient('trailseek.eu',27017)
 
-# mongodb://trailseek:hANjLSLe2ahXVCPb@trailseek.eu:27017/trailseek_db
+client = pymongo.MongoClient('#########')
 
-# mongodb://dev:hCLXZs76ubCXk8ZS@trailseek.eu:27017/trailseek
-client = pymongo.MongoClient('mongodb://dev:hCLXZs76ubCXk8ZS@trailseek.eu:27017/trailseek')
-
-db = client['trailseek']
+db = client['#######']
 collections = db.list_collection_names()
 print(collections)
 db['trails'].drop()
@@ -31,7 +27,7 @@ file_match_count = 0
 my_path = os.getcwd()
 #print('program path ',my_path)
 
-geo_file_path = 'D:\Masters\Semester3\Project\Code\Trails_GeoJson_File'
+geo_file_path = '#######'
 
 with open('Ireland_trail_New_Final_img_updated.csv', newline='\n') as csvfile:
     csv_content = csv.reader(csvfile, delimiter=',')
