@@ -6,7 +6,8 @@ const EventSchema = new mongoose.Schema({
     required: true,
   },
   trailId: {
-    type: Number,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Trail',
     required: true,
   },
   title: {
