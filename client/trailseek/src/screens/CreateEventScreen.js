@@ -1,8 +1,9 @@
-import React, { createElement } from 'react';
+import React, { createElement, useEffect, useState } from 'react';
 import { TextInput, View, StyleSheet, Image, Keyboard } from "react-native";
 import { Text, Button } from 'react-native-elements';
 import { useSelector, useDispatch } from "react-redux";
 import { signIn } from "../app/userSlice";
+import {useForm, Controller} from "react-hook-form";
 
 
 const CreateEventScreen = ({ route, navigation }) => {
@@ -12,11 +13,17 @@ const CreateEventScreen = ({ route, navigation }) => {
     const error = useSelector((state) => state.user.error);
     const isAuth = useSelector((state) => state.user.isAuth);
     const username = useSelector((state) => state.user.name);
+    const [inputs, setInput] = useState({});
 
-    const createMyEvent = () =>{
+    
 
-        
-
+    const inputsHandler = (e, field) => {
+        setInputs((inputs) => ({ ...inputs, [field]: e }));
+    };
+    
+    const {register, control, handleSubmit, errors } = useForm();
+    const onSubmit = data => {
+        console.log(data)
     }
 
     return(
@@ -24,7 +31,7 @@ const CreateEventScreen = ({ route, navigation }) => {
             <Text h3>CreateEventScreen</Text>
 
             <View style={styles.maincontainer}>
-                
+  
                 {/* map here */}
 
                 <View style={styles.mapcontainer}>
@@ -36,28 +43,66 @@ const CreateEventScreen = ({ route, navigation }) => {
                 </View>
                 <View style={styles.formcontainer}>
 
+                {/* event name */}
+                <Controller
+                    control={control}
+                    render={({ onChange, onBlur, value }) => (
                     <TextInput
+                        style={styles.input}
+                        onBlur={onBlur}
+                        onChangeText={value => onChange(value)}
+                        value={value}
                         placeholder={"Event Name"}
-                        style={styles.input}
                     />
-                    <TextInput
-                        placeholder={"Date and Time"}
-                        style={styles.input}
-                    />
-                    <TextInput
-                        placeholder={"Description"}
-                        style={styles.input}
-                    />
-                    <TextInput
-                        placeholder={"Max Participants"}
-                        style={styles.input}
-                    />
+                    )}
+                    name="eventname"
+                     rules={{required:true,minLength: 4,maxLength: 15}}
+                    defaultValue=""
+                />
+                {errors.eventname && errors.eventname.type === "required" && <Text>Event name is required.</Text>}
+                {errors.eventname && errors.eventname.type === "minLength" && <Text>Min length 4 characters.</Text> }
+                {errors.eventname && errors.eventname.type === "maxLength" && <Text>Max length 15 characters.</Text> }
 
-                    
-                    <Button
-                        title={"Create Event"}
-                        onPress={createMyEvent}
+                {/* event date */}
+                <Controller
+                    control={control}
+                    render={({ onChange, onBlur, value }) => (
+                    <TextInput
+                        style={styles.input}
+                        onBlur={onBlur}
+                        onChangeText={value => onChange(value)}
+                        value={value}
+                        placeholder={"Event Date"}
                     />
+                    )}
+                    name="eventdate"
+                    rules={{required:true,minLength: 4,maxLength: 15}}
+                    defaultValue=""
+                />
+                {errors.eventdate && errors.eventdate.type === "required" && <Text>Event date is required.</Text>}
+
+                {/* event description */}
+                <Controller
+                    control={control}
+                    render={({ onChange, onBlur, value }) => (
+                    <TextInput
+                        style={styles.input}
+                        onBlur={onBlur}
+                        onChangeText={value => onChange(value)}
+                        value={value}
+                        placeholder={"Event Description"}
+
+                    />
+                    )}
+                    name="eventdescription"
+                     rules={{required:true,minLength: 4,maxLength: 15}}
+                    defaultValue=""
+                />
+                {errors.eventdescription && errors.eventdescription.type === "required" && <Text>Description is required.</Text>}
+                {errors.eventdescription && errors.eventdescription.type === "minLength" && <Text>Min length 10 characters.</Text> }
+                {errors.eventdescription && errors.eventdescription.type === "maxLength" && <Text>Max length 50 characters.</Text> }
+                
+                <Button title="Submit" onPress={handleSubmit(onSubmit)} />            
 
                 </View>
                 
@@ -69,8 +114,6 @@ const CreateEventScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
     maincontainer:{
         flex: 1,
-        // alignItems: "center",
-        // justifyContent: "center",
         backgroundColor: "#ecf0f1",
     },
     mapcontainer:{
