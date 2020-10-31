@@ -13,7 +13,7 @@ class AuthController {
 
     const user = await User.findOne({
       where: { email },
-      attributes: ['id', 'email', 'password'],
+      attributes: ['id', 'email', 'name', 'password'],
     })
 
     if (!user)
