@@ -3,6 +3,7 @@ import AsyncStorage from "@react-native-community/async-storage";
 import trailSeek from "../api/trailSeek";
 
 const initialState = {
+  name: null,
   user: null,
   token: null,
   status: "idle",
@@ -78,10 +79,9 @@ export const userSlice = createSlice({
     },
     loginSucceded(state, action) {
       state.isAuth = true;
-      console.log("log success");
-      console.log(action.payload.data.email);
       state.token = action.payload.data.token;
       state.user = action.payload.data.email;
+      state.name = action.payload.data.name;
     },
     signUpFailed(state, action) {
       state.isAuth = false;
@@ -91,6 +91,7 @@ export const userSlice = createSlice({
       state.isAuth = true;
       state.token = action.payload.data.token;
       state.user = action.payload.data.email;
+      state.name = action.payload.data.name;
     },
     logOut(state, action) {
       state.isAuth = false;
@@ -98,6 +99,7 @@ export const userSlice = createSlice({
       state.token = null;
       state.user = null;
       state.error = null;
+      state.name = null;
     },
   },
   extraReducers: {

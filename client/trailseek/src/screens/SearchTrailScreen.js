@@ -15,6 +15,7 @@ const SearchTrailScreen = ({ navigation }) => {
   const trailStatus = useSelector((state) => state.trails.status);
   const error = useSelector((state) => state.trails.error);
   const user = useSelector((state) => state.user.user);
+  const username = useSelector((state) => state.user.name);
 
   let content,
     spinner = true;
@@ -77,7 +78,7 @@ const SearchTrailScreen = ({ navigation }) => {
     <View style={styles.container}>
       <LoadSpinner visible={spinner} />
       <Text h3 style={{ marginLeft: 5 }}>
-        Hi! {user ? user : "User"}
+        Hi! {username ? username : "User"}
       </Text>
       <SearchBar
         style={styles.searchbar}
