@@ -2,15 +2,17 @@ import React, { useState, useEffect } from "react";
 import { TextInput, View, StyleSheet, Image, Keyboard } from "react-native";
 import { Text, Button } from "react-native-elements";
 import { useSelector, useDispatch } from "react-redux";
+import { unwrapResult } from "@reduxjs/toolkit";
+
 import ToastAlert from "../components/ToastAlert";
 import { signUp } from "../app/userSlice";
-// import { setToken, setUser } from "../app/actions/index";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment";
 
 const SignupScreen = ({ navigation }) => {
   const [inputs, setInputs] = useState({});
   const [log, setLog] = useState(null);
+  const [auth, setAuth] = useState(false);
 
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState("date");
@@ -36,33 +38,21 @@ const SignupScreen = ({ navigation }) => {
   };
   const dispatch = useDispatch();
 
-  // const token = useSelector((state) => state.user.token);
-  const userStatus = useSelector((state) => state.user.status);
-  const error = useSelector((state) => state.user.error);
+  const userStatus = useSelector((state) => state.user.profile.status);
+  const error = useSelector((state) => state.user.profile.error);
   const isAuth = useSelector((state) => state.user.isAuth);
 
-  // const onSignup = () => {
-  //   dispatch(signUp({ inputs }));
-  //   if (userStatus === "succeeded") navigation.navigate("MainTab");
-  // };
-
   const onSignup = async () => {
-    let res = await dispatch(signUp({ inputs })).catch((err) => {
-      ToastAlert(err.message);
-    });
-    setLog(res);
-    if (userStatus === "succeeded" && isAuth) {
+    try {
+      const res = await dispatch(signUp({ inputs }));
+      const user = unwrapResult(res);
+      setAuth(isAuth);
       navigation.navigate("Signin");
-    }
-  };
-
-  useEffect(() => {
-    if (isAuth && userStatus === "succeeded") {
-      navigation.navigate("Signin");
-    } else if (userStatus === "failed") {
+    } catch (e) {
+      ToastAlert(e.message);
       ToastAlert(error);
     }
-  }, [userStatus]);
+  };
 
   return (
     <View style={styles.container}>

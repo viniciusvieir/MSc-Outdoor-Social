@@ -8,100 +8,47 @@ import {
   Image,
   ScrollView,
 } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { unwrapResult } from "@reduxjs/toolkit";
 import { Text } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 import StarRating from "react-native-star-rating";
 import { AntDesign } from "@expo/vector-icons";
-import * as Location from "expo-location";
+
 import ToastAlert from "./ToastAlert";
+import { fetchTrailsByQuery } from "../app/trailSlice";
+import { getLocation } from "../app/userSlice";
 
-import trailSeek from "../api/trailSeek";
-import { Intersect } from "../util/Intersect";
-
-const TrailCards = ({ getParams, gps }) => {
+const TrailCards = ({ getParams, location }) => {
   const { query, title } = getParams;
-  const [data, setData] = useState([]);
-  const [location, setLocation] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
+  const [trails, setTrails] = useState([]);
+  const error = useSelector((state) => state.trails.error);
 
+  const dispatch = useDispatch();
   const navigation = useNavigation();
 
-  //Location Change the implementation for later ToDO!!!
-
-  const getLocation = async () => {
-    let { status } = await Location.requestPermissionsAsync();
-    if (status !== "granted") {
-      setErrorMsg("Permission to access location was denied");
-      ToastAlert(error);
-      // Toast.show(errorMsg, Toast.LONG);
-    }
-    let location1 = await Location.getCurrentPositionAsync({});
-    setLocation(location1);
-  };
-
-  if (gps) {
-    useEffect(() => {
-      getLocation();
-    }, []);
-  }
   useEffect(() => {
-    if (location) {
-      async function fetchIDs() {
-        try {
-          const response = await trailSeek.get("/trails", {
-            params: {
-              fields: "_id",
-              limit: 10,
-              q: {
-                start: {
-                  $near: {
-                    $geometry: {
-                      type: "Point",
-                      coordinates: [
-                        location.coords.latitude,
-                        location.coords.longitude,
-                      ],
-                    },
-                    $minDistance: 1000,
-                    $maxDistance: 5000,
-                  },
-                },
-              },
-            },
-          });
-          setData(response.data);
-        } catch (error) {
-          ToastAlert(error);
-          // Toast.show(error, Toast.LONG);
-          console.log(error);
+    const getTrailsByQuery = async () => {
+      try {
+        let gpsLoc;
+        if (location) {
+          try {
+            gpsLoc = await dispatch(getLocation());
+          } catch (e) {
+            ToastAlert(e.message);
+          }
         }
+        const results = await dispatch(fetchTrailsByQuery({ query, location }));
+        const uResults = unwrapResult(results);
+        setTrails(uResults);
+      } catch (e) {
+        ToastAlert(e.message);
+        ToastAlert(error);
       }
-      fetchIDs();
-    }
-  }, [location]);
+    };
+    getTrailsByQuery();
+  }, []);
 
-  //No Location
-  if (!gps) {
-    useEffect(() => {
-      async function fetchIDs() {
-        try {
-          const response = await trailSeek.get("/trails", {
-            params: {
-              fields: "_id",
-              limit: 10,
-              q: query,
-            },
-          });
-          setData(response.data);
-        } catch (error) {
-          console.log(error);
-        }
-      }
-      fetchIDs();
-    }, []);
-  }
-  const trails = useSelector((state) => Intersect(state.trails.trails, data));
   let content = trails ? (
     <View style={styles.card}>
       <Text h4 style={styles.titleStyle}>
@@ -232,8 +179,6 @@ const styles = StyleSheet.create({
   },
   viewMore: {
     height: 200,
-    // borderWidth:5,
-    // borderColor:'red',
     justifyContent: "center",
     marginLeft: 5,
   },
