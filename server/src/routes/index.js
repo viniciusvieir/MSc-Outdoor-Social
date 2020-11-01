@@ -24,5 +24,16 @@ router.get('/trailsfix', trailController.trailsFix)
 
 // =============== EVENT ==============
 router.get('/trails/:trailId/events', eventController.events)
+router.post('/trails/:trailId/events', verifyToken, eventController.createEvent)
+router.put(
+  '/trails/:trailId/events/:eventId',
+  verifyToken,
+  eventController.updateEvent
+)
+router.delete(
+  '/trails/:trailId/events/:eventId',
+  verifyToken,
+  eventController.deleteEvent
+)
 
 module.exports = router
