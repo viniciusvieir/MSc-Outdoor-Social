@@ -1,150 +1,221 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, unwrapResult } from "@reduxjs/toolkit";
 import AsyncStorage from "@react-native-community/async-storage";
+import * as Location from "expo-location";
+
 import trailSeek from "../api/trailSeek";
+import CONSTANTS from "../util/Constants";
 
 const initialState = {
-  user: null,
-  token: null,
-  status: "idle",
-  error: null,
+  profile: {
+    name: null,
+    token: null,
+    error: null,
+    status: CONSTANTS.IDLE,
+  },
+  userLocation: {
+    latitude: null,
+    longitude: null,
+    status: CONSTANTS.IDLE,
+    error: null,
+  },
   isAuth: false,
 };
 
-export const signUp = createAsyncThunk(
-  "user/signUp",
-  async ({ inputs }, { dispatch }) => {
-    const response = await trailSeek
-      .post("/signup", inputs)
-      .catch((error) => dispatch(signUpFailed({ error: error.message })));
-    if (!response.payload?.error) {
-      dispatch(signUpSucceded({ data: response.data }));
-      const savToken = await dispatch(saveToken()).catch((err) => {
-        console.log("SaveToken : " + err.message);
-      });
-    }
-    return response.data;
-  }
-);
-
 export const signIn = createAsyncThunk(
   "user/signIn",
-  async ({ inputs }, { dispatch, getState }) => {
-    const response = await trailSeek
-      .post("/signin", inputs)
-      .catch((e) => dispatch(loginFailed({ error: e.message })));
-    if (!response.payload?.error) {
-      console.log(response.data);
-      dispatch(loginSucceded({ data: response.data }));
-      const savToken = await dispatch(saveToken()).catch((err) => {
-        console.log("SaveToken : " + err.message);
-      });
+  async ({ inputs }, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await trailSeek.post("/signin", inputs);
+      try {
+        const sav = await dispatch(saveToken({ data: response.data }));
+      } catch (e) {
+        console.log(e.message);
+      }
+      return response.data;
+    } catch (e) {
+      return rejectWithValue(
+        e.response.data.errors
+          .map((item) => {
+            return item.msg;
+          })
+          .join(" ")
+      );
     }
-    return response.data;
   }
 );
 
-//Write reducer for saveToken
+export const signUp = createAsyncThunk(
+  "user/signUp",
+  async ({ inputs }, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await trailSeek.post("/signup", inputs);
+      try {
+        const sav = await dispatch(saveToken({ data: response.data }));
+      } catch (e) {
+        console.log(e.message);
+      }
+      return response.data;
+    } catch (e) {
+      return rejectWithValue(
+        e.response.data.errors
+          .map((item) => {
+            return item.msg;
+          })
+          .join(" ")
+      );
+    }
+  }
+);
+
 export const saveToken = createAsyncThunk(
   "user/saveToken",
-  async (_, { dispatch, getState }) => {
+  async ({ data }) => {
+    const token = ["@token", data.token];
+    const name = ["@name", data.email];
     try {
-      const response = await AsyncStorage.setItem(
-        "@token",
-        getState().user.token
-      );
-      return response.data;
+      const response = await AsyncStorage.multiSet([token, name]);
+      return response;
     } catch (error) {
       console.log(error.response);
     }
   }
 );
 
+export const logOut = createAsyncThunk("user/delToken", async () => {
+  try {
+    const response = await AsyncStorage.clear();
+    // const response = await AsyncStorage.multiRemove(["@token", "@name"]);
+    return response;
+  } catch (error) {
+    console.log(error.response);
+  }
+});
+
 export const getToken = createAsyncThunk("user/getToken", async () => {
   try {
-    const value = await AsyncStorage.getItem("@token");
+    const value = await AsyncStorage.multiGet(["@token", "@name"]);
     if (value) {
       return value;
     }
-  } catch (error) {}
+  } catch (error) {
+    console.log(error.response);
+  }
+});
+
+export const getLocation = createAsyncThunk("user/getLocation", async () => {
+  let location;
+  try {
+    let { status } = await Location.requestPermissionsAsync();
+    try {
+      if (status !== "granted") console.log("Acess to location was denied");
+      location = await Location.getCurrentPositionAsync({});
+    } catch (e) {
+      console.log(e);
+    }
+    return location.coords;
+  } catch (e) {
+    console.log(e);
+  }
 });
 
 export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    loginFailed(state, action) {
+    logOut1(state, action) {
       state.isAuth = false;
-      state.error = action.payload.error;
-    },
-    loginSucceded(state, action) {
-      state.isAuth = true;
-      console.log("log success");
-      console.log(action.payload.data.email);
-      state.token = action.payload.data.token;
-      state.user = action.payload.data.email;
-    },
-    signUpFailed(state, action) {
-      state.isAuth = false;
-      state.error = action.payload.error;
-    },
-    signUpSucceded(state, action) {
-      state.isAuth = true;
-      state.token = action.payload.data.token;
-      state.user = action.payload.data.email;
-    },
-    logOut(state, action) {
-      state.isAuth = false;
-      state.status = "idle";
-      state.token = null;
-      state.user = null;
-      state.error = null;
+      state.profile = initialState.profile;
     },
   },
   extraReducers: {
-    [signUp.pending]: (state, action) => {
-      state.status = "loading";
-    },
-    [signUp.fulfilled]: (state, action) => {
-      state.status = "succeeded";
-    },
-    [signUp.rejected]: (state, action) => {
-      state.status = "failed";
-      state.error = action.error.message;
-    },
     [signIn.pending]: (state, action) => {
-      state.status = "loading";
+      state.profile.status = CONSTANTS.LOADING;
     },
     [signIn.fulfilled]: (state, action) => {
-      state.status = "succeeded";
+      state.profile.status = CONSTANTS.SUCCESS;
+      state.isAuth = true;
+      state.profile.name = action.payload.email;
+      state.profile.token = action.payload.token;
     },
     [signIn.rejected]: (state, action) => {
-      state.status = "failed";
+      state.profile.status = CONSTANTS.FAILED;
       state.isAuth = false;
-      state.error = action.error.message;
+      state.profile.error = action.payload;
     },
+    //////////////////////////////////////////////////////////////
+    [signUp.pending]: (state, action) => {
+      state.status = CONSTANTS.LOADING;
+    },
+    [signUp.fulfilled]: (state, action) => {
+      state.profile.status = CONSTANTS.SUCCESS;
+      // state.isAuth = true;
+      // state.profile.name = action.payload.email;
+      // state.profile.token = action.payload.token;
+    },
+    [signUp.rejected]: (state, action) => {
+      state.profile.status = CONSTANTS.FAILED;
+      state.isAuth = false;
+      state.profile.error = action.payload;
+    },
+    //////////////////////////////////////////////////////////////
     [getToken.pending]: (state, action) => {
-      state.status = "loading";
+      state.profile.status = CONSTANTS.LOADING;
     },
     [getToken.fulfilled]: (state, action) => {
-      //Todo
-      state.status = "succeeded";
-      state.isAuth = true;
-      state.token = action.payload;
+      state.profile.status = CONSTANTS.SUCCESS;
+      state.profile.token = action.payload[0][1]; //@token
+      state.profile.name = action.payload[1][1]; //@name
+      if (state.profile.token) state.isAuth = true;
     },
     [getToken.rejected]: (state, action) => {
-      state.status = "failed";
-      state.token = null;
-      state.error = action.error.message;
+      state.profile.status = CONSTANTS.FAILED;
+      state.profile.token = null;
+      state.profile.name = null;
+      state.isAuth = false;
+      state.profile.error = action.error.message;
+    },
+    //////////////////////////////////////////////////////////////
+    [saveToken.pending]: (state, action) => {
+      state.profile.status = CONSTANTS.LOADING;
+    },
+    [saveToken.fulfilled]: (state, action) => {
+      state.profile.status = CONSTANTS.SUCCESS;
+      // state.profile.token = action.payload;
+    },
+    [saveToken.rejected]: (state, action) => {
+      state.profile.status = CONSTANTS.FAILED;
+      state.profile.error = action.error.message;
+    },
+    //////////////////////////////////////////////////////////////
+    [getLocation.pending]: (state, action) => {
+      state.userLocation.status = CONSTANTS.LOADING;
+    },
+    [getLocation.fulfilled]: (state, action) => {
+      state.userLocation.status = CONSTANTS.SUCCESS;
+      state.userLocation.latitude = action.payload.latitude;
+      state.userLocation.longitude = action.payload.longitude;
+    },
+    [getLocation.rejected]: (state, action) => {
+      state.userLocation.status = CONSTANTS.FAILED;
+      state.userLocation.error = action.error.message;
+    },
+    //////////////////////////////////////////////////////////////
+    [logOut.pending]: (state, action) => {
+      state.profile.status = CONSTANTS.LOADING;
+    },
+    [logOut.fulfilled]: (state, action) => {
+      state.profile.status = CONSTANTS.SUCCESS;
+      state.profile.token = null;
+      state.profile.name = null;
+      state.isAuth = false;
+    },
+    [logOut.rejected]: (state, action) => {
+      state.profile.status = CONSTANTS.FAILED;
+      state.profile.error = action.error.message;
     },
   },
 });
 
-export const {
-  loginSucceded,
-  loginFailed,
-  signUpFailed,
-  signUpSucceded,
-  logOut,
-} = userSlice.actions;
+export const { logOut1 } = userSlice.actions;
 
 export default userSlice.reducer;

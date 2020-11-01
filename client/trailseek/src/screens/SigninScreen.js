@@ -1,88 +1,38 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, TextInput, Image } from "react-native";
 import { Text, Button } from "react-native-elements";
-import { useSelector, useDispatch, unwrapResult } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { createSlice, createAsyncThunk, unwrapResult } from "@reduxjs/toolkit";
 import { signIn } from "../app/userSlice";
-// import Toast from "react-native-simple-toast";
 import ToastAlert from "../components/ToastAlert";
-// import { setToken, setUser } from "../app/actions/index";
 
 const SigninScreen = ({ navigation }) => {
   const [inputs, setInputs] = useState({});
-  const [log, setLog] = useState(null);
+  const [auth, setAuth] = useState(false);
 
   const inputsHandler = (e, field) => {
     setInputs((inputs) => ({ ...inputs, [field]: e }));
   };
   const dispatch = useDispatch();
 
-  // const token = useSelector((state) => state.user.token);
-  const userStatus = useSelector((state) => state.user.status);
-  const error = useSelector((state) => state.user.error);
+  const error = useSelector((state) => state.user.profile.error);
   const isAuth = useSelector((state) => state.user.isAuth);
 
-  // TODO
-  // const login = async () => {
-  //   try {
-  //     const resultActions = await dispatch(signIn({ inputs }));
-  //     const user = unwrapResult(resultActions);
-  //     console.log(user);
-  //     // if (userStatus === "succeeded" && !authError)
-  //     //   navigation.navigate("MainTab");
-  //     // } else {
-  //     //   Toast.show(error, Toast.LONG);
-  //     // }
-  //   } catch (e) {
-  //     Toast.show(e, Toast.LONG);
-  //   }
-
-  //   //
-  // };
-  // useEffect(() => {
-  //   // each useEffect can return a cleanup function
-  //   return () => {
-  //     componentIsMounted.current = false;
-  //   };
-  // }, []);
-
   const login = async () => {
-    let res = await dispatch(signIn({ inputs })).catch((e) =>
-      ToastAlert(e.message)
-    );
-    setLog(res);
-    if (userStatus === "succeeded" && isAuth) {
+    try {
+      const res = await dispatch(signIn({ inputs }));
+      const user = unwrapResult(res);
+      setAuth(isAuth);
       navigation.navigate("MainTab");
+    } catch (e) {
+      ToastAlert(error);
     }
-
-    // console.log("Signin");
-    // // console.log(res);
-    // if (userStatus === "succeeded" && isAuth) {
-    //   navigation.navigate("MainTab");
-    // } else if (userStatus === "failed" || !isAuth) {
-    //   ToastAlert(error);
-    //   // Toast.show(error, Toast.LONG);
-    // }
   };
-
-  useEffect(() => {
-    if (userStatus === "succeeded" && isAuth) {
-      navigation.navigate("MainTab");
-    } else if (userStatus === "failed" || !isAuth) {
-      // ToastAlert(error);
-      // Toast.show(error, Toast.LONG);
-    }
-  }, [userStatus]);
 
   return (
     <>
-      {/* <Text h3>SigninScreen</Text>
-            <Button title='Sign up' onPress={()=>navigation.navigate('Signup')} />
-            <Button title='Login' onPress={()=>navigation.navigate('MainTab')} /> */}
-      {/* <Button title='Skip' onPress={()=>navigation.navigate('MainTab')} /> */}
-
-      {/* <Text h3>SigninScreen</Text> */}
       <View style={styles.container}>
-        {error && <Text style={{ color: "red" }}>{error}</Text>}
+        {error && <Text style={{ color: "red" }}>{auth}</Text>}
         <View style={styles.containerhead}>
           <Image
             source={require("../images/sublogo.png")}
@@ -114,8 +64,9 @@ const SigninScreen = ({ navigation }) => {
               title={"Login"}
               style={styles.input}
               buttonStyle={styles.button}
-              onPress={login}
-              // onPress={()=>this.addBlogPost}
+              onPress={() => {
+                login();
+              }}
             />
             <Button
               title={"Sign up"}
