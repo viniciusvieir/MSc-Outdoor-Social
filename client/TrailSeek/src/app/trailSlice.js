@@ -1,61 +1,104 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+
 import trailSeek from "../api/trailSeek";
 import { Intersect } from "../util/Intersect";
+import CONSTANTS from "../util/Constants";
 
 const initialState = {
   trails: [],
   trailDetails: [],
   filteredTrails: [],
-  loadedID: [], //Redundent, refactore code todo
-  status: "idle",
+  status: CONSTANTS.IDLE,
   error: null,
 };
 
-export const fetchTrails = createAsyncThunk(
-  "trails/fetchTrails",
-  async ({ fields = "", limit = 10, query = {} }) => {
+export const fetchAllTrails = createAsyncThunk(
+  "trails/fetchAllTrails",
+  async (_, { rejectWithValue }) => {
     try {
       const response = await trailSeek.get("/trails", {
         params: {
-          fields: fields,
-          limit: limit,
-          q: JSON.stringify(query),
+          fields: "name,avg_rating,location,img_url",
         },
       });
-      // console.log(response.data)
       return response.data;
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
+      retrun(error.message);
+      return rejectWithValue(
+        error.response.data.errors
+          .map((item) => {
+            return item.msg;
+          })
+          .join(" ")
+      );
     }
   }
 );
 
 export const fetchTrailsByQuery = createAsyncThunk(
   "trails/fetchTrailsByQuery",
-  async ({ limit = 10, query = {} }) => {
+  async (
+    { query = {}, limit = 10, location = false, maxDist = 5000, minDist = 0 },
+    { rejectWithValue, getState }
+  ) => {
     try {
+      if (location) {
+        query = {
+          start: {
+            $near: {
+              $geometry: {
+                type: "Point",
+                coordinates: [
+                  getState().user.userLocation.latitude,
+                  getState().user.userLocation.longitude,
+                ],
+              },
+              $minDistance: minDist,
+              $maxDistance: maxDist,
+            },
+          },
+        };
+      }
       const response = await trailSeek.get("/trails", {
         params: {
-          fields: "_id",
-          limit: limit,
           q: JSON.stringify(query),
+          limit,
         },
       });
       return response.data;
     } catch (error) {
       console.log(error);
+      return rejectWithValue(
+        error.response.data.errors
+          .map((item) => {
+            return item.msg;
+          })
+          .join(" ")
+      );
     }
   }
 );
 
 export const fetchTrailsByID = createAsyncThunk(
   "trails/fetchTrailsByID",
-  async ({ fields, id }, { getState }) => {
+  async ({ fields, id }, { rejectWithValue, getState }) => {
     try {
+      const existTrail = getState().trails.trailDetails.find(
+        (item) => item._id === id
+      );
+      if (existTrail) return existTrail;
       const response = await trailSeek.get(`/trails/${id}?fields=${fields}`);
       return response.data;
     } catch (error) {
       console.log(error);
+      return rejectWithValue(
+        error.response.data.errors
+          .map((item) => {
+            return item.msg;
+          })
+          .join(" ")
+      );
     }
   }
 );
@@ -75,40 +118,41 @@ export const trailSlice = createSlice({
     },
   },
   extraReducers: {
-    [fetchTrails.pending]: (state, action) => {
-      state.status = "loading";
+    [fetchAllTrails.pending]: (state, action) => {
+      state.status = CONSTANTS.LOADING;
     },
-    [fetchTrails.fulfilled]: (state, action) => {
-      state.status = "succeeded";
+    [fetchAllTrails.fulfilled]: (state, action) => {
+      state.status = CONSTANTS.SUCCESS;
       state.trails = action.payload;
     },
-    [fetchTrails.rejected]: (state, action) => {
-      state.status = "failed";
-      state.error = action.error.message;
+    [fetchAllTrails.rejected]: (state, action) => {
+      state.status = CONSTANTS.FAILED;
+      state.error = action.payload;
     },
+    //////////////////////////////////////////////////////////////
     [fetchTrailsByID.pending]: (state, action) => {
-      state.status = "loading";
+      state.status = CONSTANTS.LOADING;
     },
     [fetchTrailsByID.fulfilled]: (state, action) => {
-      state.status = "succeeded";
-      state.loadedID.push(action.payload._id); //redundned refactore code
-      // console.log(state.loadedID)
-      state.trailDetails.push(action.payload);
+      state.status = CONSTANTS.SUCCESS;
+      if (!state.trailDetails.some((item) => item._id === action.payload._id))
+        state.trailDetails.push(action.payload);
     },
     [fetchTrailsByID.rejected]: (state, action) => {
-      state.status = "failed";
+      state.status = CONSTANTS.FAILED;
       state.error = action.error.message;
     },
+    //////////////////////////////////////////////////////////////
     [fetchTrailsByQuery.pending]: (state, action) => {
-      state.status = "loading";
+      state.status = CONSTANTS.LOADING;
     },
     [fetchTrailsByQuery.fulfilled]: (state, action) => {
-      state.status = "succeeded";
+      state.status = CONSTANTS.SUCCESS;
       state.filteredTrails = Intersect(state.trails, action.payload);
     },
     [fetchTrailsByQuery.rejected]: (state, action) => {
-      state.status = "failed";
-      state.error = action.error.message;
+      state.status = CONSTANTS.FAILED;
+      state.error = action.payloade;
     },
   },
 });
@@ -117,11 +161,4 @@ export const { ratingAdded } = trailSlice.actions;
 
 export default trailSlice.reducer;
 
-// export const selectAllTrails = (state) => state.trails.trails;
-
-// IDK dosent work need to check
-// export const selectTrailsByID = (state, trailId) => {
-//     // console.log(trailId)
-//     // console.log(state.trails)
-//     state.trails.trails.find(item=>item.id==trailId)
-// };
+// export const selectAllTrails = (state) => state.trails.trails; // remember to return

@@ -7,9 +7,17 @@ import { logOut } from "../app/userSlice";
 const ViewProfileScreen = ({ navigation }) => {
   const isAuth = useSelector((state) => state.user.isAuth);
   const dispatch = useDispatch();
+
+  const userLogout = async () => {
+    try {
+      const response = await dispatch(logOut());
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
+
   return (
     <>
-      {/* <Text h3>ViewProfileScreen</Text> */}
       {isAuth ? (
         <Button
           title="Edit Profile"
@@ -22,7 +30,8 @@ const ViewProfileScreen = ({ navigation }) => {
         <Button
           title="Logout"
           onPress={() => {
-            dispatch(logOut()), navigation.navigate("Signin");
+            userLogout();
+            navigation.navigate("Authentication", { screen: "Signin" });
           }}
         />
       ) : null}

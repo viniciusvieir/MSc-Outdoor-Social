@@ -1,37 +1,42 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Dimensions, ScrollView } from "react-native";
 import MapView, { Polyline } from "react-native-maps";
 import { Text, Button, Tile } from "react-native-elements";
 import { useSelector, useDispatch } from "react-redux";
 import StarRating from "react-native-star-rating";
+import { unwrapResult } from "@reduxjs/toolkit";
+
 import { fetchTrailsByID } from "../app/trailSlice";
-// import Toast from "react-native-simple-toast";
 import ToastAlert from "../components/ToastAlert";
 import LoadSpinner from "../components/LoadSpinner";
+import CONSTANTS from "../util/Constants";
 
 const ViewTrailScreen = ({ route, navigation }) => {
   const { id } = route.params;
+  const [trailData, setTrailData] = useState({});
   let spinner = true;
   let content;
   const dispatch = useDispatch();
 
   const trailStatus = useSelector((state) => state.trails.status);
-  const loadedID = useSelector((state) => state.trails.loadedID);
   const error = useSelector((state) => state.trails.error);
   const fields =
     "name,avg_rating,location,path,bbox,img_url,difficulty,length_km,description,activity_type,estimate_time_min";
 
   useEffect(() => {
-    const idx = loadedID.findIndex((a) => a === id);
-    if (idx === -1) {
-      dispatch(fetchTrailsByID({ fields, id }));
-    }
-  }, []);
-  const trailData = useSelector((state) =>
-    state.trails.trailDetails.find((item) => item._id === id)
-  );
+    const getTrailDetail = async () => {
+      try {
+        const results = await dispatch(fetchTrailsByID({ fields, id }));
+        const uResults = unwrapResult(results);
+        setTrailData(uResults);
+      } catch (e) {
+        ToastAlert(e.message);
+      }
+    };
+    getTrailDetail();
+  }, [dispatch]);
 
-  if (trailData && trailStatus === "succeeded") {
+  if (!(JSON.stringify(trailData) === "{}")) {
     spinner = false;
     content = (
       <>
@@ -69,13 +74,6 @@ const ViewTrailScreen = ({ route, navigation }) => {
               />
             </View>
           </View>
-          {/*         
-        <View style={styles.section3}>
-          <Text>Description : {trailData.description}</Text>
-          <Text>activity : {trailData.activity_type}</Text>
-          <Text>location : {trailData.location}</Text>
-        </View> */}
-
           <View style={styles.section2}>
             <Text style={[styles.section2element2]}>
               Activity : {trailData.activity_type}
@@ -85,7 +83,6 @@ const ViewTrailScreen = ({ route, navigation }) => {
             </Text>
           </View>
           <View style={styles.section3}>
-            {/* <View style={styles.section3top}></View> */}
             <Text>Description : {trailData.description}</Text>
           </View>
 
@@ -130,12 +127,11 @@ const ViewTrailScreen = ({ route, navigation }) => {
         </View>
       </>
     );
-  } else if (trailStatus === "loading") {
+  } else if (trailStatus === CONSTANTS.LOADING) {
     spinner = true;
-  } else if (trailStatus === "failed") {
+  } else if (trailStatus === CONSTANTS.FAILED) {
     spinner = false;
     ToastAlert(error);
-    // Toast.show(error, Toast.LONG);
     content = error;
   }
   return (
@@ -151,8 +147,6 @@ const ViewTrailScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   mapStyle: {
     margin: 10,
-    // justifyContent: "center",
-    // alignSelf: "center",
     width: Dimensions.get("window").width - 20,
     height: 275,
   },

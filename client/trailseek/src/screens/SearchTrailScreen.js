@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { Text, SearchBar } from "react-native-elements";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchTrails } from "../app/trailSlice";
+
+import { fetchAllTrails } from "../app/trailSlice";
 import LoadSpinner from "../components/LoadSpinner";
 import ToastAlert from "../components/ToastAlert";
-
 import TrailCard from "../components/TrailCards";
+import CONSTANTS from "../util/Constants";
 
 const SearchTrailScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -14,18 +15,23 @@ const SearchTrailScreen = ({ navigation }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const trailStatus = useSelector((state) => state.trails.status);
   const error = useSelector((state) => state.trails.error);
-  const user = useSelector((state) => state.user.user);
-  const username = useSelector((state) => state.user.name);
-
+  const user = useSelector((state) => state.user.profile.name);
+  
   let content,
     spinner = true;
 
   //Initial Trail Fetch
   useEffect(() => {
-    if (trailStatus === "idle") {
-      const fields = "name,avg_rating,location,img_url";
-      const limit = 100000;
-      dispatch(fetchTrails({ fields, limit }));
+    const getAllTrails = async () => {
+      try {
+        const results = await dispatch(fetchAllTrails());
+      } catch (e) {
+        console.log(e);
+        ToastAlert(e.message);
+      }
+    };
+    if (trailStatus === CONSTANTS.IDLE) {
+      getAllTrails();
     }
   }, []);
 
@@ -56,22 +62,15 @@ const SearchTrailScreen = ({ navigation }) => {
       },
     },
   };
-  if (trailStatus === "loading") {
+
+  if (trailStatus === CONSTANTS.LOADING) {
     spinner = true;
-  } else if (trailStatus === "failed") {
+  } else if (trailStatus === CONSTANTS.FAILED) {
     spinner = false;
     ToastAlert(error);
-    // Toast.show(error, Toast.LONG);
     content = <Text>{error}</Text>;
-  } else if (trailStatus === "succeeded") {
+  } else if (trailStatus === CONSTANTS.SUCCESS) {
     spinner = false;
-    content = (
-      <ScrollView>
-        <TrailCard getParams={nearMe} gps={true} />
-        <TrailCard getParams={easyParams} gps={false} />
-        <TrailCard getParams={bestParams} gps={false} />
-      </ScrollView>
-    );
   }
 
   return (
@@ -96,7 +95,11 @@ const SearchTrailScreen = ({ navigation }) => {
           navigation.navigate("ListTrail", { query: searchParam.query });
         }}
       />
-      {content}
+      <ScrollView>
+        <TrailCard getParams={nearMe} location={true} />
+        <TrailCard getParams={easyParams} />
+        <TrailCard getParams={bestParams} />
+      </ScrollView>
     </View>
   );
 };
