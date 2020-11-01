@@ -109,7 +109,9 @@ const ViewTrailScreen = ({ route, navigation }) => {
               <Button
                 title="Create Event"
                 onPress={() => {
-                  navigation.navigate("CreateEvent");
+                  navigation.navigate("CreateEvent", {
+                    item: route
+                  });
                 }}
               />
             </View>
