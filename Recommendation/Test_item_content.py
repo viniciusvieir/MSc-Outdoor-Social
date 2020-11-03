@@ -13,7 +13,7 @@ import sys
 
 class itemContentSimilarity:
     
-    client = pymongo.MongoClient('mongodb://dev:hCLXZs76ubCXk8ZS@trailseek.eu:27017/trailseek')
+    client = pymongo.MongoClient('#####')
 
     db = client['trailseek']
  
