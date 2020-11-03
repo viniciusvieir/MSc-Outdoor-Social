@@ -1,0 +1,16 @@
+To download Anaconda:
+https://www.anaconda.com/products/individual
+
+To install Anaconda:
+bash ~/Downloads/Anaconda3-2020.02-Linux-x86_64.sh
+
+
+Open Anaconda shell and run following command to install packages:
+
+conda install -c anaconda pandas
+
+conda install -c anaconda numpy
+
+conda install -c anaconda scikit-learn
+
+conda install -c anaconda pymongo
