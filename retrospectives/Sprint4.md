@@ -7,5 +7,5 @@
 | **Glad** | Was much better than compared to all Sprints. | Good Collaboration of team Complex Task And Issues are getting resolved easily and  Want to continue the same in the coming sprints. | It was awesome this Sprint. | Making good progress with Machine Learning model. |
 
 ### Action items:
-- Daily scrum call: Need to do standup calls  mandatory to every group member. (Assignee: - Shubham)
+- Daily scrum call: Need to do standup calls  mandatory to every group member and make sure everyone is adding there learnings in retrospective. (Assignee: - Shubham)
 - Resolving Issue:  team will try to reach out to each other even more to help resolve issues. (Assignees: - Vinicius, Neel, Puja)
