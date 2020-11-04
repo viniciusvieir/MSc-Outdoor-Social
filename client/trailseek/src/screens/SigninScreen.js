@@ -118,7 +118,7 @@ const SigninScreen = ({ navigation }) => {
 
           <View style={styles.containerbuttons}>
 
-            <Button onPress={handleSubmit(login)} title="Submit" buttonStyle={styles.button} />
+            <Button onPress={handleSubmit(login)} title="Login" buttonStyle={styles.button} />
             
             <Button
               title={"Sign up"}
