@@ -1,88 +1,57 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, TextInput, Image } from "react-native";
 import { Text, Button } from "react-native-elements";
-import { useSelector, useDispatch, unwrapResult } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { createSlice, createAsyncThunk, unwrapResult } from "@reduxjs/toolkit";
 import { signIn } from "../app/userSlice";
-// import Toast from "react-native-simple-toast";
 import ToastAlert from "../components/ToastAlert";
-// import { setToken, setUser } from "../app/actions/index";
+import {useForm, Controller} from "react-hook-form";
+import { color } from "react-native-reanimated";
 
 const SigninScreen = ({ navigation }) => {
   const [inputs, setInputs] = useState({});
-  const [log, setLog] = useState(null);
+  const [auth, setAuth] = useState(false);
 
   const inputsHandler = (e, field) => {
     setInputs((inputs) => ({ ...inputs, [field]: e }));
   };
   const dispatch = useDispatch();
 
-  // const token = useSelector((state) => state.user.token);
-  const userStatus = useSelector((state) => state.user.status);
-  const error = useSelector((state) => state.user.error);
+  const error = useSelector((state) => state.user.profile.error);
   const isAuth = useSelector((state) => state.user.isAuth);
 
-  // TODO
-  // const login = async () => {
-  //   try {
-  //     const resultActions = await dispatch(signIn({ inputs }));
-  //     const user = unwrapResult(resultActions);
-  //     console.log(user);
-  //     // if (userStatus === "succeeded" && !authError)
-  //     //   navigation.navigate("MainTab");
-  //     // } else {
-  //     //   Toast.show(error, Toast.LONG);
-  //     // }
-  //   } catch (e) {
-  //     Toast.show(e, Toast.LONG);
-  //   }
-
-  //   //
-  // };
-  // useEffect(() => {
-  //   // each useEffect can return a cleanup function
-  //   return () => {
-  //     componentIsMounted.current = false;
-  //   };
-  // }, []);
-
   const login = async () => {
-    let res = await dispatch(signIn({ inputs })).catch((e) =>
-      ToastAlert(e.message)
-    );
-    setLog(res);
-    if (userStatus === "succeeded" && isAuth) {
+    console.log("inputs", inputs);
+    try {
+      const res = await dispatch(signIn({ inputs }));
+      const user = unwrapResult(res);
+      setAuth(isAuth);
       navigation.navigate("MainTab");
+      
+      //clearing inputs object after login
+      [inputs, setInputs] = useState({});
+      
+    } catch (e) {
+      console.log(error)
+      ToastAlert(error);
     }
-
-    // console.log("Signin");
-    // // console.log(res);
-    // if (userStatus === "succeeded" && isAuth) {
-    //   navigation.navigate("MainTab");
-    // } else if (userStatus === "failed" || !isAuth) {
-    //   ToastAlert(error);
-    //   // Toast.show(error, Toast.LONG);
-    // }
   };
 
-  useEffect(() => {
-    if (userStatus === "succeeded" && isAuth) {
-      navigation.navigate("MainTab");
-    } else if (userStatus === "failed" || !isAuth) {
-      // ToastAlert(error);
-      // Toast.show(error, Toast.LONG);
-    }
-  }, [userStatus]);
+  const {register, control, handleSubmit, errors } = useForm();
+
+  // const onSubmit = data => {
+  //   inputsHandler(data.email, "email")
+  //   inputsHandler(data.password, "password")
+  //   console.log(inputs)
+  // }
+
+  const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
 
   return (
     <>
-      {/* <Text h3>SigninScreen</Text>
-            <Button title='Sign up' onPress={()=>navigation.navigate('Signup')} />
-            <Button title='Login' onPress={()=>navigation.navigate('MainTab')} /> */}
-      {/* <Button title='Skip' onPress={()=>navigation.navigate('MainTab')} /> */}
-
-      {/* <Text h3>SigninScreen</Text> */}
       <View style={styles.container}>
-        {error && <Text style={{ color: "red" }}>{error}</Text>}
+        {error && <Text style={{ color: "red" }}>{auth}</Text>}
         <View style={styles.containerhead}>
           <Image
             source={require("../images/sublogo.png")}
@@ -92,30 +61,65 @@ const SigninScreen = ({ navigation }) => {
         </View>
 
         <View style={styles.containerform}>
-          <TextInput
-            onChangeText={(e) => inputsHandler(e, "email")}
-            // value={this.state.email}
-            // onChangeText={(email) => this.setState({ email })}
-            placeholder={"Email"}
-            style={styles.input}
+
+          {/* Email */}
+          <Controller
+            control={control}
+            render={({ onChange, onBlur, value }) => (
+            <TextInput
+                style={styles.input}
+                onBlur={onBlur}
+                onChangeText={(value) => {
+                  onChange(value)
+                  inputsHandler(value, "email")
+                }}
+                value={value}
+                placeholder={"Email"}
+            />
+            )}
+            name="email"
+            type="email"
+            rules={{
+              required: { value: true, message: 'Email is required' },
+              pattern: {
+                value: EMAIL_REGEX,
+                message: 'Not a valid email'
+              }
+            }}
+            defaultValue=""
           />
-          <TextInput
-            // value={this.state.password}
-            // onChangeText={(password) => this.setState({ password })}
-            onChangeText={(e) => inputsHandler(e, "password")}
-            placeholder={"Password"}
-            secureTextEntry={true}
-            style={styles.input}
+          {errors.email && <Text style={styles.errstl}>{errors?.email?.message}</Text>}
+
+          {/* Password */}
+          <Controller
+            control={control}
+            render={({ onChange, onBlur, value }) => (
+            <TextInput
+                style={styles.input}
+                onBlur={onBlur}
+                // onChangeText={value => onChange(value)}
+                onChangeText={(value) => {
+                  onChange(value)
+                  inputsHandler(value, "password")
+                }}
+                value={value}
+                placeholder={"Password"}
+                secureTextEntry={true}
+            />
+            )}
+            name="password"
+            type="password"
+            rules={{
+              required: { value: true, message: 'Password is required' },
+            }}
+            defaultValue=""
           />
+          {errors.password && <Text style={styles.errstl}>{errors?.password?.message}</Text>}
 
           <View style={styles.containerbuttons}>
-            <Button
-              title={"Login"}
-              style={styles.input}
-              buttonStyle={styles.button}
-              onPress={login}
-              // onPress={()=>this.addBlogPost}
-            />
+
+            <Button onPress={handleSubmit(login)} title="Login" buttonStyle={styles.button} />
+            
             <Button
               title={"Sign up"}
               onPress={() => navigation.navigate("Signup")}
@@ -127,7 +131,7 @@ const SigninScreen = ({ navigation }) => {
 
         <View style={styles.containerfooter}>
           <Button
-            title={"Skip "}
+            title={"Skip"}
             onPress={() => navigation.navigate("MainTab")}
             type={"clear"}
             buttonStyle={styles.button}
@@ -188,6 +192,12 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 120,
     alignSelf: "center",
+  },
+
+  errstl:{
+    color:"red",
+    marginBottom:10,
+    width: "80%",
   },
 });
 
