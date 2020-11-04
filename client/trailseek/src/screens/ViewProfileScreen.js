@@ -6,6 +6,11 @@ import { logOut } from "../app/userSlice";
 
 const ViewProfileScreen = ({ navigation }) => {
   const isAuth = useSelector((state) => state.user.isAuth);
+
+  if(isAuth !== true){
+    navigation.navigate("Signin")
+  }
+  
   const dispatch = useDispatch();
 
   const userLogout = async () => {
@@ -18,15 +23,16 @@ const ViewProfileScreen = ({ navigation }) => {
 
   return (
     <>
-      {isAuth ? (
+
+
+
+    
         <Button
           title="Edit Profile"
           onPress={() => {
             navigation.navigate("EditProfile");
           }}
         />
-      ) : null}
-      {isAuth ? (
         <Button
           title="Logout"
           onPress={() => {
@@ -34,7 +40,6 @@ const ViewProfileScreen = ({ navigation }) => {
             navigation.navigate("Authentication", { screen: "Signin" });
           }}
         />
-      ) : null}
     </>
   );
 };
