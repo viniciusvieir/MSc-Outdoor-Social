@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { View, StyleSheet, TextInput, Image } from "react-native";
 import { Text, Button } from "react-native-elements";
 import { useSelector, useDispatch } from "react-redux";
-import { createSlice, createAsyncThunk, unwrapResult } from "@reduxjs/toolkit";
+import { unwrapResult } from "@reduxjs/toolkit";
 import { signIn } from "../app/userSlice";
 import ToastAlert from "../components/ToastAlert";
-import {useForm, Controller} from "react-hook-form";
-import { color } from "react-native-reanimated";
+import { useForm, Controller } from "react-hook-form";
 
 const SigninScreen = ({ navigation }) => {
   const [inputs, setInputs] = useState({});
@@ -27,17 +26,17 @@ const SigninScreen = ({ navigation }) => {
       const user = unwrapResult(res);
       setAuth(isAuth);
       navigation.navigate("MainTab");
-      
+
       //clearing inputs object after login
-      [inputs, setInputs] = useState({});
-      
+      setInputs({});
     } catch (e) {
-      console.log(error)
+      console.log(e.message);
+      console.log(error);
       ToastAlert(error);
     }
   };
 
-  const {register, control, handleSubmit, errors } = useForm();
+  const { register, control, handleSubmit, errors } = useForm();
 
   // const onSubmit = data => {
   //   inputsHandler(data.email, "email")
@@ -46,7 +45,6 @@ const SigninScreen = ({ navigation }) => {
   // }
 
   const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
 
   return (
     <>
@@ -61,30 +59,29 @@ const SigninScreen = ({ navigation }) => {
         </View>
 
         <View style={styles.containerform}>
-
           {/* Email */}
           <Controller
             control={control}
             render={({ onChange, onBlur, value }) => (
-            <TextInput
+              <TextInput
                 style={styles.input}
                 onBlur={onBlur}
                 onChangeText={(value) => {
-                  onChange(value)
-                  inputsHandler(value, "email")
+                  onChange(value);
+                  inputsHandler(value, "email");
                 }}
                 value={value}
                 placeholder={"Email"}
-            />
+              />
             )}
             name="email"
             type="email"
             rules={{
-              required: { value: true, message: 'Email is required' },
+              required: { value: true, message: "Email is required" },
               pattern: {
                 value: EMAIL_REGEX,
-                message: 'Not a valid email'
-              }
+                message: "Not a valid email",
+              },
             }}
             defaultValue=""
           />
@@ -94,32 +91,35 @@ const SigninScreen = ({ navigation }) => {
           <Controller
             control={control}
             render={({ onChange, onBlur, value }) => (
-            <TextInput
+              <TextInput
                 style={styles.input}
                 onBlur={onBlur}
                 // onChangeText={value => onChange(value)}
                 onChangeText={(value) => {
-                  onChange(value)
-                  inputsHandler(value, "password")
+                  onChange(value);
+                  inputsHandler(value, "password");
                 }}
                 value={value}
                 placeholder={"Password"}
                 secureTextEntry={true}
-            />
+              />
             )}
             name="password"
             type="password"
             rules={{
-              required: { value: true, message: 'Password is required' },
+              required: { value: true, message: "Password is required" },
             }}
             defaultValue=""
           />
           {errors.password && <Text>{errors?.password?.message}</Text>}
 
           <View style={styles.containerbuttons}>
+            <Button
+              onPress={handleSubmit(login)}
+              title="Login"
+              buttonStyle={styles.button}
+            />
 
-            <Button onPress={handleSubmit(login)} title="Login" buttonStyle={styles.button} />
-            
             <Button
               title={"Sign up"}
               onPress={() => navigation.navigate("Signup")}
