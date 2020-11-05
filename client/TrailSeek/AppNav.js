@@ -7,6 +7,7 @@ import { StyleSheet } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { getToken } from "./src/app/userSlice";
 import { AppLoading } from "expo";
+import * as Font from "expo-font";
 
 import CreateEventScreen from "./src/screens/CreateEventScreen";
 import ViewEventScreen from "./src/screens/ViewEventScreen";
@@ -191,6 +192,10 @@ const AppNav = () => {
 
   const getAsyncToken = async () => {
     try {
+      await Font.loadAsync({
+        Roboto: require("./node_modules/native-base/Fonts/Roboto.ttf"),
+        Roboto_medium: require("./node_modules/native-base/Fonts/Roboto_medium.ttf"),
+      });
       const results = await dispatch(getToken());
       return results;
     } catch (e) {
@@ -211,7 +216,6 @@ const AppNav = () => {
       />
     );
   }
-  console.log(initRoutName);
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName={initRoutName}>
