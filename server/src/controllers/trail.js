@@ -73,7 +73,7 @@ class TrailController {
       }))
     }
 
-    if (trail && fields.includes('recommended')) {
+    if (trail && fields && fields.includes('recommended')) {
       const python = spawn('python', [
         '../Recommendation/similar-trails.py',
         id,
