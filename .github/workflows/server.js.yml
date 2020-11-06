@@ -19,5 +19,5 @@ jobs:
       - run: echo "This job runs only when modified files are under the 'server' folder."
       - run: npm --prefix ./server install
       - run: npm --prefix ./server run test
-      - run: pipenv run pip install -r <(pipenv lock -r) --target dist/
+      - run: pipenv run pip install -r <(pipenv lock -r) --target ./Recommendation/
       - run: pm2 reload trailseek --update-env
