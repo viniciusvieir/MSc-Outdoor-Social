@@ -5,10 +5,11 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { createStackNavigator } from "@react-navigation/stack";
 import { StyleSheet } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { getToken } from "./src/app/userSlice";
 import { AppLoading } from "expo";
+import { Root } from "native-base";
 import * as Font from "expo-font";
 
+import { getToken } from "./src/app/userSlice";
 import CreateEventScreen from "./src/screens/CreateEventScreen";
 import ViewEventScreen from "./src/screens/ViewEventScreen";
 import ViewTrailScreen from "./src/screens/ViewTrailScreen";
@@ -217,23 +218,25 @@ const AppNav = () => {
     );
   }
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName={initRoutName}>
-        <Stack.Screen
-          name="Authentication"
-          component={AuthenticationFlow}
-          options={{ headerTransparent: true, title: "" }}
-        />
-        <Stack.Screen
-          name="MainTab"
-          component={MainTabFlow}
-          options={{
-            headerShown: false,
-            headerRight: null,
-          }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Root>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName={initRoutName}>
+          <Stack.Screen
+            name="Authentication"
+            component={AuthenticationFlow}
+            options={{ headerTransparent: true, title: "" }}
+          />
+          <Stack.Screen
+            name="MainTab"
+            component={MainTabFlow}
+            options={{
+              headerShown: false,
+              headerRight: null,
+            }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Root>
   );
 };
 

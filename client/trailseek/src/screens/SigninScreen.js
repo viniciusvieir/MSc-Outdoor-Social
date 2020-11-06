@@ -6,6 +6,7 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import { signIn } from "../app/userSlice";
 import ToastAlert from "../components/ToastAlert";
 import { useForm, Controller } from "react-hook-form";
+import { Toast } from "native-base";
 
 const SigninScreen = ({ navigation }) => {
   const [inputs, setInputs] = useState({});
@@ -30,9 +31,15 @@ const SigninScreen = ({ navigation }) => {
       //clearing inputs object after login
       setInputs({});
     } catch (e) {
+      Toast.show({
+        text: error,
+        buttonText: "Okay",
+        type: "danger",
+        duration: 3000,
+      });
       console.log(e.message);
       console.log(error);
-      ToastAlert(error);
+      // ToastAlert(error);
     }
   };
 

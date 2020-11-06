@@ -14,7 +14,7 @@ import MapsTab from "../components/MapsTab";
 import EventsTab from "../components/EventsTab";
 
 const ViewTrailScreen = ({ route }) => {
-  const { id } = route.params;
+  const { id, showEvents } = route.params;
   const [trailData, setTrailData] = useState({});
   let spinner = true;
   let content;
@@ -23,7 +23,7 @@ const ViewTrailScreen = ({ route }) => {
   const trailStatus = useSelector((state) => state.trails.status);
   const error = useSelector((state) => state.trails.error);
   const fields =
-    "name,avg_rating,location,path,bbox,img_url,difficulty,length_km,description,activity_type,estimate_time_min,start";
+    "name,avg_rating,location,path,bbox,img_url,difficulty,length_km,description,activity_type,estimate_time_min,start,recommended";
 
   useEffect(() => {
     const getTrailDetail = async () => {
@@ -51,20 +51,19 @@ const ViewTrailScreen = ({ route }) => {
           titleStyle={styles.tilettlstyle}
         />
         <Header hasTabs style={{ height: 0 }} />
-        <Content style={{ flex: 1 }}>
-          <Tabs>
-            <Tab heading="Details">
-              <DetailsTab trailData={trailData} />
-            </Tab>
-            <Tab heading="Maps">
-              <MapsTab trailData={trailData} />
-            </Tab>
-            <Tab heading="Events">
-              <EventsTab />
-            </Tab>
-          </Tabs>
-          <LoadSpinner visible={spinner} />
-        </Content>
+
+        <Tabs initialPage={showEvents ? 2 : 0} locked={true}>
+          <Tab heading="Details">
+            <DetailsTab trailData={trailData} />
+          </Tab>
+          <Tab heading="Maps">
+            <MapsTab trailData={trailData} />
+          </Tab>
+          <Tab heading="Events">
+            <EventsTab />
+          </Tab>
+        </Tabs>
+        <LoadSpinner visible={spinner} />
       </View>
     );
   } else if (trailStatus === CONSTANTS.LOADING) {

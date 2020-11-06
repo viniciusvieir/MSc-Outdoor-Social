@@ -72,6 +72,7 @@ const TrailCards = ({ getParams }) => {
                   navigation.navigate("ViewTrail", {
                     id: item._id,
                     name: item.name,
+                    showEvents: false,
                   });
                 }}
               >
@@ -116,7 +117,11 @@ const TrailCards = ({ getParams }) => {
                   block
                   style={{ margin: 5 }}
                   onPress={() => {
-                    navigation.navigate("EventFlow", { screen: "ViewEvent" });
+                    navigation.navigate("ViewTrail", {
+                      id: item._id,
+                      name: item.name,
+                      showEvents: true,
+                    });
                   }}
                 >
                   <Text style={{ fontSize: 16, color: "white" }}>
@@ -138,13 +143,7 @@ const TrailCards = ({ getParams }) => {
           >
             <Text>View More</Text>
           </Button>
-        ) : // <TouchableOpacity
-        //   style={styles.viewMore}
-
-        // >
-        //   <Text style={{ fontSize: 30 }}>View More</Text>
-        // </TouchableOpacity>
-        null}
+        ) : null}
       </ScrollView>
     </View>
   ) : (
