@@ -78,6 +78,7 @@ class TrailController {
         '../Recommendation/similar-trails.py',
         id,
       ])
+
       python.stdout.on('data', async (data) => {
         const items = String.fromCharCode
           .apply(null, data)
@@ -91,6 +92,11 @@ class TrailController {
         }).select('name img_url avg_rating')
 
         res.json(trail)
+      })
+
+      python.stderr.on('end', async (data) => {
+        console.log('An error happened when trying to run python script')
+        res(json(trail))
       })
     } else {
       res.json(trail)
