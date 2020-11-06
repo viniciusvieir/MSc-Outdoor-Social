@@ -1,5 +1,6 @@
 const { query, param, validationResult } = require('express-validator')
 const { errorHandler } = require('../utils/error-handling')
+const { spawn } = require('child_process')
 
 const Trail = require('../models/trail')
 
@@ -61,9 +62,9 @@ class TrailController {
     const { id } = req.params
     const { fields } = req.query
 
-    const trail = await Trail.findById(id).select(
-      (fields && fields.replace(/,|;/g, ' ')) || '-path'
-    )
+    const trail = await Trail.findById(id)
+      .select((fields && fields.replace(/,|;/g, ' ')) || '-path')
+      .lean()
 
     if (trail && trail.path) {
       trail.path = trail.path.map((loc) => ({
@@ -72,12 +73,33 @@ class TrailController {
       }))
     }
 
-    res.json(trail)
+    if (trail && fields.includes('recommended')) {
+      const python = spawn('python', [
+        '../Recommendation/similar-trails.py',
+        id,
+      ])
+      python.stdout.on('data', async (data) => {
+        const items = String.fromCharCode
+          .apply(null, data)
+          .replace(/(\r\n|\n|\r)/gm, '')
+          .split(',')
+
+        trail.recommended = await Trail.find({
+          _id: {
+            $in: items,
+          },
+        }).select('name img_url avg_rating')
+
+        res.json(trail)
+      })
+    } else {
+      res.json(trail)
+    }
   }
 
   // FIX
   async trailsFix(req, res) {
-    const trails = require('../../../trails.json')
+    const trails = require('../../trails.json')
 
     const trailsValidated = trails.map((trail) => {
       const currentPath = trail.geoLoc.coordinates[0]

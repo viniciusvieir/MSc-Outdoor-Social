@@ -37,7 +37,7 @@ const TrailSchema = new mongoose.Schema({
     type: Number,
     required: false,
   },
-  elevationGain_ft: {
+  elevation_gain_ft: {
     type: Number,
     required: false,
   },

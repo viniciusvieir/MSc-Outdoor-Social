@@ -5,15 +5,21 @@ Created on Sun Oct 25 15:33:51 2020
 @author: Puja
 """
 
-import pandas as pd
-import numpy as np
-from sklearn.metrics.pairwise import cosine_similarity
-import pymongo
+import os
 import sys
+import pymongo
+import numpy as np
+import pandas as pd
+from sklearn.metrics.pairwise import cosine_similarity
+from dotenv import load_dotenv
+from pathlib import Path
+
+load_dotenv(dotenv_path = Path('../server/.env'))
+
+MONGO_URL = os.getenv('MONGO_URL')
 
 class itemContentSimilarity:
-    
-    client = pymongo.MongoClient('#####')
+    client = pymongo.MongoClient(MONGO_URL)
 
     db = client['trailseek']
  
@@ -82,7 +88,7 @@ if __name__ == '__main__':
         print("Error Occured: Cause 'Trail Object ID not found'")
         raise
     
-    print('Similar Trails: ', recommendations)
+    print(','.join(recommendations))
 
     
     
