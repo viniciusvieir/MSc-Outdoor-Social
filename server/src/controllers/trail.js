@@ -1,6 +1,6 @@
 const { query, param, validationResult } = require('express-validator')
 const { errorHandler } = require('../utils/error-handling')
-const { spawn } = require('child_process')
+const { PythonShell } = require('python-shell')
 
 const Trail = require('../models/trail')
 
@@ -74,23 +74,11 @@ class TrailController {
     }
 
     if (trail && fields && fields.includes('recommended')) {
-      const child = spawn('python3', [
-        '../Recommendation/similar-trails.py',
-        id,
-      ])
-
-      let stdoutChunks = [],
-        stderrChunks = []
-
-      child.stdout.on('data', async (data) => {
-        // stdoutChunks = stdoutChunks.concat(data)
-
-        const items = String.fromCharCode
-          .apply(null, data)
-          .replace(/(\r\n|\n|\r)/gm, '')
-          .split(',')
-        console.log(items)
-
+      const script = new PythonShell('../Recommendation/similar-trails.py', {
+        args: [id],
+      })
+      script.on('message', async (message) => {
+        const items = message.split(',')
         if (items.length > 0) {
           trail.recommended = await Trail.find({
             _id: {
@@ -98,21 +86,6 @@ class TrailController {
             },
           }).select('name img_url avg_rating')
         }
-
-        res.json(trail)
-      })
-
-      // child.stdout.on('end', async () => {
-
-      // })
-
-      child.stderr.on('data', (data) => {
-        stderrChunks = stderrChunks.concat(data)
-      })
-
-      child.stderr.on('end', async () => {
-        const error = String.fromCharCode.apply(null, stderrChunks)
-        console.error('Error: ' + error)
         res.json(trail)
       })
     } else {

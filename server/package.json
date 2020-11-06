@@ -22,6 +22,7 @@
     "mongoose": "^5.10.9",
     "morgan": "^1.10.0",
     "pg": "^8.4.1",
+    "python-shell": "^2.0.2",
     "sequelize": "^6.3.5"
   },
   "devDependencies": {
