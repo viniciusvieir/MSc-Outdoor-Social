@@ -74,31 +74,46 @@ class TrailController {
     }
 
     if (trail && fields && fields.includes('recommended')) {
-      const python = spawn('python', [
+      const child = spawn('python3', [
         '../Recommendation/similar-trails.py',
         id,
       ])
 
-      python.stdout.on('data', async (data) => {
+      let stdoutChunks = [],
+        stderrChunks = []
+
+      child.stdout.on('data', async (data) => {
+        // stdoutChunks = stdoutChunks.concat(data)
+
         const items = String.fromCharCode
           .apply(null, data)
           .replace(/(\r\n|\n|\r)/gm, '')
           .split(',')
+        console.log(items)
 
-        trail.recommended = await Trail.find({
-          _id: {
-            $in: items,
-          },
-        }).select('name img_url avg_rating')
+        if (items.length > 0) {
+          trail.recommended = await Trail.find({
+            _id: {
+              $in: items,
+            },
+          }).select('name img_url avg_rating')
+        }
 
         res.json(trail)
       })
 
-      python.stderr.on('end', async (data) => {
-        console.log(
-          'An error happened when trying to run python recommendation script'
-        )
-        res(json(trail))
+      // child.stdout.on('end', async () => {
+
+      // })
+
+      child.stderr.on('data', (data) => {
+        stderrChunks = stderrChunks.concat(data)
+      })
+
+      child.stderr.on('end', async () => {
+        const error = String.fromCharCode.apply(null, stderrChunks)
+        console.error('Error: ' + error)
+        res.json(trail)
       })
     } else {
       res.json(trail)
