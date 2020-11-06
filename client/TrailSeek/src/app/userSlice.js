@@ -71,7 +71,7 @@ export const saveToken = createAsyncThunk(
   "user/saveToken",
   async ({ data }) => {
     const token = ["@token", data.token];
-    const name = ["@name", data.email];
+    const name = ["@name", data.name];
     try {
       const response = await AsyncStorage.multiSet([token, name]);
       return response;
@@ -134,7 +134,7 @@ export const userSlice = createSlice({
     [signIn.fulfilled]: (state, action) => {
       state.profile.status = CONSTANTS.SUCCESS;
       state.isAuth = true;
-      state.profile.name = action.payload.email;
+      state.profile.name = action.payload.name;
       state.profile.token = action.payload.token;
     },
     [signIn.rejected]: (state, action) => {
