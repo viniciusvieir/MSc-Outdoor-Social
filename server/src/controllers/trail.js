@@ -95,7 +95,9 @@ class TrailController {
       })
 
       python.stderr.on('end', async (data) => {
-        console.log('An error happened when trying to run python script')
+        console.log(
+          'An error happened when trying to run python recommendation script'
+        )
         res(json(trail))
       })
     } else {
