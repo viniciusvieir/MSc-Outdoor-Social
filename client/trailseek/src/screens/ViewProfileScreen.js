@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, StyleSheet, Image } from "react-native";
 import { Text, Button } from "react-native-elements";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,11 +7,12 @@ import { CommonActions } from "@react-navigation/native";
 
 const ViewProfileScreen = ({ navigation }) => {
   const isAuth = useSelector((state) => state.user.isAuth);
-
-  if (isAuth !== true) {
-    navigation.navigate("Signin");
-  }
-
+  // useEffect(() => {
+  //   const fireEvent = navigation.addListener("tabPress", (e) => {
+  //     return isAuth ? null : navigation.navigate("Signin");
+  //   });
+  //   return fireEvent;
+  // }, [navigation]);
   const dispatch = useDispatch();
 
   const userLogout = async () => {
