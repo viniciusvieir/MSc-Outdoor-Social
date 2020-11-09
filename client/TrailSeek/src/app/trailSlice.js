@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 import trailSeek from "../api/trailSeek";
+import weather from "../api/weather";
+import covid from "../api/covid";
 import { Intersect } from "../util/Intersect";
 import CONSTANTS from "../util/Constants";
 
@@ -10,6 +12,11 @@ const initialState = {
   filteredTrails: [],
   status: CONSTANTS.IDLE,
   error: null,
+  weatherData: {
+    status: CONSTANTS.IDLE,
+    error: null,
+    data: {},
+  },
 };
 
 export const fetchAllTrails = createAsyncThunk(
@@ -89,6 +96,25 @@ export const fetchTrailsByID = createAsyncThunk(
       );
       if (existTrail) return existTrail;
       const response = await trailSeek.get(`/trails/${id}?fields=${fields}`);
+      const weatherResponse = await weather.get("/onecall", {
+        params: {
+          // appid:trailData.weatherApiToken,
+          lat: response.data.start.coordinates[0],
+          lon: response.data.start.coordinates[1],
+          exclude: "hourly,current,minutely,alerts",
+        },
+      });
+      const covidRespons = await covid.get("", {
+        params: {
+          geometry: `${response.data.start.coordinates[1]},${response.data.start.coordinates[0]}`,
+        },
+      });
+      response.data.weatherData = weatherResponse.data;
+      // console.log(
+      //   `${response.data.start.coordinates[1]},${response.data.start.coordinates[0]}`
+      // );
+      // console.log(covidRespons.data);
+      response.data.covidData = covidRespons.data.features;
       return response.data;
     } catch (error) {
       console.log(error);

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   StyleSheet,
   View,
@@ -7,44 +7,14 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
+  Modal,
 } from "react-native";
-import { Text, Button } from "native-base";
+import { Text } from "native-base";
 import StarRating from "react-native-star-rating";
-import weather from "../api/weather";
-import { useNavigation } from "@react-navigation/native";
-import moment from "moment";
+import WeatherWidget from "./WeatherWidget";
+import CovidWidget from "./CovidWidget";
 
 const DetaiTabs = ({ trailData }) => {
-  const navigation = useNavigation();
-  const [weatherData, setWeatherData] = useState({});
-  let weatherContent;
-  const getWeaterData = async () => {
-    try {
-      const response = await weather.get("/onecall", {
-        params: {
-          // appid:trailData.weatherApiToken,
-          lat: trailData.start.coordinates[0],
-          lon: trailData.start.coordinates[1],
-          exclude: "hourly,minutely,alerts",
-        },
-      });
-      setWeatherData(response.data);
-    } catch (e) {
-      console.log(e.message);
-    }
-  };
-
-  useEffect(() => {
-    getWeaterData();
-  }, []);
-
-  // weatherContent =
-  //   JSON.stringify(weatherData) != "{}" ? (
-  //     weatherData.daily.map((item) => <Text>{new Date(item.dt)}</Text>)
-  //   ) : (
-  //     <Text>No Weather Data</Text>
-  //   );
-  // console.log(weatherData);
   return (
     <ScrollView nestedScrollEnabled>
       <View style={[styles.containermain]}>
@@ -81,10 +51,12 @@ const DetaiTabs = ({ trailData }) => {
             Location : {trailData.location}
           </Text>
         </View>
-        <View>{weatherContent}</View>
         <View style={styles.section3}>
           <Text>Description : {trailData.description}</Text>
         </View>
+        <CovidWidget data={trailData.covidData} />
+        <WeatherWidget data={trailData.weatherData} />
+        <Text style={styles.similarTrails}>Similar Trails : </Text>
         <ScrollView
           horizontal
           style={{ maxHeight: 275 }}
@@ -252,6 +224,11 @@ const styles = StyleSheet.create({
   rating: {
     height: 5,
     width: 10,
+  },
+  similarTrails: {
+    marginLeft: 5,
+    fontSize: 20,
+    fontWeight: "bold",
   },
 });
 
