@@ -127,6 +127,7 @@ const EventFlow = () => {
 };
 
 const MainTabFlow = () => {
+  const autFlag = useSelector((state) => state.user.isAuth);
   return (
     <Tab.Navigator
       initialRouteName="TrailFlow"
@@ -161,6 +162,11 @@ const MainTabFlow = () => {
       <Tab.Screen
         name="ProfileFlow"
         component={ProfileFlow}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            autFlag ? null : navigation.navigate("Signin");
+          },
+        })}
         options={{
           tabBarLabel: "Profile",
           tabBarIcon: ({ color, size }) => (

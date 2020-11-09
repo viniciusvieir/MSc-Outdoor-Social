@@ -27,7 +27,7 @@ export default axiso.create({
     returnQueryGeometry: "false",
     returnDistinctValues: "false",
     cacheHint: "false",
-    orderByFields: "TimeStamp DESC",
+    orderByFields: "TimeStamp",
     returnZ: "false",
     returnM: "false",
     returnExceededLimitFeatures: "true",
