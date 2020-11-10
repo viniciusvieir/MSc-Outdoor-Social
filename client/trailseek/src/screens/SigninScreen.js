@@ -54,7 +54,7 @@ const SigninScreen = ({ navigation }) => {
         {error && <Text style={{ color: "red" }}>{auth}</Text>}
         <View style={styles.containerhead}>
           <Image
-            source={require("../images/sublogo.png")}
+            source={require("../images/tslogov2.2grey.png")}
             resizeMode="contain"
             style={styles.image}
           ></Image>
