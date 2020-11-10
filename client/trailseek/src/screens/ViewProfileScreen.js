@@ -1,9 +1,12 @@
 import React, { useEffect } from "react";
-import { View, StyleSheet, Image } from "react-native";
+import { View, StyleSheet, Image, Platform } from "react-native";
 import { Text, Button } from "react-native-elements";
 import { useDispatch, useSelector } from "react-redux";
 import { logOut } from "../app/userSlice";
 import { CommonActions } from "@react-navigation/native";
+import NetInfo from "@react-native-community/netinfo";
+import ToastAlert from "../components/ToastAlert";
+
 
 const ViewProfileScreen = ({ navigation }) => {
   const isAuth = useSelector((state) => state.user.isAuth);
@@ -22,6 +25,31 @@ const ViewProfileScreen = ({ navigation }) => {
       console.log(e.message);
     }
   };
+
+
+
+  const checNet=()=>{
+    
+      // For Android devices
+      if (Platform.OS === "android") {
+        NetInfo.fetch().then(state => {
+          if(!state.isConnected){
+            ToastAlert("Please make sure your internet is connected.");
+          }else{
+            ToastAlert("Internet is connected.");
+          }
+        });
+      } else {
+        // // For iOS devices
+        // NetInfo.isConnected.addEventListener(
+        //   "connectionChange",
+        //   this.handleFirstConnectivityChange
+        // );
+        console.log("in iphone")
+
+      }
+
+  }
 
   return (
     <>
@@ -49,6 +77,7 @@ const ViewProfileScreen = ({ navigation }) => {
 
       {isAuth ? (
         <View style={styles.bottonbox}>
+          
           <Button
             title="Edit Profile"
             buttonStyle={styles.button}
