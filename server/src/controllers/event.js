@@ -1,4 +1,4 @@
-const { body, validationResult } = require('express-validator')
+const { query, body, validationResult } = require('express-validator')
 const { errorHandler } = require('../utils/error-handling')
 
 const Event = require('../models/event')
@@ -6,9 +6,11 @@ const Event = require('../models/event')
 class EventController {
   async events(req, res) {
     const { trailId } = req.params
+    const { fields } = req.query
+
     const events = await Event.find({
       trailId,
-    })
+    }).select(fields && fields.replace(/,|;/g, ' '))
 
     res.json(events)
   }
@@ -72,6 +74,7 @@ class EventController {
   // VALIDATION
   get validators() {
     return {
+      events: [query('fields').optional().isString()],
       createEvent: [
         body('title'),
         body('description'),

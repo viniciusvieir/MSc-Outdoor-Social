@@ -27,7 +27,11 @@ router.get(
 router.get('/trailsfix', trailController.trailsFix)
 
 // =============== EVENT ==============
-router.get('/trails/:trailId/events', eventController.events)
+router.get(
+  '/trails/:trailId/events',
+  eventController.validators.events,
+  eventController.events
+)
 router.post(
   '/trails/:trailId/events',
   verifyToken,
