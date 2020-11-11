@@ -22,7 +22,11 @@ const EventSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  maxParticipants: {
+  duration_min: {
+    type: Number,
+    required: true,
+  },
+  max_participants: {
     type: Number,
     required: true,
   },

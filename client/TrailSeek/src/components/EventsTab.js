@@ -5,18 +5,20 @@ import { useNavigation } from "@react-navigation/native";
 import ColorConstants from "../util/ColorConstants";
 
 const EventsTab = ({ trailData }) => {
+  // const [events] = useState([])
+
   const list = [
     {
-      name: "Event0",
-      subtitle: "Location",
+      name: 'Event0',
+      subtitle: 'Location',
     },
     {
-      name: "Event1",
-      subtitle: "Location",
+      name: 'Event1',
+      subtitle: 'Location',
     },
-  ];
+  ]
 
-  const navigation = useNavigation();
+  const navigation = useNavigation()
   return (
     <View
       style={{
@@ -68,4 +70,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EventsTab;
+export default EventsTab

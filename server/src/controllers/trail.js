@@ -66,6 +66,7 @@ class TrailController {
       .select((fields && fields.replace(/,|;/g, ' ')) || '-path')
       .lean()
 
+    // Parses path to client format
     if (trail && trail.path) {
       trail.path = trail.path.map((loc) => ({
         latitude: loc.coordinates[0],
@@ -73,6 +74,7 @@ class TrailController {
       }))
     }
 
+    // Finds recommended trails if fields include `recommended` attribute
     if (trail && fields && fields.includes('recommended')) {
       const script = new PythonShell('../Recommendation/similar-trails.py', {
         args: [id],
