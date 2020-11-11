@@ -3,6 +3,7 @@ const { promisify } = require('util')
 
 const { errorHandler } = require('../utils/error-handling')
 const JWT_SECRET = process.env.JWT_SECRET
+console.log(JWT_SECRET)
 
 const verifyToken = async (req, res, next) => {
   const bearerHeader = req.headers.authorization
@@ -19,7 +20,7 @@ const verifyToken = async (req, res, next) => {
     next()
   } catch (err) {
     console.log('JWT Error: ' + err.message)
-    return res.status(401).json(errorHandler(['Invalid token']))
+    res.status(401).json(errorHandler('Invalid token'))
   }
 }
 
