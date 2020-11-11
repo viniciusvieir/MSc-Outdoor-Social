@@ -102,21 +102,26 @@ export const getToken = createAsyncThunk("user/getToken", async () => {
   }
 });
 
-export const getLocation = createAsyncThunk("user/getLocation", async () => {
-  let location;
-  try {
-    let { status } = await Location.requestPermissionsAsync();
-    try {
-      if (status !== "granted") console.log("Acess to location was denied");
-      location = await Location.getCurrentPositionAsync({});
-    } catch (e) {
-      console.log(e);
+export const getLocation = createAsyncThunk(
+  "user/getLocation",
+  async (_, { getState }) => {
+    let location;
+    if (getState().user.userLocation.status != CONSTANTS.SUCCESS) {
+      try {
+        let { status } = await Location.requestPermissionsAsync();
+        try {
+          if (status !== "granted") console.log("Acess to location was denied");
+          location = await Location.getCurrentPositionAsync({});
+        } catch (e) {
+          console.log(e);
+        }
+        return location.coords;
+      } catch (e) {
+        console.log(e);
+      }
     }
-    return location.coords;
-  } catch (e) {
-    console.log(e);
   }
-});
+);
 
 export const userSlice = createSlice({
   name: "user",

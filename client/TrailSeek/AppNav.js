@@ -61,6 +61,7 @@ const ProfileFlow = () => {
 };
 
 const TrailFlow = () => {
+  const autFlag = useSelector((state) => state.user.isAuth);
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -105,7 +106,15 @@ const TrailFlow = () => {
           //   },
         })}
       />
-      <Stack.Screen name="CreateEvent" component={CreateEventScreen} />
+      <Stack.Screen
+        name="CreateEvent"
+        component={CreateEventScreen}
+        listeners={({ navigation }) => ({
+          focus: (e) => {
+            autFlag ? null : navigation.navigate("Signin");
+          },
+        })}
+      />
       <Stack.Screen name="ListEvent" component={ListEventScreen} />
     </Stack.Navigator>
   );
@@ -118,7 +127,11 @@ const EventFlow = () => {
         name="MyEvent"
         component={MyEventScreen}
         options={{
+          headerStyle: { backgroundColor: ColorConstants.Black },
           headerLeft: null,
+          headerTitleStyle: { color: ColorConstants.DWhite },
+          title: "My Events",
+          // headerTintColor: ColorConstants.Black,
         }}
       />
       <Stack.Screen name="ViewEvent" component={ViewEventScreen} />
@@ -155,6 +168,11 @@ const MainTabFlow = () => {
       <Tab.Screen
         name="EventFlow"
         component={EventFlow}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            autFlag ? null : navigation.navigate("Signin");
+          },
+        })}
         options={{
           tabBarLabel: "Events",
           tabBarIcon: ({ color, size }) => (
