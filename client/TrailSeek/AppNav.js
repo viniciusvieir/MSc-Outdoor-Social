@@ -9,6 +9,7 @@ import { AppLoading } from "expo";
 import { Root } from "native-base";
 import * as Font from "expo-font";
 
+import ColorConstants from "./src/util/ColorConstants";
 import { getToken } from "./src/app/userSlice";
 import CreateEventScreen from "./src/screens/CreateEventScreen";
 import ViewEventScreen from "./src/screens/ViewEventScreen";
@@ -132,7 +133,10 @@ const MainTabFlow = () => {
     <Tab.Navigator
       initialRouteName="TrailFlow"
       tabBarOptions={{
-        activeTintColor: "#e91e63",
+        activeTintColor: ColorConstants.Yellow,
+        inactiveTintColor: ColorConstants.White,
+        inactiveBackgroundColor: ColorConstants.Black,
+        activeBackgroundColor: ColorConstants.Black,
         tabStyle: {
           paddingTop: 8,
         },
@@ -143,7 +147,6 @@ const MainTabFlow = () => {
         component={TrailFlow}
         options={{
           tabBarLabel: "Explore",
-          // tabBarButton: props => <TouchableOpacity {...props} /> ,
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="search" size={24} color={color} />
           ),

@@ -4,7 +4,7 @@ export default axiso.create({
   baseURL:
     "https://services1.arcgis.com/eNO7HHeQ3rUcBllm/ArcGIS/rest/services/Covid19CountyStatisticsHPSCIreland/FeatureServer/0/query",
   params: {
-    where: "TimeStamp>=CURRENT_TIMESTAMP-14",
+    where: "TimeStamp>=CURRENT_TIMESTAMP-10",
     geometryType: "esriGeometryPoint",
     inSR: "4326",
     spatialRel: "esriSpatialRelWithin",

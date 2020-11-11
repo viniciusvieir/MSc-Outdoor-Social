@@ -12,6 +12,7 @@ import CONSTANTS from "../util/Constants";
 import DetailsTab from "../components/DetailsTab";
 import MapsTab from "../components/MapsTab";
 import EventsTab from "../components/EventsTab";
+import ColorConstants from "../util/ColorConstants";
 
 const ViewTrailScreen = ({ route }) => {
   const { id, showEvents } = route.params;
@@ -50,16 +51,37 @@ const ViewTrailScreen = ({ route }) => {
           height={230}
           titleStyle={styles.tilettlstyle}
         />
-        <Header hasTabs style={{ height: 0 }} />
+        <Header
+          hasTabs
+          style={{ height: 0 }}
+          androidStatusBarColor="#ffffff00"
+        />
 
-        <Tabs initialPage={showEvents ? 2 : 0} locked={true}>
-          <Tab heading="Details">
+        <Tabs
+          initialPage={showEvents ? 2 : 0}
+          locked={true}
+          // tabBarBackgroundColor={ColorConstants.LGreen}
+          // tabStyle={{ backgroundColor: ColorConstants.LGreen }}
+        >
+          <Tab
+            heading="Details"
+            tabStyle={{ backgroundColor: ColorConstants.Black }}
+            activeTabStyle={{ backgroundColor: ColorConstants.Black }}
+          >
             <DetailsTab trailData={trailData} />
           </Tab>
-          <Tab heading="Maps">
+          <Tab
+            heading="Maps"
+            tabStyle={{ backgroundColor: ColorConstants.Black }}
+            activeTabStyle={{ backgroundColor: ColorConstants.Black }}
+          >
             <MapsTab trailData={trailData} />
           </Tab>
-          <Tab heading="Events">
+          <Tab
+            heading="Events"
+            tabStyle={{ backgroundColor: ColorConstants.Black }}
+            activeTabStyle={{ backgroundColor: ColorConstants.Black }}
+          >
             <EventsTab />
           </Tab>
         </Tabs>
@@ -78,7 +100,11 @@ const ViewTrailScreen = ({ route }) => {
   ) {
     content = <Text>No Data</Text>;
   }
-  return <Container>{content}</Container>;
+  return (
+    <Container style={{ backgroundColor: ColorConstants.LGreen, flex: 1 }}>
+      {content}
+    </Container>
+  );
 };
 
 const styles = StyleSheet.create({

@@ -5,21 +5,21 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   FlatList,
-  Image,
   ScrollView,
+  Image,
+  Dimensions,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { unwrapResult } from "@reduxjs/toolkit";
-// import { Text } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 import StarRating from "react-native-star-rating";
-import { AntDesign } from "@expo/vector-icons";
 import { Col, Row, Grid } from "react-native-easy-grid";
-import { Button, Text, H1 } from "native-base";
+import { Button, Text, H1, Card, CardItem } from "native-base";
 
 import ToastAlert from "./ToastAlert";
 import { fetchTrailsByQuery } from "../app/trailSlice";
 import { getLocation } from "../app/userSlice";
+import ColorConstants from "../util/ColorConstants";
 
 const TrailCards = ({ getParams }) => {
   const { query, title } = getParams;
@@ -53,8 +53,18 @@ const TrailCards = ({ getParams }) => {
   }, [getParams]);
 
   let content = trails ? (
-    <View style={styles.card}>
-      <H1 style={styles.titleStyle}>{title}</H1>
+    <View style={{ backgroundColor: ColorConstants.LGreen }}>
+      <H1
+        style={{
+          backgroundColor: ColorConstants.LGreen,
+          color: ColorConstants.White,
+          marginLeft: 10,
+          marginVertical: 5,
+          fontWeight: "bold",
+        }}
+      >
+        {title}
+      </H1>
       <ScrollView showsHorizontalScrollIndicator={false}>
         <FlatList
           data={trails}
@@ -76,9 +86,14 @@ const TrailCards = ({ getParams }) => {
                   });
                 }}
               >
-                <Grid>
-                  {/* <View style={styles.listitem}> */}
-                  <Col>
+                <Card
+                  style={{
+                    width: Dimensions.get("screen").width - 20,
+                    alignSelf: "center",
+                    backgroundColor: ColorConstants.DWhite,
+                  }}
+                >
+                  <CardItem cardBody>
                     <Image
                       source={{ uri: item.img_url }}
                       style={styles.imageStyle}
@@ -86,15 +101,17 @@ const TrailCards = ({ getParams }) => {
                       resizeMethod="auto"
                       resizeMode="cover"
                     />
-                  </Col>
-                  <Col>
-                    <View style={styles.caption}>
-                      <Text style={styles.nameStyle}>{item.name}</Text>
-                      <View style={styles.rateloc}>
-                        <Text style={styles.locationStyle}>
-                          {item.location}
-                        </Text>
-                        <View style={{ width: 150 }}>
+                  </CardItem>
+                  <CardItem>
+                    <Grid>
+                      <Row>
+                        <Text style={styles.nameStyle}>{item.name}</Text>
+                      </Row>
+                      <Row>
+                        <Col size={3}>
+                          <Text>{item.location}</Text>
+                        </Col>
+                        <Col size={1}>
                           <StarRating
                             disabled={true}
                             emptyStar={"ios-star-outline"}
@@ -107,27 +124,29 @@ const TrailCards = ({ getParams }) => {
                             starSize={20}
                             starStyle={styles.rating}
                           />
-                        </View>
-                      </View>
-                    </View>
-                  </Col>
-                  {/* </View> */}
-                </Grid>
-                <Button
-                  block
-                  style={{ margin: 5 }}
-                  onPress={() => {
-                    navigation.navigate("ViewTrail", {
-                      id: item._id,
-                      name: item.name,
-                      showEvents: true,
-                    });
-                  }}
-                >
-                  <Text style={{ fontSize: 16, color: "white" }}>
-                    View Events
-                  </Text>
-                </Button>
+                        </Col>
+                      </Row>
+                    </Grid>
+                  </CardItem>
+                  <Button
+                    block
+                    style={{
+                      margin: 5,
+                      backgroundColor: ColorConstants.DGreen,
+                    }}
+                    onPress={() => {
+                      navigation.navigate("ViewTrail", {
+                        id: item._id,
+                        name: item.name,
+                        showEvents: true,
+                      });
+                    }}
+                  >
+                    <Text style={{ fontSize: 16, color: "white" }}>
+                      View Events
+                    </Text>
+                  </Button>
+                </Card>
               </TouchableOpacity>
             );
           }}
@@ -139,7 +158,9 @@ const TrailCards = ({ getParams }) => {
             onPress={() => {
               navigation.navigate("ListTrail", { getParams });
             }}
-            style={{ marginHorizontal: 5 }}
+            style={{
+              marginHorizontal: 5,
+            }}
           >
             <Text>View More</Text>
           </Button>
@@ -154,52 +175,16 @@ const TrailCards = ({ getParams }) => {
 };
 
 const styles = StyleSheet.create({
-  listitem: {
-    // flexShrink: 1,
-    borderRadius: 5,
-    marginBottom: 5,
-    marginTop: 5,
-  },
-  card: {
-    backgroundColor: "#fff",
-    marginTop: 8,
-    borderRadius: 8,
-  },
   imageStyle: {
-    borderRadius: 3,
-    width: 200,
-    height: 150,
-    marginBottom: 5,
-    marginLeft: 10,
+    width: null,
+    flex: 1,
+    height: 190,
   },
   nameStyle: {
     fontWeight: "800",
     fontSize: 18,
     flexShrink: 1,
-    marginLeft: 5,
     color: "#404040",
-  },
-  locationStyle: {
-    marginLeft: 5,
-    // width: 160,
-    color: "#666666",
-  },
-  titleStyle: {
-    marginLeft: 10,
-    color: "#395693",
-  },
-  caption: {
-    // width: 250,
-    marginLeft: 5,
-  },
-  rateloc: {
-    // flexDirection: "row",
-    // justifyContent: "space-between",
-  },
-  rating: {
-    height: 30,
-    width: 30,
-    alignContent: "flex-start",
   },
   viewMore: {
     padding: 15,

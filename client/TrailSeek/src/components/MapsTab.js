@@ -1,11 +1,12 @@
 import React from "react";
-import { StyleSheet, Linking, Platform, Dimensions } from "react-native";
+import { StyleSheet, Linking, Platform, Dimensions, View } from "react-native";
 import { Text, Button } from "native-base";
 import MapView, { Polyline } from "react-native-maps";
+import ColorConstants from "../util/ColorConstants";
 
 const MapsTab = ({ trailData }) => {
   return (
-    <>
+    <View style={{ backgroundColor: ColorConstants.LGreen }}>
       <MapView
         style={styles.mapStyle}
         initialRegion={{
@@ -39,12 +40,12 @@ const MapsTab = ({ trailData }) => {
 
           Linking.openURL(url);
         }}
-        full
-        style={{ margin: 5 }}
+        block
+        style={{ margin: 5, backgroundColor: ColorConstants.Yellow }}
       >
-        <Text>Navigate</Text>
+        <Text style={{ color: ColorConstants.Black }}>Navigate</Text>
       </Button>
-    </>
+    </View>
   );
 };
 
