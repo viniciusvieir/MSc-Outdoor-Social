@@ -6,6 +6,9 @@ import { logOut } from "../app/userSlice";
 import { CommonActions } from "@react-navigation/native";
 import NetInfo from "@react-native-community/netinfo";
 import ToastAlert from "../components/ToastAlert";
+import { AntDesign } from "@expo/vector-icons";
+import { Col, Row, Grid } from "react-native-easy-grid";
+import { Button, Text, H1 } from "native-base";
 
 
 const ViewProfileScreen = ({ navigation }) => {
@@ -53,7 +56,10 @@ const ViewProfileScreen = ({ navigation }) => {
 
   return (
     <>
+
       <View style={styles.databox}>
+      <View style={styles.card}><H1 style={styles.titleStyle}>{"User Profile"}</H1></View>
+
         <View style={styles.row}>
           <Text style={styles.attribute1}>NAME</Text>
           <Text style={styles.attribute}>DANISH</Text>
@@ -79,15 +85,17 @@ const ViewProfileScreen = ({ navigation }) => {
         <View style={styles.bottonbox}>
           
           <Button
-            title="Edit Profile"
-            buttonStyle={styles.button}
+            block
+            style={styles.button}
             onPress={() => {
               navigation.navigate("EditProfile");
             }}
-          />
+            >
+            <Text style={{ fontSize: 16, color: "white" }}>Edit Profile</Text>
+            </Button>
           <Button
-            title="Logout"
-            buttonStyle={styles.button}
+            block
+            style={styles.button}
             onPress={async () => {
               const res = await userLogout();
               console.log(res);
@@ -99,7 +107,9 @@ const ViewProfileScreen = ({ navigation }) => {
               );
               // navigation.navigate("Authentication");
             }}
-          />
+          >
+          <Text style={{ fontSize: 16, color: "white" }}>Logout</Text>
+          </Button>
         </View>
       ) : null}
     </>
@@ -107,9 +117,16 @@ const ViewProfileScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+
+  titleStyle:{
+    alignSelf: "center",
+    margin: 10,
+    padding: 10,
+
+  },
   databox: {
     backgroundColor: "#fff",
-    width: "100%",
+    width: "90%",
     alignSelf: "center",
     margin: 10,
     padding: 10,
@@ -123,13 +140,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   attribute1: {
-    width: "20%",
+    width: "30%",
   },
   attribute2: {
-    width: "80%",
+    width: "70%",
   },
   button: {
     margin: 10,
+    width: "90%",
+    alignSelf: "center",
+    color:"#fff",
   },
 });
 

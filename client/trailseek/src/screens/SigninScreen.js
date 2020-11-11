@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import { View, StyleSheet, TextInput, Image } from "react-native";
 import { Text, Button } from "react-native-elements";
 import { useSelector, useDispatch } from "react-redux";
-import { unwrapResult } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, unwrapResult } from "@reduxjs/toolkit";
 import { signIn } from "../app/userSlice";
 import ToastAlert from "../components/ToastAlert";
-import { useForm, Controller } from "react-hook-form";
-import { Toast } from "native-base";
+import {useForm, Controller} from "react-hook-form";
+import { color } from "react-native-reanimated";
+
 
 const SigninScreen = ({ navigation }) => {
   const [inputs, setInputs] = useState({});
@@ -27,7 +28,6 @@ const SigninScreen = ({ navigation }) => {
       const user = unwrapResult(res);
       setAuth(isAuth);
       navigation.navigate("MainTab");
-
       //clearing inputs object after login
       setInputs({});
     } catch (e) {
@@ -59,7 +59,7 @@ const SigninScreen = ({ navigation }) => {
         {error && <Text style={{ color: "red" }}>{auth}</Text>}
         <View style={styles.containerhead}>
           <Image
-            source={require("../images/sublogo.png")}
+            source={require("../images/tslogov2.2grey.png")}
             resizeMode="contain"
             style={styles.image}
           ></Image>
@@ -70,63 +70,61 @@ const SigninScreen = ({ navigation }) => {
           <Controller
             control={control}
             render={({ onChange, onBlur, value }) => (
-              <TextInput
+            <TextInput
                 style={styles.input}
                 onBlur={onBlur}
                 onChangeText={(value) => {
-                  onChange(value);
-                  inputsHandler(value, "email");
+                  onChange(value)
+                  inputsHandler(value, "email")
                 }}
                 value={value}
                 placeholder={"Email"}
-              />
+            />
             )}
             name="email"
             type="email"
             rules={{
-              required: { value: true, message: "Email is required" },
+              required: { value: true, message: 'Email is required' },
               pattern: {
                 value: EMAIL_REGEX,
-                message: "Not a valid email",
-              },
+                message: 'Not a valid email'
+              }
             }}
             defaultValue=""
           />
-          {errors.email && <Text>{errors?.email?.message}</Text>}
+          {errors.email && <Text style={styles.errstl}>{errors?.email?.message}</Text>}
 
           {/* Password */}
           <Controller
             control={control}
             render={({ onChange, onBlur, value }) => (
-              <TextInput
+            <TextInput
                 style={styles.input}
                 onBlur={onBlur}
                 // onChangeText={value => onChange(value)}
                 onChangeText={(value) => {
-                  onChange(value);
-                  inputsHandler(value, "password");
+                  onChange(value)
+                  inputsHandler(value, "password")
                 }}
                 value={value}
                 placeholder={"Password"}
                 secureTextEntry={true}
-              />
+
+            />
             )}
             name="password"
             type="password"
             rules={{
-              required: { value: true, message: "Password is required" },
+              required: { value: true, message: 'Password is required' },
             }}
             defaultValue=""
           />
-          {errors.password && <Text>{errors?.password?.message}</Text>}
+          {errors.password && <Text style={styles.errstl}>{errors?.password?.message}</Text>}
 
           <View style={styles.containerbuttons}>
-            <Button
-              onPress={handleSubmit(login)}
-              title="Login"
-              buttonStyle={styles.button}
-            />
 
+            <Button onPress={handleSubmit(login)} title="Login" buttonStyle={styles.button} />
+            
             <Button
               title={"Sign up"}
               onPress={() => navigation.navigate("Signup")}
@@ -199,6 +197,12 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 120,
     alignSelf: "center",
+  },
+
+  errstl:{
+    color:"red",
+    marginBottom:10,
+    width: "80%",
   },
 });
 
