@@ -9,7 +9,7 @@ const verifyToken = async (req, res, next) => {
   if (!bearerHeader)
     return res
       .status(401)
-      .json(errorHandler(['Authentication token not provided']))
+      .json(errorHandler(['Authorization token not provided']))
 
   const token = bearerHeader.split(' ')[1]
 

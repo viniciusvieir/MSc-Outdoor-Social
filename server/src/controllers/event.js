@@ -14,9 +14,19 @@ class EventController {
   }
 
   async createEvent(req, res) {
-    const { userId } = req.context
+    const errors = validationResult(req)
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() })
+
+    const { id: userId } = req.context
     const { trailId } = req.params
-    const { title, description, date, maxParticipants } = req.body
+    const {
+      title,
+      description,
+      date,
+      duration_min,
+      max_participants,
+    } = req.body
 
     const event = await Event.create({
       userId,
@@ -24,32 +34,52 @@ class EventController {
       title,
       description,
       date,
-      maxParticipants,
+      duration_min,
+      max_participants,
     })
 
     res.json({ eventId: event.id, success: true })
   }
 
   async updateEvent(req, res) {
-    const { userId } = req.context
+    const { id: userId } = req.context
     const { eventId } = req.params
-    const { title, description, date, maxParticipants } = req.body
+    const {
+      title,
+      description,
+      date,
+      duration_min,
+      max_participants,
+    } = req.body
 
     await Event.updateOne(
       { eventId },
-      { title, description, date, maxParticipants }
+      { title, description, date, duration_min, max_participants }
     )
 
     res.json({ success: true })
   }
 
   async deleteEvent(req, res) {
-    const { userId } = req.context
+    const { id: userId } = req.context
     const { eventId } = req.params
 
     await Event.deleteOne({ eventId })
 
     res.json({ success: true })
+  }
+
+  // VALIDATION
+  get validators() {
+    return {
+      createEvent: [
+        body('title'),
+        body('description'),
+        body('date').toDate(),
+        body('duration_min').isInt().toInt(),
+        body('max_participants').isInt().toInt(),
+      ],
+    }
   }
 }
 
