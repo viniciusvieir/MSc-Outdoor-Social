@@ -42,6 +42,7 @@ const MyEventScreen = ({ navigation }) => {
               onPress={() => {
                 navigation.navigate("ViewEvent");
               }}
+              noIndent
             >
               <Body>
                 <Text style={styles.listText}>{l.name}</Text>
