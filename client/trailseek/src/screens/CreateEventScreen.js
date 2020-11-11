@@ -6,11 +6,11 @@ import { signIn } from "../app/userSlice";
 import { useForm, Controller } from "react-hook-form";
 
 const CreateEventScreen = ({ route, navigation }) => {
-  const trailname = route.params.item.params.name;
+  const { trailName, trailID } = route.params;
   const userStatus = useSelector((state) => state.user.status);
   const error = useSelector((state) => state.user.error);
   const isAuth = useSelector((state) => state.user.isAuth);
-  const username = useSelector((state) => state.user.name);
+  const username = useSelector((state) => state.user.profile.name);
   const [inputs, setInput] = useState({});
 
   const inputsHandler = (e, field) => {
@@ -34,7 +34,7 @@ const CreateEventScreen = ({ route, navigation }) => {
         <View style={styles.infocontainer}>
           {
             <Text h5 style={styles.desc}>
-              Trail: {trailname}
+              Trail: {trailName}
             </Text>
           }
           {

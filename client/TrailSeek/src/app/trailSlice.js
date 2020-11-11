@@ -9,7 +9,10 @@ import CONSTANTS from "../util/Constants";
 const initialState = {
   trails: [],
   trailDetails: [],
-  filteredTrails: [],
+  filteredTrails: {
+    data: [],
+    query: {},
+  },
   status: CONSTANTS.IDLE,
   error: null,
   weatherData: {
@@ -46,7 +49,14 @@ export const fetchAllTrails = createAsyncThunk(
 export const fetchTrailsByQuery = createAsyncThunk(
   "trails/fetchTrailsByQuery",
   async (
-    { query = {}, limit = 10, location = false, maxDist = 5000, minDist = 0 },
+    {
+      query = {},
+      limit = 20,
+      skip = 0,
+      location = false,
+      maxDist = 10000,
+      minDist = 0,
+    },
     { rejectWithValue, getState }
   ) => {
     try {
@@ -71,9 +81,11 @@ export const fetchTrailsByQuery = createAsyncThunk(
         params: {
           q: JSON.stringify(query),
           limit,
+          skip,
+          fields: "name,avg_rating,location,img_url",
         },
       });
-      return response.data;
+      return { response: response.data, query };
     } catch (error) {
       console.log(error);
       return rejectWithValue(
@@ -185,7 +197,21 @@ export const trailSlice = createSlice({
     },
     [fetchTrailsByQuery.fulfilled]: (state, action) => {
       state.status = CONSTANTS.SUCCESS;
-      state.filteredTrails = Intersect(state.trails, action.payload);
+      // if (
+      //   JSON.stringify(state.filteredTrails.query) ===
+      //   JSON.stringify(action.payload.query)
+      // ) {
+      //   console.log("Same");
+      // const tempSet = new Set(state.filteredTrails.data);
+      // action.payload.response.forEach((item) => tempSet.add(item));
+
+      // state.filteredTrails.data = [tempSet];
+      // state.filteredTrails.data.push(action.payload.response);
+      // } else {
+      //   console.log("Different");
+      state.filteredTrails.query = action.payload.query;
+      state.filteredTrails.data = action.payload.response;
+      // }
     },
     [fetchTrailsByQuery.rejected]: (state, action) => {
       state.status = CONSTANTS.FAILED;
