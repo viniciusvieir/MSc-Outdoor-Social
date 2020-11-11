@@ -89,31 +89,42 @@ export const fetchTrailsByQuery = createAsyncThunk(
 
 export const fetchTrailsByID = createAsyncThunk(
   "trails/fetchTrailsByID",
-  async ({ fields, id }, { rejectWithValue, getState }) => {
+  async (
+    { fields, id, excludeWeather = "hourly,current,minutely,alerts" },
+    { rejectWithValue, getState }
+  ) => {
+    let weatherResponse;
+    let covidRespons;
     try {
       const existTrail = getState().trails.trailDetails.find(
         (item) => item._id === id
       );
       if (existTrail) return existTrail;
       const response = await trailSeek.get(`/trails/${id}?fields=${fields}`);
-      const weatherResponse = await weather.get("/onecall", {
-        params: {
-          // appid:trailData.weatherApiToken,
-          lat: response.data.start.coordinates[0],
-          lon: response.data.start.coordinates[1],
-          exclude: "hourly,current,minutely,alerts",
-        },
-      });
-      const covidRespons = await covid.get("", {
-        params: {
-          geometry: `${response.data.start.coordinates[1]},${response.data.start.coordinates[0]}`,
-        },
-      });
+      try {
+        weatherResponse = await weather.get("/onecall", {
+          params: {
+            // appid:trailData.weatherApiToken,
+            lat: response.data.start.coordinates[0],
+            lon: response.data.start.coordinates[1],
+            exclude: excludeWeather,
+          },
+        });
+      } catch (e) {
+        console.log("Weather API Error");
+        console.log(e.response.data.message);
+      }
+      try {
+        covidRespons = await covid.get("", {
+          params: {
+            geometry: `${response.data.start.coordinates[1]},${response.data.start.coordinates[0]}`,
+          },
+        });
+      } catch (e) {
+        console.log("Covid API Error");
+        console.log(e.response.data.message);
+      }
       response.data.weatherData = weatherResponse.data;
-      // console.log(
-      //   `${response.data.start.coordinates[1]},${response.data.start.coordinates[0]}`
-      // );
-      // console.log(covidRespons.data);
       response.data.covidData = covidRespons.data.features;
       return response.data;
     } catch (error) {

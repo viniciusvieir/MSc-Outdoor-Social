@@ -7,28 +7,33 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
-  Modal,
 } from "react-native";
-import { Text } from "native-base";
+import { Text, CardItem, Card } from "native-base";
 import StarRating from "react-native-star-rating";
+import { Col, Row, Grid } from "react-native-easy-grid";
+import { useNavigation } from "@react-navigation/native";
+import moment from "moment";
+
 import WeatherWidget from "./WeatherWidget";
 import CovidWidget from "./CovidWidget";
+import ColorConstants from "../util/ColorConstants";
 
 const DetaiTabs = ({ trailData }) => {
+  const navigation = useNavigation();
   return (
-    <ScrollView nestedScrollEnabled>
-      <View style={[styles.containermain]}>
-        <View style={styles.section2}>
-          <Text style={[styles.section2element1]}>
-            Difficulty : {trailData.difficulty}-
-          </Text>
-          <Text style={styles.section2element1}>
-            Length : {trailData.length_km}
-          </Text>
-          <Text style={styles.section2element1}>
-            Est Time : {trailData.estimate_time_min}
-          </Text>
-          <View style={[styles.section2element1]}>
+    <ScrollView style={{ backgroundColor: ColorConstants.LGreen, flex: 1 }}>
+      <Grid style={{ backgroundColor: ColorConstants.LGreen, margin: 10 }}>
+        <Row>
+          <Col size={2}>
+            <Text style={styles.textInfoLabel}>Difficulty</Text>
+            <Text style={styles.textInfo}>{trailData.difficulty}</Text>
+          </Col>
+          <Col size={2}>
+            <Text style={styles.textInfoLabel}>Length</Text>
+            <Text style={styles.textInfo}>{trailData.length_km} km</Text>
+          </Col>
+          <Col size={3}>
+            <Text style={styles.textInfoLabel}>Rating</Text>
             <StarRating
               style={styles.section2element1}
               disabled={true}
@@ -39,196 +44,173 @@ const DetaiTabs = ({ trailData }) => {
               maxStars={5}
               rating={trailData.avg_rating}
               fullStarColor={"gold"}
-              starSize={20}
+              starSize={30}
             />
-          </View>
-        </View>
-        <View style={styles.section2}>
-          <Text style={[styles.section2element2]}>
-            Activity : {trailData.activity_type}
+          </Col>
+        </Row>
+
+        <Row style={{ marginVertical: 10 }}>
+          <Col size={1}>
+            <Text style={styles.textInfoLabel}>Activity</Text>
+            <Text style={styles.textInfo}>{trailData.activity_type}</Text>
+          </Col>
+          <Col size={1}>
+            <Text style={styles.textInfoLabel}>Est Time</Text>
+            <Text style={styles.textInfo}>
+              {moment
+                .utc()
+                .startOf("day")
+                .add({ minutes: trailData.estimate_time_min })
+                .format("H:mm")}
+            </Text>
+          </Col>
+          <Col size={3}>
+            <Text style={styles.textInfoLabel}>Location</Text>
+            <Text style={styles.textInfo}>{trailData.location}</Text>
+          </Col>
+        </Row>
+        <View
+          style={{
+            marginBottom: 5,
+            borderBottomColor: ColorConstants.White,
+            borderBottomWidth: 1,
+          }}
+        />
+        <Row>
+          <Text style={styles.textInfoLabel}>Description</Text>
+        </Row>
+        <Row>
+          <Text style={styles.textInfoDescription}>
+            {trailData.description}
           </Text>
-          <Text style={[styles.section2element3]}>
-            Location : {trailData.location}
-          </Text>
-        </View>
-        <View style={styles.section3}>
-          <Text>Description : {trailData.description}</Text>
-        </View>
-        <CovidWidget data={trailData.covidData} />
-        <WeatherWidget data={trailData.weatherData} />
-        <Text style={styles.similarTrails}>Similar Trails : </Text>
-        <ScrollView
-          horizontal
-          style={{ maxHeight: 275 }}
-          showsHorizontalScrollIndicator={false}
+        </Row>
+        <View
+          style={{
+            marginVertical: 10,
+            borderBottomColor: ColorConstants.White,
+            borderBottomWidth: 1,
+          }}
+        />
+        <Row>
+          <CovidWidget data={trailData.covidData} />
+        </Row>
+        <View
+          style={{
+            marginVertical: 10,
+            borderBottomColor: ColorConstants.White,
+            borderBottomWidth: 1,
+          }}
+        />
+        <Row>
+          <WeatherWidget data={trailData.weatherData} />
+        </Row>
+      </Grid>
+      <View
+        style={{
+          margin: 10,
+          borderBottomColor: ColorConstants.White,
+          borderBottomWidth: 1,
+        }}
+      />
+      <Text style={styles.similarTrails}>Similar Trails : </Text>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        nestedScrollEnabled
+      >
+        <FlatList
           nestedScrollEnabled
-        >
-          <FlatList
-            nestedScrollEnabled
-            horizontal
-            data={trailData.recommended}
-            keyExtractor={(trails) => {
-              return trails._id;
-            }}
-            renderItem={({ item }) => {
-              return (
-                <TouchableOpacity
-                  onPress={() => {
-                    navigation.push("ViewTrail", {
-                      id: item._id,
-                      name: item.name,
-                    });
+          horizontal
+          data={trailData.recommended}
+          keyExtractor={(trails) => {
+            return trails._id;
+          }}
+          renderItem={({ item }) => {
+            return (
+              <View style={{ flex: 1 }}>
+                <Card
+                  style={{
+                    width: 250,
+                    marginLeft: 10,
+                    backgroundColor: ColorConstants.DWhite,
                   }}
                 >
-                  <View style={styles.listitem}>
-                    <Image
-                      source={{ uri: item.img_url }}
-                      style={styles.imageStyle}
-                      PlaceholderContent={<ActivityIndicator />}
-                      resizeMethod="auto"
-                      resizeMode="cover"
-                    />
-                    <View style={styles.caption}>
-                      <Text style={styles.nameStyle}>{item.name}</Text>
-                      <View style={styles.rateloc}>
-                        <Text style={styles.locationStyle}>
-                          {item.location}
-                        </Text>
-                        <StarRating
-                          disabled={true}
-                          emptyStar={"ios-star-outline"}
-                          fullStar={"ios-star"}
-                          halfStar={"ios-star-half"}
-                          iconSet={"Ionicons"}
-                          maxStars={5}
-                          rating={item.avg_rating}
-                          fullStarColor={"gold"}
-                          starSize={20}
-                        />
-                      </View>
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              );
-            }}
-          />
-        </ScrollView>
-      </View>
+                  <TouchableOpacity
+                    onPress={() => {
+                      navigation.push("ViewTrail", {
+                        id: item._id,
+                        name: item.name,
+                      });
+                    }}
+                  >
+                    <CardItem cardBody>
+                      <Image
+                        source={{ uri: item.img_url }}
+                        style={styles.imageStyle}
+                        PlaceholderContent={<ActivityIndicator />}
+                        resizeMethod="auto"
+                        resizeMode="cover"
+                      />
+                    </CardItem>
+                    <CardItem
+                      style={{ backgroundColor: ColorConstants.DWhite }}
+                    >
+                      <Grid>
+                        <Col size={4}>
+                          <Text>{item.name}</Text>
+                        </Col>
+                        <Col size={2}>
+                          <StarRating
+                            disabled={true}
+                            emptyStar={"ios-star-outline"}
+                            fullStar={"ios-star"}
+                            halfStar={"ios-star-half"}
+                            iconSet={"Ionicons"}
+                            maxStars={5}
+                            rating={item.avg_rating}
+                            fullStarColor={"gold"}
+                            starSize={16}
+                          />
+                        </Col>
+                      </Grid>
+                    </CardItem>
+                  </TouchableOpacity>
+                </Card>
+              </View>
+            );
+          }}
+        />
+      </ScrollView>
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  section2: {
-    flexDirection: "row",
-    margin: 10,
-    backgroundColor: "#ffffff",
-    borderRadius: 5,
+  textInfo: {
+    color: ColorConstants.DWhite,
+    fontSize: 25,
+    // fontWeight: "900",
   },
-  section2element1: {
-    flex: 1,
-    padding: 2,
-    margin: 5,
-    fontWeight: "bold",
-    color: "#979aad",
+  textInfoLabel: {
+    fontSize: 12,
+    color: ColorConstants.DWhite,
   },
-  section2element2: {
-    flex: 1,
-    padding: 2,
-    margin: 5,
-    fontWeight: "bold",
-    color: "#979aad",
+  textInfoDescription: {
+    color: ColorConstants.DWhite,
+    fontSize: 15,
+    // fontWeight: "900",
   },
-  section2element3: {
-    flex: 2,
-    padding: 2,
-    margin: 2,
-    fontWeight: "bold",
-    color: "#979aad",
-  },
-  ratinglbl: {
-    backgroundColor: "#000",
-    borderRadius: 5,
-    // alignItems:"center"
-  },
-  section3: {
-    margin: 10,
-    backgroundColor: "#fff",
-    borderRadius: 5,
-    padding: 5,
-  },
-  section3top: {
-    flexDirection: "row",
-  },
-  containermain: {
-    backgroundColor: "#ecf0f1",
-  },
-  flex1: {
-    flex: 1,
-  },
-  flex2: {
-    flex: 2,
-  },
-  btnsection: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  btnsubsection: {
-    flex: 1,
-    margin: 5,
-  },
-  listitem: {
-    flexShrink: 1,
-    borderRadius: 5,
-    marginBottom: 5,
-    marginTop: 5,
-  },
-  card: {
-    backgroundColor: "#fff",
-    marginTop: 8,
-    borderRadius: 8,
-  },
+
   imageStyle: {
-    borderRadius: 3,
-    width: 250,
-    height: 175,
-    marginBottom: 5,
-    marginLeft: 10,
-  },
-  nameStyle: {
-    fontWeight: "800",
-    fontSize: 18,
-    flexShrink: 1,
-    marginLeft: 5,
-    color: "#404040",
-  },
-  locationStyle: {
-    marginLeft: 5,
-    width: 160,
-    color: "#666666",
-  },
-  titleStyle: {
-    marginLeft: 10,
-    color: "#395693",
-  },
-  caption: {
-    width: 250,
-    marginLeft: 5,
-  },
-  rateloc: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  rating: {
-    height: 5,
-    width: 10,
+    width: null,
+    flex: 1,
+    height: 150,
   },
   similarTrails: {
-    marginLeft: 5,
+    marginLeft: 10,
     fontSize: 20,
     fontWeight: "bold",
+    color: ColorConstants.DWhite,
   },
 });
 

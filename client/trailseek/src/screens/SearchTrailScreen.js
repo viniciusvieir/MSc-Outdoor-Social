@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
+import { StyleSheet, ScrollView } from "react-native";
 import { SearchBar } from "react-native-elements";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -19,6 +19,7 @@ import LoadSpinner from "../components/LoadSpinner";
 import ToastAlert from "../components/ToastAlert";
 import TrailCard from "../components/TrailCards";
 import CONSTANTS from "../util/Constants";
+import ColorConstants from "../util/ColorConstants";
 
 const SearchTrailScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -95,29 +96,30 @@ const SearchTrailScreen = ({ navigation }) => {
   }
 
   return (
-    <Container>
-      <Header transparent>
+    <Container style={{ backgroundColor: ColorConstants.LGreen }}>
+      <Header transparent androidStatusBarColor="#ffffff00">
         <Body>
-          <Title style={{ color: "black", fontWeight: "bold", fontSize: 40 }}>
+          <Title
+            style={{
+              color: ColorConstants.White,
+              fontWeight: "bold",
+              fontSize: 40,
+            }}
+          >
             {" "}
             Hi! {user ? user : "User"}
           </Title>
         </Body>
-        {/* <H1 style={{ fontWeight: "bold", fontSize: 40 }}>
-         
-        </H1> */}
       </Header>
-
       <LoadSpinner visible={spinner} />
-
       <SearchBar
         containerStyle={styles.searchbar}
-        lightTheme={true}
         placeholder="Search"
         value={searchTerm}
         onChangeText={(text) => {
           setSearchTerm(text);
         }}
+        inputContainerStyle={{ height: 35, marginLeft: 3 }}
         autoCapitalize="none"
         platform="android"
         autoCompleteType="name"
@@ -126,14 +128,16 @@ const SearchTrailScreen = ({ navigation }) => {
           navigation.navigate("ListTrail", { query: searchParam.query });
         }}
       />
-
-      <ScrollView horizontal style={{ marginTop: 10, maxHeight: 50 }}>
+      <ScrollView
+        horizontal
+        style={{ marginTop: 10, maxHeight: 50, marginLeft: 10 }}
+      >
         <Button
           rounded
           onPress={() => setParams(bestParams)}
           style={styles.filterButtons}
         >
-          <Text>Best Rated</Text>
+          <Text style={styles.filterButtonsText}>Best Rated</Text>
         </Button>
         <Button
           rounded
@@ -142,7 +146,7 @@ const SearchTrailScreen = ({ navigation }) => {
             setParams(easyParams);
           }}
         >
-          <Text>Easy Trails</Text>
+          <Text style={styles.filterButtonsText}>Easy Trails</Text>
         </Button>
         <Button
           rounded
@@ -151,50 +155,28 @@ const SearchTrailScreen = ({ navigation }) => {
             setParams(nearMe);
           }}
         >
-          <Text>Near You</Text>
+          <Text style={styles.filterButtonsText}>Near You</Text>
         </Button>
       </ScrollView>
       <Content>
-        <View style={styles.container}>
-          <ScrollView>
-            {/* <TrailCard getParams={nearMe} location={true} /> */}
-            <TrailCard getParams={params} />
-            {/* <TrailCard getParams={bestParams} /> */}
-          </ScrollView>
-        </View>
+        <TrailCard getParams={params} />
       </Content>
     </Container>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#ecf0f1",
-    width: "100%",
-    // alignItems: "center",
-    // marginTop: 30,
-  },
-  subcontainer: {
-    flex: 1,
-    backgroundColor: "#ecf0f1",
-    width: "90%",
-  },
-  texth3: {
-    fontSize: 30,
-    fontWeight: "bold",
-    textAlign: "center",
-    width: "80%",
-    alignSelf: "center",
-  },
   searchbar: {
-    borderColor: "grey",
-    borderWidth: 1,
-    borderRadius: 10,
-    marginHorizontal: 2,
+    borderRadius: 20,
+    marginHorizontal: 10,
+    height: 50,
   },
   filterButtons: {
-    marginHorizontal: 5,
+    marginHorizontal: 3,
+    backgroundColor: ColorConstants.Yellow,
+  },
+  filterButtonsText: {
+    color: ColorConstants.Black2,
   },
 });
 

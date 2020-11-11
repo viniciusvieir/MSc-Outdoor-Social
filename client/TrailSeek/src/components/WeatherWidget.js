@@ -1,20 +1,23 @@
 import React from "react";
-import { StyleSheet, Image, FlatList } from "react-native";
+import { StyleSheet, Image, FlatList, View } from "react-native";
 import { Grid, Col, Row, Text } from "native-base";
 import moment from "moment";
+import ColorConstants from "../util/ColorConstants";
 
 const WeatherWidget = ({ data }) => {
   const day = (dt) => {
-    const day = moment(dt * 1000).format("ddd");
-    return <Text style={styles.bold}>{day.toUpperCase()}</Text>;
+    const day = moment(dt * 1000)
+      .format("ddd")
+      .toString();
+    return day;
   };
 
   const date = (dt) => {
-    const date = moment(dt * 1000).format("DD/MM");
-    return <Text>{date}</Text>;
+    const date = moment(dt * 1000)
+      .format("DD/MM")
+      .toString();
+    return date;
   };
-
-  //   console.log(data);
 
   return (
     <FlatList
@@ -23,25 +26,68 @@ const WeatherWidget = ({ data }) => {
       keyExtractor={(itemW) => {
         itemW.dt;
       }}
+      showsHorizontalScrollIndicator={false}
       renderItem={({ item }) => {
         return (
-          <Grid>
-            <Row>{day(item.dt)}</Row>
-            <Row>{date(item.dt)}</Row>
-            <Row>
-              <Image
-                style={{ width: 80, height: 80 }}
-                source={{
-                  uri: `http://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`,
+          <View
+            style={{
+              borderRadius: 10,
+              backgroundColor: "#ffffff70",
+              marginHorizontal: 5,
+            }}
+          >
+            <Grid>
+              <Row
+                style={{
+                  alignItems: "center",
+                  flex: 1,
+                  justifyContent: "center",
+                  marginTop: 5,
                 }}
-              />
-            </Row>
-            <Row>
-              <Text>
-                {Math.ceil(item.temp.max)}° - {Math.floor(item.temp.min)}°
-              </Text>
-            </Row>
-          </Grid>
+              >
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontWeight: "bold",
+                    color: ColorConstants.DWhite,
+                  }}
+                >
+                  {day(item.dt)}
+                </Text>
+              </Row>
+              <Row
+                style={{
+                  alignItems: "center",
+                  flex: 1,
+                  justifyContent: "center",
+                }}
+              >
+                <Text style={{ color: ColorConstants.DWhite }}>
+                  {date(item.dt)}
+                </Text>
+              </Row>
+              <Row>
+                <Image
+                  style={{ width: 80, height: 80 }}
+                  source={{
+                    uri: `http://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`,
+                  }}
+                />
+              </Row>
+              <Row
+                style={{
+                  alignItems: "center",
+                  flex: 1,
+                  justifyContent: "center",
+                  marginBottom: 5,
+                }}
+              >
+                <Text style={{ color: ColorConstants.DWhite }}>
+                  {Math.ceil(item.temp.max)}° - {Math.floor(item.temp.min)}°
+                </Text>
+              </Row>
+            </Grid>
+          </View>
         );
       }}
     />
