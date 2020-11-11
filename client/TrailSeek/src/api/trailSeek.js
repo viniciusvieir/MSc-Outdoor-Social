@@ -1,5 +1,5 @@
-import axiso from 'axios';
+import axios from 'axios'
 
-export default axiso.create({
-    baseURL:'https://api.trailseek.eu/v1'
-});
+export default axios.create({
+  baseURL: 'https://api.trailseek.eu/v1',
+})

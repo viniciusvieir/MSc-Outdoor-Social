@@ -5,6 +5,8 @@ import { useNavigation } from "@react-navigation/native";
 import ColorConstants from "../util/ColorConstants";
 
 const EventsTab = ({ trailData }) => {
+  // const [events] = useState([])
+
   const list = [
     {
       name: "Event0",

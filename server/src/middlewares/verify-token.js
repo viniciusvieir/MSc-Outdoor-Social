@@ -9,9 +9,10 @@ const verifyToken = async (req, res, next) => {
   if (!bearerHeader)
     return res
       .status(401)
-      .json(errorHandler(['Authentication token not provided']))
+      .json(errorHandler(['Authorization token not provided']))
 
   const token = bearerHeader.split(' ')[1]
+  console.log(token)
 
   try {
     const decoded = await promisify(JWT.verify)(token, JWT_SECRET)
@@ -19,7 +20,7 @@ const verifyToken = async (req, res, next) => {
     next()
   } catch (err) {
     console.log('JWT Error: ' + err.message)
-    return res.status(401).json(errorHandler(['Invalid token']))
+    res.status(401).json(errorHandler('Invalid token'))
   }
 }
 
