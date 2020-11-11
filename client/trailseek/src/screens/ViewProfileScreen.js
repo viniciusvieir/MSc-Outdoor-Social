@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { View, StyleSheet, Image, Platform } from "react-native";
-import { Text, Button } from "react-native-elements";
 import { useDispatch, useSelector } from "react-redux";
 import { logOut } from "../app/userSlice";
 import { CommonActions } from "@react-navigation/native";
@@ -9,7 +8,6 @@ import ToastAlert from "../components/ToastAlert";
 import { AntDesign } from "@expo/vector-icons";
 import { Col, Row, Grid } from "react-native-easy-grid";
 import { Button, Text, H1 } from "native-base";
-
 
 const ViewProfileScreen = ({ navigation }) => {
   const isAuth = useSelector((state) => state.user.isAuth);
@@ -29,36 +27,32 @@ const ViewProfileScreen = ({ navigation }) => {
     }
   };
 
-
-
-  const checNet=()=>{
-    
-      // For Android devices
-      if (Platform.OS === "android") {
-        NetInfo.fetch().then(state => {
-          if(!state.isConnected){
-            ToastAlert("Please make sure your internet is connected.");
-          }else{
-            ToastAlert("Internet is connected.");
-          }
-        });
-      } else {
-        // // For iOS devices
-        // NetInfo.isConnected.addEventListener(
-        //   "connectionChange",
-        //   this.handleFirstConnectivityChange
-        // );
-        console.log("in iphone")
-
-      }
-
-  }
+  const checNet = () => {
+    // For Android devices
+    if (Platform.OS === "android") {
+      NetInfo.fetch().then((state) => {
+        if (!state.isConnected) {
+          ToastAlert("Please make sure your internet is connected.");
+        } else {
+          ToastAlert("Internet is connected.");
+        }
+      });
+    } else {
+      // // For iOS devices
+      // NetInfo.isConnected.addEventListener(
+      //   "connectionChange",
+      //   this.handleFirstConnectivityChange
+      // );
+      console.log("in iphone");
+    }
+  };
 
   return (
     <>
-
       <View style={styles.databox}>
-      <View style={styles.card}><H1 style={styles.titleStyle}>{"User Profile"}</H1></View>
+        <View style={styles.card}>
+          <H1 style={styles.titleStyle}>{"User Profile"}</H1>
+        </View>
 
         <View style={styles.row}>
           <Text style={styles.attribute1}>NAME</Text>
@@ -83,16 +77,15 @@ const ViewProfileScreen = ({ navigation }) => {
 
       {isAuth ? (
         <View style={styles.bottonbox}>
-          
           <Button
             block
             style={styles.button}
             onPress={() => {
               navigation.navigate("EditProfile");
             }}
-            >
+          >
             <Text style={{ fontSize: 16, color: "white" }}>Edit Profile</Text>
-            </Button>
+          </Button>
           <Button
             block
             style={styles.button}
@@ -108,7 +101,7 @@ const ViewProfileScreen = ({ navigation }) => {
               // navigation.navigate("Authentication");
             }}
           >
-          <Text style={{ fontSize: 16, color: "white" }}>Logout</Text>
+            <Text style={{ fontSize: 16, color: "white" }}>Logout</Text>
           </Button>
         </View>
       ) : null}
@@ -117,12 +110,10 @@ const ViewProfileScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-
-  titleStyle:{
+  titleStyle: {
     alignSelf: "center",
     margin: 10,
     padding: 10,
-
   },
   databox: {
     backgroundColor: "#fff",
@@ -149,7 +140,7 @@ const styles = StyleSheet.create({
     margin: 10,
     width: "90%",
     alignSelf: "center",
-    color:"#fff",
+    color: "#fff",
   },
 });
 
