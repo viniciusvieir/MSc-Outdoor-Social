@@ -1,29 +1,31 @@
-import React from "react";
-import { StyleSheet } from "react-native";
-import { Text, Button } from "native-base";
-import { useNavigation } from "@react-navigation/native";
-import { ListItem } from "react-native-elements";
+import React, { useEffect, useState } from 'react'
+import { StyleSheet } from 'react-native'
+import { Text, Button } from 'native-base'
+import { useNavigation } from '@react-navigation/native'
+import { ListItem } from 'react-native-elements'
 
 const EventsTab = ({ trailData }) => {
+  // const [events] = useState([])
+
   const list = [
     {
-      name: "Event0",
-      subtitle: "Location",
+      name: 'Event0',
+      subtitle: 'Location',
     },
     {
-      name: "Event1",
-      subtitle: "Location",
+      name: 'Event1',
+      subtitle: 'Location',
     },
-  ];
+  ]
 
-  const navigation = useNavigation();
+  const navigation = useNavigation()
   return (
     <>
       <Button
         onPress={() => {
-          navigation.navigate("TrailFlow", {
-            screen: "CreateEvent",
-          });
+          navigation.navigate('TrailFlow', {
+            screen: 'CreateEvent',
+          })
         }}
         full
         style={{ margin: 5 }}
@@ -36,7 +38,7 @@ const EventsTab = ({ trailData }) => {
           key={i}
           bottomDivider
           onPress={() => {
-            navigation.navigate("EventFlow", { screen: "ViewEvent" });
+            navigation.navigate('EventFlow', { screen: 'ViewEvent' })
           }}
         >
           <ListItem.Content>
@@ -53,9 +55,9 @@ const EventsTab = ({ trailData }) => {
         <Text>Join Events</Text>
       </Button> */}
     </>
-  );
-};
+  )
+}
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({})
 
-export default EventsTab;
+export default EventsTab
