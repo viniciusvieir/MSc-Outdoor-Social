@@ -1,6 +1,7 @@
 const { query, body, validationResult } = require('express-validator')
 const { errorHandler } = require('../utils/error-handling')
 
+const Trail = require('../models/trail')
 const Event = require('../models/event')
 
 class EventController {
@@ -30,13 +31,16 @@ class EventController {
       max_participants,
     } = req.body
 
+    const trail = await Trail.findById(trailId).select('estimate_time_min')
+    if (!trail) return res.status(403).json(errorHandler('Trail not found'))
+
     const event = await Event.create({
       userId,
       trailId,
       title,
       description,
       date,
-      duration_min,
+      duration_min: duration_min || trail.estimate_time_min,
       max_participants,
     })
 
@@ -79,7 +83,7 @@ class EventController {
         body('title'),
         body('description'),
         body('date').toDate(),
-        body('duration_min').isInt().toInt(),
+        body('duration_min').optional().isInt().toInt(),
         body('max_participants').isInt().toInt(),
       ],
     }
