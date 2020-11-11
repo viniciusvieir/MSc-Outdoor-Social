@@ -3,6 +3,7 @@ const router = require('express').Router()
 const verifyToken = require('../middlewares/verify-token').verifyToken
 
 const authController = require('../controllers/auth')
+const userController = require('../controllers/user')
 const trailController = require('../controllers/trail')
 const eventController = require('../controllers/event')
 
@@ -12,6 +13,9 @@ const eventController = require('../controllers/event')
 router.post('/signin', authController.validators.signIn, authController.signIn)
 router.post('/signup', authController.validators.signUp, authController.signUp)
 router.get('/privateRoute', verifyToken, authController.privateRoute)
+
+// =============== USER ===============
+router.post('/user', verifyToken, userController.changeUserInfo)
 
 // =============== TRAIL ==============
 router.get('/trails', trailController.validators.trails, trailController.trails)

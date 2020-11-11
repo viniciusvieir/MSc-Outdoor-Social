@@ -1,18 +1,18 @@
-import React from "react";
-import { View, StyleSheet } from "react-native";
-import { Text, Button, ListItem } from "react-native-elements";
+import React from 'react'
+import { View, StyleSheet } from 'react-native'
+import { Text, Button, ListItem } from 'react-native-elements'
 
 const ListEventScreen = ({ navigation }) => {
   const list = [
     {
-      name: "Event0",
-      subtitle: "Location",
+      name: 'Event - TEST',
+      subtitle: 'Location',
     },
     {
-      name: "Event1",
-      subtitle: "Location",
+      name: 'Event1',
+      subtitle: 'Location',
     },
-  ];
+  ]
   return (
     <>
       <Text h3>ListEventScreen</Text>
@@ -22,7 +22,7 @@ const ListEventScreen = ({ navigation }) => {
           key={i}
           bottomDivider
           onPress={() => {
-            navigation.navigate("ViewEvent");
+            navigation.navigate('ViewEvent')
           }}
         >
           <ListItem.Content>
@@ -32,9 +32,9 @@ const ListEventScreen = ({ navigation }) => {
         </ListItem>
       ))}
     </>
-  );
-};
+  )
+}
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({})
 
-export default ListEventScreen;
+export default ListEventScreen
