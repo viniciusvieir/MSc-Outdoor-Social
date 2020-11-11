@@ -21,7 +21,10 @@ import ColorConstants from "../util/ColorConstants";
 const DetaiTabs = ({ trailData }) => {
   const navigation = useNavigation();
   return (
-    <ScrollView style={{ backgroundColor: ColorConstants.LGreen, flex: 1 }}>
+    <ScrollView
+      style={{ backgroundColor: ColorConstants.LGreen, flex: 1 }}
+      nestedScrollEnabled
+    >
       <Grid style={{ backgroundColor: ColorConstants.LGreen, margin: 10 }}>
         <Row>
           <Col size={2}>
@@ -35,7 +38,6 @@ const DetaiTabs = ({ trailData }) => {
           <Col size={3}>
             <Text style={styles.textInfoLabel}>Rating</Text>
             <StarRating
-              style={styles.section2element1}
               disabled={true}
               emptyStar={"ios-star-outline"}
               fullStar={"ios-star"}
@@ -189,7 +191,6 @@ const styles = StyleSheet.create({
   textInfo: {
     color: ColorConstants.DWhite,
     fontSize: 25,
-    // fontWeight: "900",
   },
   textInfoLabel: {
     fontSize: 12,
@@ -198,7 +199,6 @@ const styles = StyleSheet.create({
   textInfoDescription: {
     color: ColorConstants.DWhite,
     fontSize: 15,
-    // fontWeight: "900",
   },
 
   imageStyle: {

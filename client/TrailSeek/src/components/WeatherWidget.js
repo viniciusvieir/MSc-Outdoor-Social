@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, Image, FlatList, View } from "react-native";
-import { Grid, Col, Row, Text } from "native-base";
+import { Grid, Row, Text } from "native-base";
 import moment from "moment";
 import ColorConstants from "../util/ColorConstants";
 
@@ -24,8 +24,9 @@ const WeatherWidget = ({ data }) => {
       horizontal
       data={data.daily}
       keyExtractor={(itemW) => {
-        itemW.dt;
+        return itemW.dt.toString();
       }}
+      nestedScrollEnabled
       showsHorizontalScrollIndicator={false}
       renderItem={({ item }) => {
         return (

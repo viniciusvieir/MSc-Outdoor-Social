@@ -85,10 +85,10 @@ const CovidWidget = ({ data }) => {
                 decimalPlaces: 0, // optional, defaults to 2dp
                 color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
                 labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                style: {
-                  // borderRadius: 10,
-                  // height: 200,
-                },
+                // style: {
+                //   // borderRadius: 10,
+                //   // height: 200,
+                // },
                 propsForDots: {
                   r: "1",
                   strokeWidth: "1",
