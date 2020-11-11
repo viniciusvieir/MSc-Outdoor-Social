@@ -3,7 +3,6 @@ const { promisify } = require('util')
 
 const { errorHandler } = require('../utils/error-handling')
 const JWT_SECRET = process.env.JWT_SECRET
-console.log(JWT_SECRET)
 
 const verifyToken = async (req, res, next) => {
   const bearerHeader = req.headers.authorization
@@ -13,6 +12,7 @@ const verifyToken = async (req, res, next) => {
       .json(errorHandler(['Authorization token not provided']))
 
   const token = bearerHeader.split(' ')[1]
+  console.log(token)
 
   try {
     const decoded = await promisify(JWT.verify)(token, JWT_SECRET)
