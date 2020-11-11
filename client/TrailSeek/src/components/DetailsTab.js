@@ -17,6 +17,7 @@ import moment from "moment";
 import WeatherWidget from "./WeatherWidget";
 import CovidWidget from "./CovidWidget";
 import ColorConstants from "../util/ColorConstants";
+import NoData from "./NoData";
 
 const DetaiTabs = ({ trailData }) => {
   const navigation = useNavigation();
@@ -121,6 +122,7 @@ const DetaiTabs = ({ trailData }) => {
         nestedScrollEnabled
       >
         <FlatList
+          ListEmptyComponent={<NoData />}
           nestedScrollEnabled
           horizontal
           data={trailData.recommended}

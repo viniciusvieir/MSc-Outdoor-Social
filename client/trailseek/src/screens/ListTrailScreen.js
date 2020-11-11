@@ -28,7 +28,7 @@ const ListTrailScreen = ({ route }) => {
       try {
         const results = await dispatch(fetchTrailsByQuery({ query, limit }));
         const uResults = unwrapResult(results);
-        setFilteredTrails(uResults);
+        setFilteredTrails(uResults.response);
       } catch (e) {
         ToastAlert(e.message);
         ToastAlert(error);

@@ -82,7 +82,7 @@ const ViewTrailScreen = ({ route }) => {
             tabStyle={{ backgroundColor: ColorConstants.Black }}
             activeTabStyle={{ backgroundColor: ColorConstants.Black }}
           >
-            <EventsTab />
+            <EventsTab trailData={trailData} />
           </Tab>
         </Tabs>
         <LoadSpinner visible={spinner} />

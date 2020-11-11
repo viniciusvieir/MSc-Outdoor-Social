@@ -3,6 +3,7 @@ import { StyleSheet, Image, FlatList, View } from "react-native";
 import { Grid, Row, Text } from "native-base";
 import moment from "moment";
 import ColorConstants from "../util/ColorConstants";
+import NoData from "./NoData";
 
 const WeatherWidget = ({ data }) => {
   const day = (dt) => {
@@ -21,6 +22,7 @@ const WeatherWidget = ({ data }) => {
 
   return (
     <FlatList
+      ListEmptyComponent={<NoData />}
       horizontal
       data={data.daily}
       keyExtractor={(itemW) => {
