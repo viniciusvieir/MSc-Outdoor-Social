@@ -10,6 +10,15 @@ const TrailSchema = new mongoose.Schema({
     required: true,
     index: 'text',
   },
+  description: {
+    type: String,
+    required: true,
+  },
+  activity_type: {
+    type: String,
+    required: true,
+    index: true,
+  },
   location: {
     type: String,
     required: true,
@@ -28,16 +37,7 @@ const TrailSchema = new mongoose.Schema({
     type: Number,
     required: false,
   },
-  description: {
-    type: String,
-    required: true,
-  },
-  activity_type: {
-    type: String,
-    required: true,
-    index: true,
-  },
-  elevationGain_ft: {
+  elevation_gain_ft: {
     type: Number,
     required: false,
   },

@@ -81,6 +81,8 @@ class User extends Model {
       token,
       name: this.name,
       email: this.email,
+      dob: this.dob,
+      gender: this.gender,
     }
   }
 }

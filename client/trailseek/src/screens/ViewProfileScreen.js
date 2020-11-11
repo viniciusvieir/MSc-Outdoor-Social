@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { View, StyleSheet, Image, Platform } from "react-native";
-// import { Text } from "react-native-elements";
+import { Text, Button } from "react-native-elements";
 import { useDispatch, useSelector } from "react-redux";
 import { logOut } from "../app/userSlice";
 import { CommonActions } from "@react-navigation/native";
@@ -117,6 +117,7 @@ const ViewProfileScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+
   titleStyle:{
     alignSelf: "center",
     margin: 10,

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { View, StyleSheet, TextInput, Image } from "react-native";
 import { Text, Button } from "react-native-elements";
 import { useSelector, useDispatch } from "react-redux";
@@ -7,6 +7,7 @@ import { signIn } from "../app/userSlice";
 import ToastAlert from "../components/ToastAlert";
 import {useForm, Controller} from "react-hook-form";
 import { color } from "react-native-reanimated";
+
 
 const SigninScreen = ({ navigation }) => {
   const [inputs, setInputs] = useState({});
@@ -27,17 +28,22 @@ const SigninScreen = ({ navigation }) => {
       const user = unwrapResult(res);
       setAuth(isAuth);
       navigation.navigate("MainTab");
-      
       //clearing inputs object after login
-      [inputs, setInputs] = useState({});
-      
+      setInputs({});
     } catch (e) {
-      console.log(error)
-      ToastAlert(error);
+      Toast.show({
+        text: error,
+        buttonText: "Okay",
+        type: "danger",
+        duration: 3000,
+      });
+      console.log(e.message);
+      console.log(error);
+      // ToastAlert(error);
     }
   };
 
-  const {register, control, handleSubmit, errors } = useForm();
+  const { register, control, handleSubmit, errors } = useForm();
 
   // const onSubmit = data => {
   //   inputsHandler(data.email, "email")
@@ -46,7 +52,6 @@ const SigninScreen = ({ navigation }) => {
   // }
 
   const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
 
   return (
     <>
@@ -61,7 +66,6 @@ const SigninScreen = ({ navigation }) => {
         </View>
 
         <View style={styles.containerform}>
-
           {/* Email */}
           <Controller
             control={control}
@@ -105,6 +109,7 @@ const SigninScreen = ({ navigation }) => {
                 value={value}
                 placeholder={"Password"}
                 secureTextEntry={true}
+
             />
             )}
             name="password"

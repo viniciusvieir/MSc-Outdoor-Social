@@ -154,6 +154,37 @@ const styles = StyleSheet.create({
     },
 
 
+const styles = StyleSheet.create({
+  maincontainer: {
+    flex: 1,
+    backgroundColor: "#ecf0f1",
+  },
+  mapcontainer: {
+    backgroundColor: "#ffffff",
+    margin: 5,
+    padding: 5,
+    borderRadius: 5,
+  },
+  infocontainer: {
+    backgroundColor: "#ffffff",
+    margin: 5,
+    padding: 5,
+    borderRadius: 5,
+  },
+  formcontainer: {
+    backgroundColor: "#ffffff",
+    margin: 5,
+    padding: 5,
+    borderRadius: 5,
+  },
+
+  input: {
+    height: 44,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "black",
+    marginBottom: 10,
+  },
 });
 
 export default CreateEventScreen;

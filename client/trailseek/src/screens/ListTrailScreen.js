@@ -3,13 +3,12 @@ import { ScrollView, StyleSheet } from "react-native";
 import { ListItem, Text } from "react-native-elements";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
-import ToastAlert from "../components/ToastAlert";
-// import Toast from "react-native-simple-toast";
+import { unwrapResult } from "@reduxjs/toolkit";
 
-// import trailSeek from '../api/trailSeek';
-// import {Intersect} from '../util/Intersect';
+import ToastAlert from "../components/ToastAlert";
 import LoadSpinner from "../components/LoadSpinner";
 import { fetchTrailsByQuery } from "../app/trailSlice";
+import CONSTANTS from "../util/Constants";
 
 const ListTrailScreen = ({ route }) => {
   const { query } = route.params;
@@ -19,22 +18,36 @@ const ListTrailScreen = ({ route }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
+  const [filteredTrails, setFilteredTrails] = useState([]);
+
   const trailStatus = useSelector((state) => state.trails.status);
   const error = useSelector((state) => state.trails.error);
 
   useEffect(() => {
+    const getTrailsByQuery = async () => {
+      try {
+        const results = await dispatch(fetchTrailsByQuery({ query, limit }));
+        const uResults = unwrapResult(results);
+        setFilteredTrails(uResults);
+      } catch (e) {
+        ToastAlert(e.message);
+        ToastAlert(error);
+      }
+    };
+    getTrailsByQuery();
+  }, []);
+
+  useEffect(() => {
     dispatch(fetchTrailsByQuery({ query, limit }));
   }, []);
-  const filteredTrails = useSelector((state) => state.trails.filteredTrails);
 
-  if (trailStatus === "loading") {
+  if (trailStatus === CONSTANTS.LOADING) {
     spinner = true;
-  } else if (trailStatus === "failed") {
+  } else if (trailStatus === CONSTANTS.FAILED) {
     spinner = false;
     ToastAlert(error);
-    // Toast.show(error, Toast.LONG);
     content = <Text>{error}</Text>;
-  } else if (trailStatus === "succeeded") {
+  } else if (trailStatus === CONSTANTS.SUCCESS) {
     spinner = false;
     content =
       filteredTrails.length > 0 ? (
@@ -56,7 +69,6 @@ const ListTrailScreen = ({ route }) => {
         <Text>No Results</Text>
       );
   }
-  // data.length===0?spinner=true:spinner=false
   return (
     <ScrollView>
       <LoadSpinner visible={spinner} />
