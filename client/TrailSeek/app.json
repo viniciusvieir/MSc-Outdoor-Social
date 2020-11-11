@@ -6,9 +6,9 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
-      "image": "./src/images/tslogo.png",
+      "image": "./src/images/tslogov2.3.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#007060"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
