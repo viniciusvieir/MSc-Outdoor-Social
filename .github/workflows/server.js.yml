@@ -10,6 +10,7 @@ on:
     paths:
       - 'Recommendation/**'
       - 'server/**'
+      - '.github/workflows/**'
 
 jobs:
   serverUpdate:
