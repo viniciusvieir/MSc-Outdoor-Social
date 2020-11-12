@@ -6,7 +6,7 @@ name: Server CI
 on:
   push:
     branches:
-      - master
+      - D16129083
     paths:
       - 'Recommendation/**'
       - 'server/**'
