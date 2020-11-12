@@ -80,9 +80,7 @@ class EventController {
   async deleteEvent(req, res) {
     const { id: userId } = req.context
     const { eventId } = req.params
-
     await Event.deleteOne({ eventId })
-
     res.json({ success: true })
   }
 

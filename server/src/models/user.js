@@ -77,8 +77,6 @@ class User extends Model {
       expiresIn: '28d',
     })
 
-    console.log(JWT_SECRET)
-
     return {
       token,
       name: this.name,
