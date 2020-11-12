@@ -3,6 +3,7 @@ const { errorHandler } = require('../utils/error-handling')
 
 const Trail = require('../models/trail')
 const Event = require('../models/event')
+const User = require('../models/user')
 
 class EventController {
   async events(req, res) {
@@ -13,8 +14,10 @@ class EventController {
       trailId,
     }).lean()
 
+    const user = await User.findByPk(events.userId, { attributes: ['name'] })
+
     events.forEach((event) => {
-      event.subtitle = `${event.date} ${event.duration_min} ${event.max_participants}`
+      event.subtitle = `${event.date} • ${event.duration_min} • ${event.max_participants} • ${user.name}`
     })
 
     res.json(events)
