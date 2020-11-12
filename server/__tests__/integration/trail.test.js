@@ -35,7 +35,6 @@ describe('Trails', () => {
       .then(() => console.log('MongoDB disconected...'))
   })
 
-  // ####### /trails
   it('should get trails', async () => {
     const response = await supertest(app).get('/trails')
     expect(response.body.length).toBeGreaterThan(0)
@@ -70,7 +69,6 @@ describe('Trails', () => {
     expect(response.body).toHaveProperty('errors')
   })
 
-  // ####### /trails/:id
   it('should get trail by id', async () => {
     const response = await supertest(app).get(`/trails/${id}`)
     expect(response.body.name).toBe('Howth Loop Trail')
@@ -103,4 +101,11 @@ describe('Trails', () => {
     const response = await supertest(app).get(`/trails/${id}?fields=path`)
     expect(response.body.path.length).toBeGreaterThan(0)
   })
+
+  // it('should return recommended trails', async () => {
+  //   const response = await supertest(app).get(
+  //     `/trails/${id}?fields=recommended`
+  //   )
+  //   expect(response.body).toHaveProperty('recommended')
+  // })
 })

@@ -4,14 +4,14 @@ const { errorHandler } = require('../utils/error-handling')
 const User = require('../models/user')
 
 class UserController {
-  async user(res, req) {
+  async user(req, res) {
     const user = await User.findByPk(req.context.id, {
       attributes: ['id', 'name', 'dob', 'gender', 'email'],
     })
     res.json(user)
   }
 
-  async changeUserInfo(res, req) {
+  async changeUserInfo(req, res) {
     // const errors = validationResult(req)
     // if (!errors.isEmpty())
     //   return res.status(400).json({ errors: errors.array() })
@@ -19,8 +19,6 @@ class UserController {
     const { id } = req.context
 
     const user = await User.findByPk(id)
-
-    if (!user) return res.status(401).json(errorHandler(['User not found']))
 
     return user
       .update(req.body)
