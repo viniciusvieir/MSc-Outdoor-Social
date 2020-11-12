@@ -4,6 +4,13 @@ const { errorHandler } = require('../utils/error-handling')
 const User = require('../models/user')
 
 class UserController {
+  async user(res, req) {
+    const user = await User.findByPk(req.context.id, {
+      attributes: ['id', 'name', 'dob', 'gender', 'email'],
+    })
+    res.json(user)
+  }
+
   async changeUserInfo(res, req) {
     // const errors = validationResult(req)
     // if (!errors.isEmpty())
