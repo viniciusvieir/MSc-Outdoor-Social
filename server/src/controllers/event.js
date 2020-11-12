@@ -14,11 +14,15 @@ class EventController {
       trailId,
     }).lean()
 
-    const user = await User.findByPk(events.userId, { attributes: ['name'] })
-
-    events.forEach((event) => {
-      event.subtitle = `${event.date} • ${event.duration_min} • ${event.max_participants} • ${user.name}`
-    })
+    // for (let i = 0; i < events.length; i++) {
+    //   console.log(events[i].userId)
+    //   const user = await User.findByPk(events[i].userId, {
+    //     attributes: ['name'],
+    //   })
+    //   events[
+    //     i
+    //   ].subtitle = `${events[0].date} • ${events[0].duration_min} • ${events[0].max_participants} • ${user.name}`
+    // }
 
     res.json(events)
   }
