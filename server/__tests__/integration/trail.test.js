@@ -17,7 +17,7 @@ describe('Trails', () => {
           : 'test.env',
     })
 
-    const url = `mongodb://${process.env.MONGO_READER_USER}:${process.env.MONGO_READER_PASS}@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_COLLECTION}`
+    const url = `mongodb://${process.env.MONGO_DEV_USER}:${process.env.MONGO_DEV_PASS}@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_COLLECTION}`
     await mongoose
       .connect(url, {
         useNewUrlParser: true,
