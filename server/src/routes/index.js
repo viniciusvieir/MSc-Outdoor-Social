@@ -15,6 +15,7 @@ router.post('/signup', authController.validators.signUp, authController.signUp)
 router.get('/privateRoute', verifyToken, authController.privateRoute)
 
 // =============== USER ===============
+router.get('/user', verifyToken, userController.user)
 router.post('/user', verifyToken, userController.changeUserInfo)
 
 // =============== TRAIL ==============
