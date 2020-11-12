@@ -12,6 +12,8 @@ const verifyToken = async (req, res, next) => {
       .json(errorHandler(['Authorization token not provided']))
 
   const token = bearerHeader.split(' ')[1]
+  console.log(token)
+  console.log(JWT_SECRET)
 
   try {
     const decoded = await promisify(JWT.verify)(token, JWT_SECRET)
