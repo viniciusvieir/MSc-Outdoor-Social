@@ -17,7 +17,7 @@ describe('Trails', () => {
           : 'test.env',
     })
 
-    const url = `mongodb://${process.env.MONGO_READER_USER}:${process.env.MONGO_READER_PASS}@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_COLLECTION}`
+    const url = `mongodb://${process.env.MONGO_DEV_USER}:${process.env.MONGO_DEV_PASS}@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_COLLECTION}`
     await mongoose
       .connect(url, {
         useNewUrlParser: true,
@@ -35,7 +35,6 @@ describe('Trails', () => {
       .then(() => console.log('MongoDB disconected...'))
   })
 
-  // ####### /trails
   it('should get trails', async () => {
     const response = await supertest(app).get('/trails')
     expect(response.body.length).toBeGreaterThan(0)
@@ -70,7 +69,13 @@ describe('Trails', () => {
     expect(response.body).toHaveProperty('errors')
   })
 
-  // ####### /trails/:id
+  it('should return trails close to a location', async () => {
+    const response = await supertest(app).get(
+      `/trails?q={"near":{"lat":53.285268,"lon":-6.239517}}&fields=name`
+    )
+    expect(response.body.length).toBeGreaterThan(0)
+  })
+
   it('should get trail by id', async () => {
     const response = await supertest(app).get(`/trails/${id}`)
     expect(response.body.name).toBe('Howth Loop Trail')
@@ -103,4 +108,11 @@ describe('Trails', () => {
     const response = await supertest(app).get(`/trails/${id}?fields=path`)
     expect(response.body.path.length).toBeGreaterThan(0)
   })
+
+  // it('should return recommended trails', async () => {
+  //   const response = await supertest(app).get(
+  //     `/trails/${id}?fields=recommended`
+  //   )
+  //   expect(response.body).toHaveProperty('recommended')
+  // })
 })

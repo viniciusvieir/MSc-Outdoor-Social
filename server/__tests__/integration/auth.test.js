@@ -10,7 +10,7 @@ describe('Authentication', () => {
     await sequelize.sync({ force: true })
 
     let users = []
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 10; i++) {
       users.push({
         name: faker.name.findName(),
         dob: faker.date.past(),
@@ -99,20 +99,57 @@ describe('Authentication', () => {
       password: 'authentication',
     })
     const response = await supertest(app)
-      .get('/privateRoute')
-      .set('Authorization', `bearer ${login.body.token}`)
-    expect(response.body).toHaveProperty('success')
+      .get('/user')
+      .set('Authorization', `Bearer ${login.body.token}`)
+    expect(response.body).toHaveProperty('id')
   })
 
   it('should not be able to access private routes without bearer token', async () => {
-    const response = await supertest(app).get('/privateRoute')
+    const response = await supertest(app).get('/user')
     expect(response.body).toHaveProperty('errors')
   })
 
   it('should not be able to access private routes with custom tokens', async () => {
     const response = await supertest(app)
-      .get('/privateRoute')
-      .set('Authorization', `bearer random_token`)
+      .get('/user')
+      .set('Authorization', `Bearer random_token`)
     expect(response.body).toHaveProperty('errors')
+  })
+
+  it('should be able to get user information', async () => {
+    const signUpResponse = await supertest(app).post('/signup').send({
+      email: faker.internet.email(),
+      password: faker.internet.password(),
+      name: faker.name.findName(),
+      gender: 'M',
+    })
+
+    const token = signUpResponse.body.token
+    const userResponse = await supertest(app)
+      .get('/user')
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(userResponse.body).toHaveProperty('id')
+    expect(userResponse.body).toHaveProperty('name')
+    expect(userResponse.body).toHaveProperty('email')
+    expect(userResponse.body).toHaveProperty('dob')
+  })
+
+  it('should be able to change user name', async () => {
+    const signUpResponse = await supertest(app).post('/signup').send({
+      email: faker.internet.email(),
+      password: faker.internet.password(),
+      name: faker.name.findName(),
+      gender: 'M',
+    })
+
+    const token = signUpResponse.body.token
+    const userResponse = await supertest(app)
+      .post('/user')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        name: faker.name.findName(),
+      })
+    expect(userResponse.body).toHaveProperty('success')
   })
 })
