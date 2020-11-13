@@ -4,7 +4,7 @@ import pandas as pd
 import pymongo
 
 ## Connect to database:
-client = pymongo.MongoClient("mongodb://dev:hCLXZs76ubCXk8ZS@trailseek.eu:27017/trailseek")
+client = pymongo.MongoClient("#####")
 db = client['trailseek']
 db['user_rating'].drop()
 collection = db['user_rating']
