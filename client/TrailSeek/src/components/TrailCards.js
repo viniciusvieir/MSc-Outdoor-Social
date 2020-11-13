@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react'
 import {
   View,
   StyleSheet,
@@ -7,45 +7,53 @@ import {
   FlatList,
   Image,
   Dimensions,
-} from "react-native";
+} from 'react-native'
 
-import { useNavigation } from "@react-navigation/native";
-import StarRating from "react-native-star-rating";
-import { Col, Row, Grid } from "react-native-easy-grid";
-import { Button, Text, H1, Card, CardItem } from "native-base";
+import { Entypo } from '@expo/vector-icons'
+import { FontAwesome5 } from '@expo/vector-icons'
 
-import ColorConstants from "../util/ColorConstants";
-import NoData from "./NoData";
+import { useNavigation } from '@react-navigation/native'
+import StarRating from 'react-native-star-rating'
+import { Col, Row, Grid } from 'react-native-easy-grid'
+import {
+  Button,
+  Text,
+  H3,
+  Card,
+  CardItem,
+  Left,
+  Right,
+  Icon,
+} from 'native-base'
 
-const TrailCards = ({ title, trails, fetchMoreData, filter }) => {
-  const navigation = useNavigation();
+import ColorConstants from '../util/ColorConstants'
+import NoData from './NoData'
+import Constants from '../util/Constants'
+
+const TrailCards = ({ trails, fetchMoreData, filter }) => {
+  const navigation = useNavigation()
 
   let content = trails ? (
-    <View style={{ backgroundColor: ColorConstants.LGreen, flex: 1 }}>
-      <H1
-        style={{
-          backgroundColor: ColorConstants.LGreen,
-          color: ColorConstants.White,
-          marginLeft: 10,
-          marginVertical: 5,
-          fontWeight: "bold",
-        }}
-      >
-        {title}
-      </H1>
+    <View style={{ flex: 1 }}>
       <FlatList
-        ListEmptyComponent={<NoData />}
+        style={{
+          paddingTop: 20,
+          paddingBottom: 20,
+          paddingHorizontal: Constants.POINTS.marginHorizontal,
+          // backgroundColor: '#f1f1f1',
+        }}
+        ListEmptyComponent={<NoData type={'funny'} />}
         // initialNumToRender={10}
         data={trails}
         keyExtractor={(trails) => {
-          return trails._id;
+          return trails._id
         }}
         ListFooterComponent={
           trails.length >= 10 ? (
             <Button
               block
               onPress={() => {
-                navigation.navigate("ListTrail", { filter });
+                navigation.navigate('ListTrail', { filter })
               }}
               style={{
                 margin: 5,
@@ -62,27 +70,21 @@ const TrailCards = ({ title, trails, fetchMoreData, filter }) => {
           return (
             <TouchableOpacity
               onPress={() => {
-                navigation.navigate("ViewTrail", {
+                navigation.navigate('ViewTrail', {
                   id: item._id,
                   name: item.name,
                   showEvents: false,
-                });
+                })
               }}
             >
-              <Card
-                style={{
-                  width: Dimensions.get("screen").width - 20,
-                  alignSelf: "center",
-                  backgroundColor: ColorConstants.DWhite,
-                }}
-              >
+              <Card>
                 <CardItem cardBody>
                   <Image
                     source={{ uri: item.img_url }}
                     style={styles.imageStyle}
                     PlaceholderContent={<ActivityIndicator />}
-                    resizeMethod="auto"
-                    resizeMode="cover"
+                    resizeMethod='auto'
+                    resizeMode='cover'
                   />
                 </CardItem>
                 <CardItem>
@@ -91,71 +93,81 @@ const TrailCards = ({ title, trails, fetchMoreData, filter }) => {
                       <Text style={styles.nameStyle}>{item.name}</Text>
                     </Row>
                     <Row>
-                      <Col size={3}>
-                        <Text>{item.location}</Text>
-                      </Col>
-                      <Col size={1}>
-                        <StarRating
-                          disabled={true}
-                          emptyStar={"ios-star-outline"}
-                          fullStar={"ios-star"}
-                          halfStar={"ios-star-half"}
-                          iconSet={"Ionicons"}
-                          maxStars={5}
-                          rating={item.avg_rating}
-                          fullStarColor={"gold"}
-                          starSize={20}
-                          starStyle={styles.rating}
-                        />
-                      </Col>
+                      <Entypo name='location-pin' size={16} color='gray' />
+                      <Text style={{ fontSize: 14 }}>{item.location}</Text>
                     </Row>
                   </Grid>
                 </CardItem>
-                <Button
-                  block
-                  style={{
-                    margin: 5,
-                    backgroundColor: ColorConstants.DGreen,
-                  }}
-                  onPress={() => {
-                    navigation.navigate("ViewTrail", {
-                      id: item._id,
-                      name: item.name,
-                      showEvents: true,
-                    });
-                  }}
-                >
-                  <Text style={{ fontSize: 16, color: "white" }}>
-                    View Events
-                  </Text>
-                </Button>
+
+                <CardItem bordered footer>
+                  <Left>
+                    <StarRating
+                      disabled={true}
+                      emptyStar={'ios-star-outline'}
+                      fullStar={'ios-star'}
+                      halfStar={'ios-star-half'}
+                      iconSet={'Ionicons'}
+                      maxStars={5}
+                      rating={item.avg_rating}
+                      fullStarColor={'gold'}
+                      starSize={24}
+                      starStyle={styles.rating}
+                    />
+                  </Left>
+                  <Right>
+                    <Button
+                      transparent
+                      onPress={() => {
+                        navigation.navigate('ViewTrail', {
+                          id: item._id,
+                          name: item.name,
+                          showEvents: true,
+                        })
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          color: ColorConstants.primary,
+                        }}
+                      >
+                        2 outings happening
+                      </Text>
+                      <FontAwesome5
+                        name='arrow-right'
+                        size={16}
+                        color={ColorConstants.primary}
+                      />
+                    </Button>
+                  </Right>
+                </CardItem>
               </Card>
             </TouchableOpacity>
-          );
+          )
         }}
       />
     </View>
-  ) : null;
-  return content;
-};
+  ) : null
+  return content
+}
 
 const styles = StyleSheet.create({
   imageStyle: {
     width: null,
     flex: 1,
-    height: 190,
+    height: 180,
   },
   nameStyle: {
-    fontWeight: "800",
-    fontSize: 18,
+    fontWeight: '800',
+    fontSize: 16,
     flexShrink: 1,
-    color: "#404040",
+    color: '#404040',
   },
   viewMore: {
     padding: 15,
-    justifyContent: "center",
+    justifyContent: 'center',
     marginLeft: 5,
   },
-});
+})
 
-export default TrailCards;
+export default TrailCards
