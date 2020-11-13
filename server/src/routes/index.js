@@ -41,6 +41,7 @@ router.post(
 router.put(
   '/trails/:trailId/events/:eventId',
   verifyToken,
+  eventController.validators.updateEvent,
   eventController.updateEvent
 )
 router.delete(

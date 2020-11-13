@@ -69,6 +69,13 @@ describe('Trails', () => {
     expect(response.body).toHaveProperty('errors')
   })
 
+  it('should return trails close to a location', async () => {
+    const response = await supertest(app).get(
+      `/trails?q={"near":{"lat":53.285268,"lon":-6.239517}}&fields=name`
+    )
+    expect(response.body.length).toBeGreaterThan(0)
+  })
+
   it('should get trail by id', async () => {
     const response = await supertest(app).get(`/trails/${id}`)
     expect(response.body.name).toBe('Howth Loop Trail')

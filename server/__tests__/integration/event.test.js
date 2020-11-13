@@ -8,6 +8,8 @@ const app = require('../../src/app')
 const supertest = require('supertest')
 const faker = require('faker')
 
+const trailId = '5fa17e268f4d258042edf4b6'
+
 describe('Trails', () => {
   beforeAll(async () => {
     require('dotenv').config({
@@ -38,9 +40,7 @@ describe('Trails', () => {
   })
 
   it('should get a list of events', async () => {
-    const response = await supertest(app).get(
-      '/trails/5fa17e268f4d258042edf4da/events'
-    )
+    const response = await supertest(app).get(`/trails/${trailId}/events`)
     expect(response.body.length).toBeGreaterThan(0)
   })
 
@@ -52,7 +52,7 @@ describe('Trails', () => {
       gender: 'M',
     })
     const response = await supertest(app)
-      .post('/trails/5fa17e268f4d258042edf4b6/events')
+      .post(`/trails/${trailId}/events`)
       .set('Authorization', `Bearer ${signUpResponse.body.token}`)
       .send({
         title: faker.lorem.words(2),
@@ -62,9 +62,7 @@ describe('Trails', () => {
         max_participants: 10,
       })
     await supertest(app)
-      .delete(
-        '/trails/5fa17e268f4d258042edf4b6/events/' + response.body.eventId
-      )
+      .delete(`/trails/${trailId}/events/${response.body.eventId}`)
       .set('Authorization', `Bearer ${signUpResponse.body.token}`)
 
     expect(response.body.success).toBe(true)
@@ -78,7 +76,7 @@ describe('Trails', () => {
       gender: 'M',
     })
     const response = await supertest(app)
-      .post('/trails/5fa17e26bf8d258042edf4be/events')
+      .post(`/trails/${trailId}/events`)
       .set('Authorization', `Bearer ${signUpResponse.body.token}`)
       .send({
         title: faker.lorem.words(2),
@@ -97,7 +95,7 @@ describe('Trails', () => {
       .post('/trails/5fa17e26bf8d258042edf4be/events')
       .set('Authorization', `Bearer ${signUpResponse.body.token}`)
       .send({
-        title: faker.lorem.words(4),
+        title: faker.lorem.words(2),
         description: faker.lorem.sentences(2),
         date: faker.date.future(),
         duration_min: 60,
@@ -106,7 +104,7 @@ describe('Trails', () => {
     expect(response.body.success).toBe(false)
   })
 
-  it('should be able to delete event if event is owned by user', async () => {
+  it('should be able to delete event if it is owned by user', async () => {
     const signUpResponse = await supertest(app).post('/signup').send({
       email: faker.internet.email(),
       password: faker.internet.password(),
@@ -114,20 +112,73 @@ describe('Trails', () => {
       gender: 'M',
     })
     const trailResponse = await supertest(app)
-      .post('/trails/5fa17e26bf8d258042edf4be/events')
+      .post(`/trails/${trailId}/events`)
       .set('Authorization', `Bearer ${signUpResponse.body.token}`)
       .send({
-        title: faker.lorem.words(4),
+        title: faker.lorem.words(2),
         description: faker.lorem.sentences(2),
         date: faker.date.future(),
         duration_min: 60,
         max_participants: 10,
       })
-    const deleteResponse = await await supertest(app)
-      .delete(
-        '/trails/5fa17e26bf8d258042edf4be/events/' + trailResponse.body.eventId
-      )
+    const deleteResponse = await supertest(app)
+      .delete(`/trails/${trailId}/events/${trailResponse.body.eventId}`)
       .set('Authorization', `Bearer ${signUpResponse.body.token}`)
+
     expect(deleteResponse.body.success).toBe(true)
+  })
+
+  it('should be able to update event if event is owned by user', async () => {
+    const signUpResponse = await supertest(app).post('/signup').send({
+      email: faker.internet.email(),
+      password: faker.internet.password(),
+      name: faker.name.findName(),
+      gender: 'M',
+    })
+    const trailResponse = await supertest(app)
+      .post(`/trails/${trailId}/events`)
+      .set('Authorization', `Bearer ${signUpResponse.body.token}`)
+      .send({
+        title: faker.lorem.words(2),
+        description: faker.lorem.sentences(2),
+        date: faker.date.future(),
+        duration_min: 60,
+        max_participants: 10,
+      })
+    const updateResponse = await supertest(app)
+      .put(`/trails/${trailId}/events/${trailResponse.body.eventId}`)
+      .set('Authorization', `Bearer ${signUpResponse.body.token}`)
+      .send({
+        title: faker.lorem.words(2),
+      })
+
+    expect(updateResponse.body.success).toBe(true)
+  })
+
+  it('should not be able to update event if event if no information is sent', async () => {
+    const signUpResponse = await supertest(app).post('/signup').send({
+      email: faker.internet.email(),
+      password: faker.internet.password(),
+      name: faker.name.findName(),
+      gender: 'M',
+    })
+
+    const trailResponse = await supertest(app)
+      .post(`/trails/${trailId}/events`)
+      .set('Authorization', `Bearer ${signUpResponse.body.token}`)
+      .send({
+        title: faker.lorem.words(2),
+        description: faker.lorem.sentences(2),
+        date: faker.date.future(),
+        duration_min: 60,
+        max_participants: 10,
+      })
+    console.log('*******', trailResponse.body)
+
+    const updateResponse = await supertest(app)
+      .put(`/trails/${trailId}/events/${trailResponse.body.eventId}`)
+      .set('Authorization', `Bearer ${signUpResponse.body.token}`)
+
+    expect(updateResponse.body.success).toBe(false)
   })
 })

@@ -59,6 +59,10 @@ class EventController {
   }
 
   async updateEvent(req, res) {
+    const errors = validationResult(req)
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() })
+
     const { id: userId } = req.context
     const { eventId } = req.params
     const {
@@ -68,6 +72,9 @@ class EventController {
       duration_min,
       max_participants,
     } = req.body
+
+    if (!title && !description && !date && !duration_min && !max_participants)
+      return res.status(403).json(errorHandler('Nothing to update'))
 
     await Event.updateOne(
       { eventId },
@@ -94,6 +101,13 @@ class EventController {
         body('date').toDate(),
         body('duration_min').optional().isInt().toInt(),
         body('max_participants').isInt().toInt(),
+      ],
+      updateEvent: [
+        body('title').optional(),
+        body('description').optional(),
+        body('date').optional().toDate(),
+        body('duration_min').optional().isInt().toInt(),
+        body('max_participants').optional().isInt().toInt(),
       ],
     }
   }

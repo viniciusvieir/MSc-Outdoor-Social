@@ -20,15 +20,8 @@ class UserController {
 
     const user = await User.findByPk(id)
 
-    return user
-      .update(req.body)
-      .then(() => {
-        res.json({ success: true })
-      })
-      .catch((err) => {
-        console.log(err)
-        res.status(500).json(errorHandler(err))
-      })
+    await user.update(req.body)
+    res.json({ success: true })
   }
 }
 
