@@ -45,13 +45,15 @@ describe('Trails', () => {
   })
 
   it('should be able to create events', async () => {
-    const loginResponse = await supertest(app).post('/signin').send({
-      email: 'auth@test.com',
-      password: 'authentication',
+    const signUpResponse = await supertest(app).post('/signup').send({
+      email: faker.internet.email(),
+      password: faker.internet.password(),
+      name: faker.name.findName(),
+      gender: 'M',
     })
     const response = await supertest(app)
       .post('/trails/5fa17e268f4d258042edf4b6/events')
-      .set('Authorization', `Bearer ${loginResponse.body.token}`)
+      .set('Authorization', `Bearer ${signUpResponse.body.token}`)
       .send({
         title: faker.lorem.words(2),
         description: faker.lorem.sentences(2),
@@ -63,19 +65,21 @@ describe('Trails', () => {
       .delete(
         '/trails/5fa17e268f4d258042edf4b6/events/' + response.body.eventId
       )
-      .set('Authorization', `Bearer ${loginResponse.body.token}`)
+      .set('Authorization', `Bearer ${signUpResponse.body.token}`)
 
     expect(response.body.success).toBe(true)
   })
 
   it('should not be able to create events if not all parameters are given', async () => {
-    const loginResponse = await supertest(app).post('/signin').send({
-      email: 'auth@test.com',
-      password: 'authentication',
+    const signUpResponse = await supertest(app).post('/signup').send({
+      email: faker.internet.email(),
+      password: faker.internet.password(),
+      name: faker.name.findName(),
+      gender: 'M',
     })
     const response = await supertest(app)
       .post('/trails/5fa17e26bf8d258042edf4be/events')
-      .set('Authorization', `Bearer ${loginResponse.body.token}`)
+      .set('Authorization', `Bearer ${signUpResponse.body.token}`)
       .send({
         title: faker.lorem.words(2),
       })
@@ -83,13 +87,15 @@ describe('Trails', () => {
   })
 
   it('should not be able to create events if trail does not exist', async () => {
-    const loginResponse = await supertest(app).post('/signin').send({
-      email: 'auth@test.com',
-      password: 'authentication',
+    const signUpResponse = await supertest(app).post('/signup').send({
+      email: faker.internet.email(),
+      password: faker.internet.password(),
+      name: faker.name.findName(),
+      gender: 'M',
     })
     const response = await supertest(app)
       .post('/trails/5fa17e26bf8d258042edf4be/events')
-      .set('Authorization', `Bearer ${loginResponse.body.token}`)
+      .set('Authorization', `Bearer ${signUpResponse.body.token}`)
       .send({
         title: faker.lorem.words(4),
         description: faker.lorem.sentences(2),
@@ -101,13 +107,15 @@ describe('Trails', () => {
   })
 
   it('should be able to delete event if event is owned by user', async () => {
-    const loginResponse = await supertest(app).post('/signin').send({
-      email: 'auth@test.com',
-      password: 'authentication',
+    const signUpResponse = await supertest(app).post('/signup').send({
+      email: faker.internet.email(),
+      password: faker.internet.password(),
+      name: faker.name.findName(),
+      gender: 'M',
     })
     const trailResponse = await supertest(app)
       .post('/trails/5fa17e26bf8d258042edf4be/events')
-      .set('Authorization', `Bearer ${loginResponse.body.token}`)
+      .set('Authorization', `Bearer ${signUpResponse.body.token}`)
       .send({
         title: faker.lorem.words(4),
         description: faker.lorem.sentences(2),
@@ -119,7 +127,7 @@ describe('Trails', () => {
       .delete(
         '/trails/5fa17e26bf8d258042edf4be/events/' + trailResponse.body.eventId
       )
-      .set('Authorization', `Bearer ${loginResponse.body.token}`)
+      .set('Authorization', `Bearer ${signUpResponse.body.token}`)
     expect(deleteResponse.body.success).toBe(true)
   })
 })
