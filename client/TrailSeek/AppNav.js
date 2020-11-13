@@ -53,7 +53,13 @@ const ProfileFlow = () => {
       <Stack.Screen
         name="ViewProfile"
         component={ViewProfileScreen}
-        options={{ headerLeft: null }}
+        options={{
+          headerStyle: { backgroundColor: ColorConstants.Black },
+          headerLeft: null,
+          headerTitleStyle: { color: ColorConstants.DWhite },
+          title: "My Profile",
+          // headerTintColor: ColorConstants.Black,
+        }}
       />
       <Stack.Screen name="EditProfile" component={EditProfileScreen} />
     </Stack.Navigator>
@@ -86,7 +92,7 @@ const TrailFlow = () => {
       <Stack.Screen
         name="ViewTrail"
         component={ViewTrailScreen}
-        options={({ route, navigation }) => ({
+        options={() => ({
           title: "",
           headerTransparent: true,
           headerBackImage: () => (
@@ -134,7 +140,7 @@ const EventFlow = () => {
           // headerTintColor: ColorConstants.Black,
         }}
       />
-      <Stack.Screen name="ViewEvent" component={ViewEventScreen} />
+
       <Stack.Screen name="EditEvent" component={EditEventScreen} />
     </Stack.Navigator>
   );
@@ -260,6 +266,22 @@ const AppNav = () => {
               headerShown: false,
               headerRight: null,
             }}
+          />
+          <Stack.Screen
+            name="ViewEvent"
+            component={ViewEventScreen}
+            options={() => ({
+              title: "",
+              headerTransparent: true,
+              headerBackImage: () => (
+                <MaterialIcons
+                  name="arrow-back"
+                  size={24}
+                  color="white"
+                  style={styles.shadow}
+                />
+              ),
+            })}
           />
         </Stack.Navigator>
       </NavigationContainer>

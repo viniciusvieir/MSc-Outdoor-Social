@@ -13,14 +13,13 @@ import {
   Body,
 } from "native-base";
 
-import { fetchAllTrails } from "../app/trailSlice";
 import LoadSpinner from "../components/LoadSpinner";
 import ToastAlert from "../components/ToastAlert";
 import TrailCard from "../components/TrailCards";
 import CONSTANTS from "../util/Constants";
 import ColorConstants from "../util/ColorConstants";
 import { fetchTrailsByQuery } from "../app/trailSlice";
-import { getLocation } from "../app/userSlice";
+import { getLocation, fetchUserData } from "../app/userSlice";
 
 const SearchTrailScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -29,10 +28,11 @@ const SearchTrailScreen = ({ navigation }) => {
   const trailStatus = useSelector((state) => state.trails.status);
   const error = useSelector((state) => state.trails.error);
   const user = useSelector((state) => state.user.profile.name);
+  const isAuth = useSelector((state) => state.user.isAuth);
   const locationStatus = useSelector((state) => state.user.userLocation.status);
-  const filteredTrails = useSelector(
-    (state) => state.trails.filteredTrails.data
-  );
+  // const filteredTrails = useSelector(
+  //   (state) => state.trails.filteredTrails.data
+  // );
   const [trails, setTrails] = useState([]);
 
   const easyParams = {
@@ -83,30 +83,28 @@ const SearchTrailScreen = ({ navigation }) => {
       );
       const uResult = unwrapResult(results);
       setTrails(uResult.response);
-      // return filteredTrails;
     } catch (e) {
       ToastAlert(e.message);
       ToastAlert(error);
     }
   };
+  const getUserData = async () => {
+    try {
+      const response = await dispatch(fetchUserData());
+    } catch (e) {
+      ToastAlert(e.message);
+    }
+  };
 
   //Initial Trail Fetch
   useEffect(() => {
-    const getAllTrails = async () => {
-      try {
-        // const results = await dispatch(fetchAllTrails());
-        const res = await getTrailsByQuery({
-          query: filter?.query,
-          location: filter?.location,
-        });
-        // console.log(res);
-        // setTrails(res);
-      } catch (e) {
-        console.log(e);
-        ToastAlert(e.message);
-      }
-    };
-    getAllTrails();
+    getTrailsByQuery({
+      query: filter?.query,
+      location: filter?.location,
+    });
+    if (isAuth) {
+      getUserData();
+    }
     setSearchTerm("");
   }, []);
 
