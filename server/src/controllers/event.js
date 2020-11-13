@@ -3,6 +3,7 @@ const { errorHandler } = require('../utils/error-handling')
 
 const Trail = require('../models/trail')
 const Event = require('../models/event')
+const User = require('../models/user')
 
 class EventController {
   async events(req, res) {
@@ -13,9 +14,15 @@ class EventController {
       trailId,
     }).lean()
 
-    events.forEach((event) => {
-      event.subtitle = `${event.date} ${event.duration_min} ${event.max_participants}`
-    })
+    // for (let i = 0; i < events.length; i++) {
+    //   console.log(events[i].userId)
+    //   const user = await User.findByPk(events[i].userId, {
+    //     attributes: ['name'],
+    //   })
+    //   events[
+    //     i
+    //   ].subtitle = `${events[0].date} • ${events[0].duration_min} • ${events[0].max_participants} • ${user.name}`
+    // }
 
     res.json(events)
   }
@@ -52,6 +59,10 @@ class EventController {
   }
 
   async updateEvent(req, res) {
+    const errors = validationResult(req)
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() })
+
     const { id: userId } = req.context
     const { eventId } = req.params
     const {
@@ -61,6 +72,9 @@ class EventController {
       duration_min,
       max_participants,
     } = req.body
+
+    if (!title && !description && !date && !duration_min && !max_participants)
+      return res.status(403).json(errorHandler('Nothing to update'))
 
     await Event.updateOne(
       { eventId },
@@ -73,9 +87,7 @@ class EventController {
   async deleteEvent(req, res) {
     const { id: userId } = req.context
     const { eventId } = req.params
-
     await Event.deleteOne({ eventId })
-
     res.json({ success: true })
   }
 
@@ -89,6 +101,13 @@ class EventController {
         body('date').toDate(),
         body('duration_min').optional().isInt().toInt(),
         body('max_participants').isInt().toInt(),
+      ],
+      updateEvent: [
+        body('title').optional(),
+        body('description').optional(),
+        body('date').optional().toDate(),
+        body('duration_min').optional().isInt().toInt(),
+        body('max_participants').optional().isInt().toInt(),
       ],
     }
   }

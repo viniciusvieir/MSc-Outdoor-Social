@@ -12,7 +12,6 @@ const eventController = require('../controllers/event')
 // =============== AUTH ===============
 router.post('/signin', authController.validators.signIn, authController.signIn)
 router.post('/signup', authController.validators.signUp, authController.signUp)
-router.get('/privateRoute', verifyToken, authController.privateRoute)
 
 // =============== USER ===============
 router.get('/user', verifyToken, userController.user)
@@ -25,7 +24,7 @@ router.get(
   trailController.validators.trailById,
   trailController.trailById
 )
-router.get('/trailsfix', trailController.trailsFix)
+// router.get('/trailsfix', trailController.trailsFix)
 
 // =============== EVENT ==============
 router.get(
@@ -42,6 +41,7 @@ router.post(
 router.put(
   '/trails/:trailId/events/:eventId',
   verifyToken,
+  eventController.validators.updateEvent,
   eventController.updateEvent
 )
 router.delete(

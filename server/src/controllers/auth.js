@@ -55,10 +55,6 @@ class AuthController {
     return res.json(user.generateTokenPayload())
   }
 
-  async privateRoute(req, res) {
-    res.json({ success: true })
-  }
-
   // VALIDATION
   get validators() {
     return {
