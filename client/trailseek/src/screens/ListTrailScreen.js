@@ -9,6 +9,8 @@ import ToastAlert from "../components/ToastAlert";
 import LoadSpinner from "../components/LoadSpinner";
 import { fetchTrailsByQuery } from "../app/trailSlice";
 import CONSTANTS from "../util/Constants";
+import NoData from "../components/NoData";
+import ColorConstants from "../util/ColorConstants";
 
 const ListTrailScreen = ({ route }) => {
   const { query } = route.params;
@@ -60,17 +62,25 @@ const ListTrailScreen = ({ route }) => {
             }}
           >
             <ListItem.Content>
-              <ListItem.Title>{l.name}</ListItem.Title>
-              <ListItem.Subtitle>{l.location}</ListItem.Subtitle>
+              <ListItem.Title
+                style={{ backgroundColor: ColorConstants.DWhite }}
+              >
+                {l.name}
+              </ListItem.Title>
+              <ListItem.Subtitle
+                style={{ backgroundColor: ColorConstants.DWhite }}
+              >
+                {l.location}
+              </ListItem.Subtitle>
             </ListItem.Content>
           </ListItem>
         ))
       ) : (
-        <Text>No Results</Text>
+        <NoData />
       );
   }
   return (
-    <ScrollView>
+    <ScrollView style={{ backgroundColor: ColorConstants.LGreen }}>
       <LoadSpinner visible={spinner} />
       {content}
     </ScrollView>

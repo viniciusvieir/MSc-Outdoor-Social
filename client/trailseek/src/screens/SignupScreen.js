@@ -1,13 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { TextInput, View, StyleSheet, Image, Keyboard } from "react-native";
-import { Text, Button } from "react-native-elements";
+import {
+  TextInput,
+  View,
+  StyleSheet,
+  Image,
+  Keyboard,
+  ImageBackground,
+  TouchableWithoutFeedback,
+} from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { Button } from "react-native-elements";
 import { useSelector, useDispatch } from "react-redux";
 import { unwrapResult } from "@reduxjs/toolkit";
+import { Text, Container } from "native-base";
+import { RadioButtons } from "react-native-radio-buttons";
 
 import ToastAlert from "../components/ToastAlert";
 import { signUp } from "../app/userSlice";
-import DateTimePicker from "@react-native-community/datetimepicker";
+
 import moment from "moment";
+import ColorConstants from "../util/ColorConstants";
 
 const SignupScreen = ({ navigation }) => {
   const [inputs, setInputs] = useState({});
@@ -42,6 +54,29 @@ const SignupScreen = ({ navigation }) => {
   const error = useSelector((state) => state.user.profile.error);
   const isAuth = useSelector((state) => state.user.isAuth);
 
+  const options = ["M", "F"];
+
+  const [selectedOption, setSelectedOption] = useState("M");
+
+  function renderOption(option, selected, onSelect, index) {
+    const style = selected
+      ? {
+          fontWeight: "bold",
+          color: ColorConstants.DWhite,
+          fontSize: 22,
+          marginHorizontal: 10,
+        }
+      : { color: ColorConstants.DWhite, fontSize: 22, marginHorizontal: 10 };
+    return (
+      <TouchableWithoutFeedback onPress={onSelect} key={index}>
+        <Text style={style}>{option == "M" ? "Male" : "Female"}</Text>
+      </TouchableWithoutFeedback>
+    );
+  }
+
+  function renderContainer(optionNodes) {
+    return <View style={{ flexDirection: "row" }}>{optionNodes}</View>;
+  }
   const onSignup = async () => {
     try {
       const res = await dispatch(signUp({ inputs }));
@@ -49,77 +84,114 @@ const SignupScreen = ({ navigation }) => {
       setAuth(isAuth);
       navigation.navigate("Signin");
     } catch (e) {
-      ToastAlert(e.message);
+      // ToastAlert(e.response);
       ToastAlert(error);
     }
   };
-
+  console.log(inputs);
   return (
-    <View style={styles.container}>
-      {show && (
-        <DateTimePicker
-          testID="dateTimePicker"
-          value={date}
-          mode={mode}
-          is24Hour={true}
-          display="default"
-          onChange={onChange}
-        />
-      )}
-      <View style={styles.containerhead}>
-        <Image
-          source={require("../images/tslogov2.2grey.png")}
-          resizeMode="contain"
-          style={styles.image}
-        ></Image>
-      </View>
-      <View style={styles.containerform}>
-        {error && <Text style={{ color: "red" }}>{error}</Text>}
-        <TextInput
-          onChangeText={(e) => inputsHandler(e, "name")}
-          placeholder={"Name"}
-          style={styles.input}
-        />
-        <TextInput
-          onChangeText={(e) => inputsHandler(e, "dob")}
-          onFocus={() => showDatepicker()}
-          value={dobval}
-          placeholder={"DOB"}
-          style={styles.input}
-        />
-        <TextInput
-          placeholder={"Gender"}
-          onChangeText={(e) => inputsHandler(e, "gender")}
-          style={styles.input}
-        />
+    <Container>
+      <ImageBackground
+        source={require("../images/sigininbg.jpg")}
+        style={{ flex: 1, resizeMode: "cover", justifyContent: "center" }}
+      >
+        <View style={styles.container}>
+          {show && (
+            <DateTimePicker
+              testID="dateTimePicker"
+              value={date}
+              mode={mode}
+              is24Hour={true}
+              display="default"
+              onChange={onChange}
+            />
+          )}
+          <View style={styles.containerhead}>
+            <Image
+              source={require("../images/tslogov2.2grey.png")}
+              resizeMode="contain"
+              style={styles.image}
+            ></Image>
+          </View>
+          <View style={styles.containerform}>
+            {error && <Text style={{ color: "red" }}>{error}</Text>}
+            <TextInput
+              onChangeText={(e) => inputsHandler(e, "name")}
+              placeholder={"Name"}
+              style={styles.input}
+            />
+            <TextInput
+              onChangeText={(e) => inputsHandler(e, "dob")}
+              onFocus={() => showDatepicker()}
+              value={dobval}
+              placeholder={"DOB"}
+              style={styles.input}
+            />
+            {/* <TextInput
+              placeholder={"Gender"}
+              onChangeText={(e) => inputsHandler(e, "gender")}
+              style={styles.input}
+            /> */}
 
-        <TextInput
-          onChangeText={(e) => inputsHandler(e, "email")}
-          autoCompleteType="email"
-          placeholder={"Email"}
-          style={styles.input}
-        />
-        <TextInput
-          onChangeText={(e) => inputsHandler(e, "password")}
-          placeholder={"Password"}
-          secureTextEntry={true}
-          style={styles.input}
-        />
-
-        <View style={styles.flexxx}>
-          <Button
-            title={"Sign up"}
-            onPress={() => onSignup()}
-            buttonStyle={styles.button}
-          />
-          <Button
-            title={"Login"}
-            type={"clear"}
-            onPress={() => navigation.navigate("Signin")}
-          />
+            <TextInput
+              onChangeText={(e) => inputsHandler(e, "email")}
+              autoCompleteType="email"
+              placeholder={"Email"}
+              style={styles.input}
+            />
+            <TextInput
+              onChangeText={(e) => inputsHandler(e, "password")}
+              placeholder={"Password"}
+              secureTextEntry={true}
+              style={styles.input}
+            />
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "flex-start",
+                borderRadius: 10,
+                backgroundColor: "#ffffff30",
+                width: 330,
+                marginBottom: 10,
+                padding: 10,
+              }}
+            >
+              <Text
+                style={{
+                  color: ColorConstants.DWhite,
+                  fontSize: 20,
+                }}
+              >
+                Gender :{" "}
+              </Text>
+              <RadioButtons
+                options={options}
+                onSelection={(item) => {
+                  setSelectedOption(item);
+                  inputsHandler(selectedOption, "gender");
+                }}
+                selectedOption={selectedOption}
+                renderOption={renderOption}
+                renderContainer={renderContainer}
+              />
+            </View>
+            <View style={styles.flexxx}>
+              <Button
+                title={"Sign up"}
+                onPress={() => onSignup()}
+                buttonStyle={styles.button}
+                titleStyle={{ color: ColorConstants.Black }}
+              />
+              <Button
+                title={"Login"}
+                onPress={() => navigation.navigate("Signin")}
+                buttonStyle={{ backgroundColor: ColorConstants.DGreen }}
+              />
+            </View>
+          </View>
         </View>
-      </View>
-    </View>
+      </ImageBackground>
+    </Container>
   );
 };
 
@@ -130,7 +202,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#ecf0f1",
+    backgroundColor: ColorConstants.LGreen + 90,
   },
   containerhead: {
     flex: 1,
@@ -153,6 +225,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "black",
     marginBottom: 10,
+    borderRadius: 10,
+    backgroundColor: ColorConstants.DWhite,
   },
 
   flexxx: {
@@ -168,5 +242,6 @@ const styles = StyleSheet.create({
 
   button: {
     marginBottom: 10,
+    backgroundColor: ColorConstants.Yellow,
   },
 });

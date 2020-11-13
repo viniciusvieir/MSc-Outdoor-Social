@@ -83,6 +83,8 @@ const TrailFlow = () => {
         name="ListTrail"
         component={ListTrailScreen}
         options={({ route }) => ({
+          headerStyle: { backgroundColor: ColorConstants.Black },
+          headerTitleStyle: { color: ColorConstants.DWhite },
           title:
             typeof route.params.getParams?.title === "undefined"
               ? "Search"
