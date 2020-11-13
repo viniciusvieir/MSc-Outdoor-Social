@@ -96,61 +96,61 @@ class TrailController {
   }
 
   // FIX
-  async trailsFix(req, res) {
-    const trails = require('../../trails.json')
+  // async trailsFix(req, res) {
+  //   const trails = require('../../trails.json')
 
-    const trailsValidated = trails.map((trail) => {
-      const currentPath = trail.geoLoc.coordinates[0]
+  //   const trailsValidated = trails.map((trail) => {
+  //     const currentPath = trail.geoLoc.coordinates[0]
 
-      const path = currentPath.map((coordinates) => {
-        return {
-          type: 'Point',
-          coordinates: [coordinates[1], coordinates[0]],
-          elevation: coordinates[2],
-        }
-      })
+  //     const path = currentPath.map((coordinates) => {
+  //       return {
+  //         type: 'Point',
+  //         coordinates: [coordinates[1], coordinates[0]],
+  //         elevation: coordinates[2],
+  //       }
+  //     })
 
-      let estimate_time_min = null
-      if (trail.estimateTime.includes(' h ')) {
-        const items = trail.estimateTime.split(' h ')
-        const hours = isNaN(parseInt(items[0])) ? 0 : parseInt(items[0])
-        const min = isNaN(parseInt(items[1].replace(' m')))
-          ? 0
-          : parseInt(items[1].replace(' m'))
-        estimate_time_min = hours * 60 + min
-      } else if (trail.estimateTime.includes(' m')) {
-        const min = parseInt(trail.estimateTime.replace(' m'))
-        estimate_time_min = min
-      }
+  //     let estimate_time_min = null
+  //     if (trail.estimateTime.includes(' h ')) {
+  //       const items = trail.estimateTime.split(' h ')
+  //       const hours = isNaN(parseInt(items[0])) ? 0 : parseInt(items[0])
+  //       const min = isNaN(parseInt(items[1].replace(' m')))
+  //         ? 0
+  //         : parseInt(items[1].replace(' m'))
+  //       estimate_time_min = hours * 60 + min
+  //     } else if (trail.estimateTime.includes(' m')) {
+  //       const min = parseInt(trail.estimateTime.replace(' m'))
+  //       estimate_time_min = min
+  //     }
 
-      if (isNaN(estimate_time_min)) {
-        console.log(trail)
-      }
+  //     if (isNaN(estimate_time_min)) {
+  //       console.log(trail)
+  //     }
 
-      return {
-        path,
-        estimate_time_min,
-        id: trail.id,
-        name: trail.name,
-        location: trail.location,
-        difficulty: trail.difficulty || 'Unknown',
-        length_km: trail.length_km,
-        description: trail.description,
-        activity_type: trail.activityType,
-        elevation_gain_ft: trail.elevationGain_ft,
-        no_of_ratings: trail.no_of_ratings,
-        avg_rating: trail.avgRating,
-        img_url: trail.imgUrl,
-        start: path[0],
-        end: path[path.length - 1],
-        bbox: trail.geoLoc.bbox,
-      }
-    })
+  //     return {
+  //       path,
+  //       estimate_time_min,
+  //       id: trail.id,
+  //       name: trail.name,
+  //       location: trail.location,
+  //       difficulty: trail.difficulty || 'Unknown',
+  //       length_km: trail.length_km,
+  //       description: trail.description,
+  //       activity_type: trail.activityType,
+  //       elevation_gain_ft: trail.elevationGain_ft,
+  //       no_of_ratings: trail.no_of_ratings,
+  //       avg_rating: trail.avgRating,
+  //       img_url: trail.imgUrl,
+  //       start: path[0],
+  //       end: path[path.length - 1],
+  //       bbox: trail.geoLoc.bbox,
+  //     }
+  //   })
 
-    await Trail.insertMany(trailsValidated)
+  //   await Trail.insertMany(trailsValidated)
 
-    res.json({ success: 123 })
-  }
+  //   res.json({ success: 123 })
+  // }
 
   // VALIDATION
   get validators() {
