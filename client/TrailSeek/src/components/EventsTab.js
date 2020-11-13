@@ -2,20 +2,24 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { Text, Button, List, ListItem, Body } from "native-base";
 import { useNavigation } from "@react-navigation/native";
-import trailSeek from "../api/trailSeek";
+import { useDispatch, useSelector } from "react-redux";
+import { unwrapResult } from "@reduxjs/toolkit";
+// import trailSeek from "../api/trailSeek";
 
 import ColorConstants from "../util/ColorConstants";
+import { fetchEvents } from "../app/eventSlice";
+import ToastAlert from "../components/ToastAlert";
 
 const EventsTab = ({ trailData }) => {
-  // const [events] = useState([])
+  const dispatch = useDispatch();
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
     const getEvents = async () => {
       try {
-        const results = await trailSeek.get(`/trails/${trailData._id}/events`); // need to send :trailId
-        console.log(results);
-        setEvents(results.data);
+        const results = await dispatch(fetchEvents(trailData._id));
+        const uResults = unwrapResult(results);
+        setEvents(uResults.data);
       } catch (e) {
         console.log(e);
         ToastAlert(e.message);
@@ -23,17 +27,6 @@ const EventsTab = ({ trailData }) => {
     };
     getEvents();
   }, []);
-
-  // const list = [
-  //   {
-  //     name: "Event0",
-  //     subtitle: "Location",
-  //   },
-  //   {
-  //     name: "Event1",
-  //     subtitle: "Location",
-  //   },
-  // ];
 
   const navigation = useNavigation();
   return (
@@ -46,7 +39,6 @@ const EventsTab = ({ trailData }) => {
       <Button
         onPress={() => {
           navigation.navigate("CreateEvent", {
-            // screen: "CreateEvent",
             trailID: trailData._id,
             trailName: trailData.name,
           });
@@ -62,7 +54,12 @@ const EventsTab = ({ trailData }) => {
           <ListItem
             key={i}
             onPress={() => {
-              navigation.navigate("EventFlow", { screen: "ViewEvent" });
+              navigation.navigate("ViewEvent", {
+                // screen: "ViewEvent",
+                // initial: false,
+                trailData,
+                eventData: l,
+              });
             }}
             noIndent
             style={{ backgroundColor: ColorConstants.LGreen }}

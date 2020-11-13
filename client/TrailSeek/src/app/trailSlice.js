@@ -3,12 +3,13 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import trailSeek from "../api/trailSeek";
 import weather from "../api/weather";
 import covid from "../api/covid";
-import { Intersect } from "../util/Intersect";
+// import { Intersect } from "../util/Intersect";
 import CONSTANTS from "../util/Constants";
 
 const initialState = {
   trails: [],
   trailDetails: [],
+  ///changes to ve done, remove the query and data, make into array and set the object fields in the return call of thunk.
   filteredTrails: {
     data: [],
     query: {},
@@ -197,21 +198,9 @@ export const trailSlice = createSlice({
     },
     [fetchTrailsByQuery.fulfilled]: (state, action) => {
       state.status = CONSTANTS.SUCCESS;
-      // if (
-      //   JSON.stringify(state.filteredTrails.query) ===
-      //   JSON.stringify(action.payload.query)
-      // ) {
-      //   console.log("Same");
-      // const tempSet = new Set(state.filteredTrails.data);
-      // action.payload.response.forEach((item) => tempSet.add(item));
 
-      // state.filteredTrails.data = [tempSet];
-      // state.filteredTrails.data.push(action.payload.response);
-      // } else {
-      //   console.log("Different");
       state.filteredTrails.query = action.payload.query;
       state.filteredTrails.data = action.payload.response;
-      // }
     },
     [fetchTrailsByQuery.rejected]: (state, action) => {
       state.status = CONSTANTS.FAILED;

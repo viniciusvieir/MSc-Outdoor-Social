@@ -11,17 +11,19 @@ import { useSelector, useDispatch } from "react-redux";
 import { useForm, Controller } from "react-hook-form";
 import {
   Container,
-  Content,
+  // Content,
   Button,
-  Form,
-  Input,
-  Item,
+  // Form,
+  // Input,
+  // Item,
   Text,
+  // Toast,
 } from "native-base";
 
 import { signIn } from "../app/userSlice";
 import ToastAlert from "../components/ToastAlert";
 import ColorConstants from "../util/ColorConstants";
+import { unwrapResult } from "@reduxjs/toolkit";
 
 const SigninScreen = ({ navigation }) => {
   const [inputs, setInputs] = useState({});
@@ -36,33 +38,27 @@ const SigninScreen = ({ navigation }) => {
   };
 
   const login = async () => {
-    console.log("inputs", inputs);
     try {
       const res = await dispatch(signIn({ inputs }));
+      const user = unwrapResult(res);
       setAuth(isAuth);
       navigation.navigate("MainTab");
       //clearing inputs object after login
       setInputs({});
     } catch (e) {
-      Toast.show({
-        text: error,
-        buttonText: "Okay",
-        type: "danger",
-        duration: 3000,
-      });
+      // Toast.show({
+      //   text: error,
+      //   buttonText: "Okay",
+      //   type: "danger",
+      //   duration: 3000,
+      // });
       console.log(e.message);
       console.log(error);
-      // ToastAlert(error);
+      ToastAlert(error);
     }
   };
 
   const { register, control, handleSubmit, errors } = useForm();
-
-  // const onSubmit = data => {
-  //   inputsHandler(data.email, "email")
-  //   inputsHandler(data.password, "password")
-  //   console.log(inputs)
-  // }
 
   const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -142,7 +138,9 @@ const SigninScreen = ({ navigation }) => {
 
             <View style={styles.containerbuttons}>
               <Button
-                onPress={handleSubmit(login)}
+                onPress={() => {
+                  handleSubmit(login());
+                }}
                 style={{
                   backgroundColor: ColorConstants.Yellow,
                   marginBottom: 10,
@@ -156,7 +154,6 @@ const SigninScreen = ({ navigation }) => {
                 onPress={() => navigation.navigate("Signup")}
                 block
                 style={{ backgroundColor: ColorConstants.DGreen }}
-                // style={}
               >
                 <Text style={styles.buttonText}>Sign up</Text>
               </Button>
@@ -165,7 +162,6 @@ const SigninScreen = ({ navigation }) => {
           <View style={styles.containerfooter}>
             <Button
               onPress={() => navigation.navigate("MainTab")}
-              // bordered
               style={{
                 backgroundColor: ColorConstants.Yellow,
                 marginBottom: 10,

@@ -1,23 +1,27 @@
-import React, { useEffect } from "react";
-import { View, StyleSheet, Image, Platform } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, StyleSheet, Platform } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { logOut } from "../app/userSlice";
 import { CommonActions } from "@react-navigation/native";
 import NetInfo from "@react-native-community/netinfo";
-import ToastAlert from "../components/ToastAlert";
 import { AntDesign } from "@expo/vector-icons";
 import { Col, Row, Grid } from "react-native-easy-grid";
-import { Button, Text, H1 } from "native-base";
+import { Button, Text, H1, Container, Content, Thumbnail } from "native-base";
+// import { unwrapResult } from "@reduxjs/toolkit";
+
+import { logOut } from "../app/userSlice";
+// import { fetchUserData } from "../app/userSlice";
+import ToastAlert from "../components/ToastAlert";
+import ColorConstants from "../util/ColorConstants";
 
 const ViewProfileScreen = ({ navigation }) => {
   const isAuth = useSelector((state) => state.user.isAuth);
-  // useEffect(() => {
-  //   const fireEvent = navigation.addListener("tabPress", (e) => {
-  //     return isAuth ? null : navigation.navigate("Signin");
-  //   });
-  //   return fireEvent;
-  // }, [navigation]);
+  const userData = useSelector((state) => state.user.profile);
   const dispatch = useDispatch();
+  // const [userData, setUserData] = useState({});
+
+  // useEffect(() => {
+  //   setUserData(userDataState)
+  // }, []);
 
   const userLogout = async () => {
     try {
@@ -48,99 +52,111 @@ const ViewProfileScreen = ({ navigation }) => {
   };
 
   return (
-    <>
-      <View style={styles.databox}>
-        <View style={styles.card}>
-          <H1 style={styles.titleStyle}>{"User Profile"}</H1>
-        </View>
-
-        <View style={styles.row}>
-          <Text style={styles.attribute1}>NAME</Text>
-          <Text style={styles.attribute}>DANISH</Text>
-        </View>
-
-        <View style={styles.row}>
-          <Text style={styles.attribute1}>EMAIL</Text>
-          <Text style={styles.attribute}>syeddanishjamil45@gmail.com</Text>
-        </View>
-
-        <View style={styles.row}>
-          <Text style={styles.attribute1}>GENDER</Text>
-          <Text style={styles.attribute}>MALE</Text>
-        </View>
-
-        <View style={styles.row}>
-          <Text style={styles.attribute1}>DOB</Text>
-          <Text style={styles.attribute}>10-10-1990</Text>
-        </View>
-      </View>
-
-      {isAuth ? (
-        <View style={styles.bottonbox}>
-          <Button
-            block
-            style={styles.button}
-            onPress={() => {
-              navigation.navigate("EditProfile");
+    <Container style={{ backgroundColor: ColorConstants.LGreen }}>
+      <Content
+        style={{
+          backgroundColor: "#ffffff20",
+          margin: 30,
+          borderRadius: 100,
+          padding: 50,
+        }}
+      >
+        <Grid>
+          <Row
+            size={25}
+            style={{
+              height: 150,
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
-            <Text style={{ fontSize: 16, color: "white" }}>Edit Profile</Text>
-          </Button>
-          <Button
-            block
-            style={styles.button}
-            onPress={async () => {
-              const res = await userLogout();
-              console.log(res);
-              await navigation.dispatch(
-                CommonActions.reset({
-                  index: 0,
-                  routes: [{ name: "Authentication" }],
-                })
-              );
-              // navigation.navigate("Authentication");
-            }}
-          >
-            <Text style={{ fontSize: 16, color: "white" }}>Logout</Text>
-          </Button>
-        </View>
-      ) : null}
-    </>
+            <Thumbnail
+              style={{ borderColor: ColorConstants.DGreen, borderWidth: 3 }}
+              large
+              source={{
+                uri: `https://eu.ui-avatars.com/api/?name=${userData.name}`,
+              }}
+            />
+          </Row>
+          <Row size={20} style={{ alignItems: "center" }}>
+            {/* <View style={styles.databox}> */}
+            <Text
+              style={{
+                color: ColorConstants.DWhite,
+                fontSize: 40,
+                fontWeight: "bold",
+                alignSelf: "center",
+              }}
+            >
+              {userData.name}
+            </Text>
+          </Row>
+          <Row size={10}>
+            <Text style={styles.attribute1}>Email</Text>
+            <Text style={styles.attribute}>{userData.email}</Text>
+          </Row>
+          <Row size={10}>
+            <Text style={styles.attribute1}>Gender</Text>
+            <Text style={styles.attribute}>{userData.gender}</Text>
+          </Row>
+          <Row size={10}>
+            <Text style={styles.attribute1}>Date of Birth</Text>
+            <Text style={styles.attribute}>{userData.dob}</Text>
+          </Row>
+          {/* </View> */}
+
+          {isAuth ? (
+            <>
+              <Row size={10}>
+                <Button
+                  block
+                  style={styles.button}
+                  onPress={() => {
+                    navigation.navigate("EditProfile");
+                  }}
+                >
+                  <Text style={{ fontSize: 16, color: "white" }}>
+                    Edit Profile
+                  </Text>
+                </Button>
+              </Row>
+              <Row size={10}>
+                <Button
+                  danger
+                  block
+                  style={styles.button}
+                  onPress={async () => {
+                    const res = await userLogout();
+                    console.log(res);
+                    await navigation.dispatch(
+                      CommonActions.reset({
+                        index: 0,
+                        routes: [{ name: "Authentication" }],
+                      })
+                    );
+                    // navigation.navigate("Authentication");
+                  }}
+                >
+                  <Text style={{ fontSize: 16, color: "white" }}>Logout</Text>
+                </Button>
+              </Row>
+            </>
+          ) : null}
+        </Grid>
+      </Content>
+    </Container>
   );
 };
 
 const styles = StyleSheet.create({
-  titleStyle: {
-    alignSelf: "center",
-    margin: 10,
-    padding: 10,
-  },
-  databox: {
-    backgroundColor: "#fff",
-    width: "90%",
-    alignSelf: "center",
-    margin: 10,
-    padding: 10,
-    borderRadius: 10,
-    flexDirection: "column",
-  },
-  row: {
-    padding: 5,
-    borderBottomColor: "#aaa",
-    borderBottomWidth: 0.3,
-    flexDirection: "row",
-  },
   attribute1: {
+    color: ColorConstants.DWhite,
     width: "30%",
   },
-  attribute2: {
+  attribute: {
+    color: ColorConstants.DWhite,
     width: "70%",
-  },
-  button: {
-    margin: 10,
-    width: "90%",
-    alignSelf: "center",
-    color: "#fff",
   },
 });
 

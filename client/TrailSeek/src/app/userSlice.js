@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk, unwrapResult } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import AsyncStorage from "@react-native-community/async-storage";
 import * as Location from "expo-location";
 
@@ -11,6 +11,10 @@ const initialState = {
     token: null,
     error: null,
     status: CONSTANTS.IDLE,
+    id: null,
+    dob: "",
+    gender: "",
+    email: "",
   },
   userLocation: {
     latitude: null,
@@ -33,6 +37,7 @@ export const signIn = createAsyncThunk(
       }
       return response.data;
     } catch (e) {
+      // console.log(e.response.data.errors);
       return rejectWithValue(
         e.response.data.errors
           .map((item) => {
@@ -56,6 +61,25 @@ export const signUp = createAsyncThunk(
       }
       return response.data;
     } catch (e) {
+      return rejectWithValue(
+        e.response.data.errors
+          .map((item) => {
+            return item.msg;
+          })
+          .join(" ")
+      );
+    }
+  }
+);
+
+export const fetchUserData = createAsyncThunk(
+  "user/fetchUserData",
+  async (_, { rejectWithValue, getState }) => {
+    try {
+      const response = await trailSeek.get("/user");
+      return response.data;
+    } catch (error) {
+      console.log(error.response);
       return rejectWithValue(
         e.response.data.errors
           .map((item) => {
@@ -212,15 +236,40 @@ export const userSlice = createSlice({
       state.profile.status = CONSTANTS.SUCCESS;
       state.profile.token = null;
       state.profile.name = null;
+      state.profile.dob = "";
+      state.profile.id = null;
+      state.profile.gender = "";
+      state.profile.email = "";
       state.isAuth = false;
     },
     [logOut.rejected]: (state, action) => {
       state.profile.status = CONSTANTS.FAILED;
       state.profile.error = action.error.message;
     },
+    //////////////////////////////////////////////////////////////
+    [fetchUserData.pending]: (state, action) => {
+      state.profile.status = CONSTANTS.LOADING;
+    },
+    [fetchUserData.fulfilled]: (state, action) => {
+      state.profile.id = action.payload.id;
+      state.profile.name = action.payload.name;
+      state.profile.dob = action.payload.dob;
+      state.profile.gender = action.payload.gender;
+      state.profile.email = action.payload.email;
+      state.profile.status = CONSTANTS.SUCCESS;
+      // state.profile.data = action.payload;
+    },
+    [fetchUserData.rejected]: (state, action) => {
+      state.profile.status = CONSTANTS.FAILED;
+      state.isAuth = false;
+      state.profile.error = action.payload;
+    },
+    //////////////////////////////////////////////////////////////
   },
 });
 
 export const { logOut1 } = userSlice.actions;
 
 export default userSlice.reducer;
+
+export const token = (state) => state.user.token; // remember to return
