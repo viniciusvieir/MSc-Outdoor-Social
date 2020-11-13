@@ -3,19 +3,22 @@ import { TextInput, View, StyleSheet, Image, Keyboard } from "react-native";
 import { Text, Button } from "react-native-elements";
 import { Tile } from "react-native-elements";
 import moment from "moment";
+import ColorConstants from "../util/ColorConstants";
 
 const ViewEventScreen = ({ navigation, route }) => {
   const { trailData, eventData } = route.params || {};
-  const eventWeather = trailData.weatherData.daily.find(
-    (item) =>
-      moment(item * 1000)
-        .format("DD/MM/YYYY")
-        .toString() === moment(eventData.date).format("DD/MM/YYYY").toString()
-  );
-  console.log(eventWeather);
+  if (trailData && eventData) {
+    const eventWeather = trailData.weatherData.daily.find(
+      (item) =>
+        moment(item * 1000)
+          .format("DD/MM/YYYY")
+          .toString() === moment(eventData.date).format("DD/MM/YYYY").toString()
+    );
+  }
+  // console.log(eventWeather);
   return (
     <>
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, backgroundColor: ColorConstants.LGreen }}>
         {trailData && eventData ? (
           <>
             {/* //Mapview Instead of image tile */}
@@ -43,13 +46,13 @@ const ViewEventScreen = ({ navigation, route }) => {
           </>
         ) : null}
 
-        <Text h3>ViewEventScreen</Text>
-        <Button
+        {/* <Text h3>ViewEventScreen</Text> */}
+        {/* <Button
           title="Edit Event"
           onPress={() => {
             navigation.navigate("EditEvent");
           }}
-        />
+        /> */}
       </View>
     </>
   );

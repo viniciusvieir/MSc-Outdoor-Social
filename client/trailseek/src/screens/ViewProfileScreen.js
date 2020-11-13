@@ -61,7 +61,7 @@ const ViewProfileScreen = ({ navigation }) => {
           padding: 50,
         }}
       >
-        <Grid>
+        <Grid style={{ alignItems: "center" }}>
           <Row
             size={25}
             style={{
@@ -87,6 +87,7 @@ const ViewProfileScreen = ({ navigation }) => {
                 fontSize: 40,
                 fontWeight: "bold",
                 alignSelf: "center",
+                // marginHorizontal: 20,
               }}
             >
               {userData.name}
@@ -101,13 +102,14 @@ const ViewProfileScreen = ({ navigation }) => {
             <Text style={styles.attribute}>{userData.gender}</Text>
           </Row>
           <Row size={10}>
-            <Text style={styles.attribute1}>Date of Birth</Text>
+            <Text style={styles.attribute1}>DoB</Text>
             <Text style={styles.attribute}>{userData.dob}</Text>
           </Row>
           {/* </View> */}
 
           {isAuth ? (
             <>
+              {/*             
               <Row size={10}>
                 <Button
                   block
@@ -120,12 +122,12 @@ const ViewProfileScreen = ({ navigation }) => {
                     Edit Profile
                   </Text>
                 </Button>
-              </Row>
+              </Row> */}
               <Row size={10}>
                 <Button
                   danger
                   block
-                  style={styles.button}
+                  style={{ marginTop: 30 }}
                   onPress={async () => {
                     const res = await userLogout();
                     console.log(res);
