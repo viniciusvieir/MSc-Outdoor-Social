@@ -11,7 +11,11 @@ class EventController {
 
     const events = await Event.find({
       trailId,
-    }).select(fields && fields.replace(/,|;/g, ' '))
+    }).lean()
+
+    events.forEach((event) => {
+      event.subtitle = `${event.date} ${event.duration_min} ${event.max_participants}`
+    })
 
     res.json(events)
   }
