@@ -76,9 +76,7 @@ export const fetchUserData = createAsyncThunk(
   "user/fetchUserData",
   async (_, { rejectWithValue, getState }) => {
     try {
-      const response = await trailSeek.get("/user", {
-        headers: { Authorization: `Bearer ${getState().user.profile.token}` },
-      });
+      const response = await trailSeek.get("/user");
       return response.data;
     } catch (error) {
       console.log(error.response);
@@ -273,3 +271,5 @@ export const userSlice = createSlice({
 export const { logOut1 } = userSlice.actions;
 
 export default userSlice.reducer;
+
+export const token = (state) => state.user.token; // remember to return
