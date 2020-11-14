@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { TextInput, View, StyleSheet, Image, Keyboard } from "react-native";
-import { Text, Button } from "react-native-elements";
-import { Tile } from "react-native-elements";
-import moment from "moment";
-import ColorConstants from "../util/ColorConstants";
+import React, { useEffect, useState } from 'react'
+import { TextInput, View, StyleSheet, Image, Keyboard } from 'react-native'
+import { Text, Button } from 'react-native-elements'
+import { Tile } from 'react-native-elements'
+import moment from 'moment'
+import ColorConstants from '../util/ColorConstants'
 
 const ViewEventScreen = ({ navigation, route }) => {
-  const { trailData, eventData } = route.params || {};
+  const { trailData, eventData } = route.params || {}
   if (trailData && eventData) {
     const eventWeather = trailData.weatherData.daily.find(
       (item) =>
         moment(item * 1000)
-          .format("DD/MM/YYYY")
-          .toString() === moment(eventData.date).format("DD/MM/YYYY").toString()
-    );
+          .format('DD/MM/YYYY')
+          .toString() === moment(eventData.date).format('DD/MM/YYYY').toString()
+    )
   }
   // console.log(eventWeather);
   return (
@@ -55,9 +55,9 @@ const ViewEventScreen = ({ navigation, route }) => {
         /> */}
       </View>
     </>
-  );
-};
+  )
+}
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({})
 
-export default ViewEventScreen;
+export default ViewEventScreen

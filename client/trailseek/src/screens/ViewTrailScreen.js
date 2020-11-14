@@ -1,9 +1,21 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Dimensions, View } from 'react-native'
+import { StyleSheet, Dimensions, View, Image } from 'react-native'
 import { Tile } from 'react-native-elements'
 import { useSelector, useDispatch } from 'react-redux'
 import { unwrapResult } from '@reduxjs/toolkit'
-import { Container, Tab, Tabs, Header, Content, Text } from 'native-base'
+import {
+  Container,
+  Tab,
+  Tabs,
+  Header,
+  Content,
+  Text,
+  Grid,
+  Col,
+  Row,
+} from 'native-base'
+
+import { Entypo } from '@expo/vector-icons'
 
 import { fetchTrailsByID } from '../app/trailSlice'
 import ToastAlert from '../components/ToastAlert'
@@ -13,6 +25,7 @@ import DetailsTab from '../components/DetailsTab'
 import MapsTab from '../components/MapsTab'
 import EventsTab from '../components/EventsTab'
 import ColorConstants from '../util/ColorConstants'
+import StarRating from 'react-native-star-rating'
 
 const ViewTrailScreen = ({ route }) => {
   const { id, showEvents } = route.params
@@ -43,14 +56,82 @@ const ViewTrailScreen = ({ route }) => {
     spinner = false
     content = (
       <View style={{ flex: 1 }}>
+        {/* <View
+          style={{
+            height: Dimensions.get('window').height / 2 - 50,
+            backgroundColor: ColorConstants.DWhite,
+            // width: Dimensions.get('window').width,
+            // flex: 1,
+          }}
+        >
+          <Image
+            source={{ uri: trailData.img_url }}
+            style={{
+              height: Dimensions.get('window').height / 2 - 50,
+              backgroundColor: ColorConstants.DWhite,
+              width: Dimensions.get('window').width,
+              flex: 1,
+              position: 'absolute',
+            }}
+          />
+          <Grid
+            style={{
+              position: 'absolute',
+              bottom: 40,
+              left: 0,
+              right: 0,
+              marginHorizontal: 20,
+            }}
+          >
+            <Row>
+              <Col size={2}>
+                <Text
+                  style={{
+                    color: 'white',
+                    fontSize: 26,
+                    fontWeight: 'bold',
+                  }}
+                >
+                  {trailData.name}
+                </Text>
+              </Col>
+              <Col size={1} style={{ flex: 1, flexDirection: 'row' }}>
+                <StarRating
+                  disabled={true}
+                  emptyStar={'ios-star-outline'}
+                  fullStar={'ios-star'}
+                  halfStar={'ios-star-half'}
+                  iconSet={'Ionicons'}
+                  maxStars={1}
+                  rating={1}
+                  fullStarColor={'gold'}
+                  starSize={30}
+                />
+                <Text
+                  style={{
+                    marginLeft: 12,
+                    marginTop: 4,
+                    color: 'white',
+                    fontSize: 22,
+                    fontWeight: 'bold',
+                  }}
+                >
+                  3.4
+                </Text>
+              </Col>
+            </Row>
+          </Grid>
+        </View> */}
+
         <Tile
-          imageSrc={{ uri: trailData.img_url }}
-          title={trailData.name}
           featured
-          activeOpacity={1}
-          height={230}
+          imageSrc={{ uri: trailData.img_url }}
+          // title={trailData.name}
           titleStyle={styles.tilettlstyle}
+          activeOpacity={1}
+          height={320}
         />
+
         <Header
           hasTabs
           style={{ height: 0 }}
@@ -62,25 +143,26 @@ const ViewTrailScreen = ({ route }) => {
           locked={true}
           // tabBarBackgroundColor={ColorConstants.LGreen}
           // tabStyle={{ backgroundColor: ColorConstants.LGreen }}
+          activeTextStyle={{ color: ColorConstants.secondary }}
         >
           <Tab
             heading='Details'
-            tabStyle={{ backgroundColor: ColorConstants.Black }}
-            activeTabStyle={{ backgroundColor: ColorConstants.Black }}
+            tabStyle={{ backgroundColor: ColorConstants.primary }}
+            activeTabStyle={{ backgroundColor: ColorConstants.primary }}
           >
             <DetailsTab trailData={trailData} />
           </Tab>
           <Tab
             heading='Maps'
-            tabStyle={{ backgroundColor: ColorConstants.Black }}
-            activeTabStyle={{ backgroundColor: ColorConstants.Black }}
+            tabStyle={{ backgroundColor: ColorConstants.primary }}
+            activeTabStyle={{ backgroundColor: ColorConstants.primary }}
           >
             <MapsTab trailData={trailData} />
           </Tab>
           <Tab
             heading='Events'
-            tabStyle={{ backgroundColor: ColorConstants.Black }}
-            activeTabStyle={{ backgroundColor: ColorConstants.Black }}
+            tabStyle={{ backgroundColor: ColorConstants.primary }}
+            activeTabStyle={{ backgroundColor: ColorConstants.primary }}
           >
             <EventsTab trailData={trailData} />
           </Tab>
