@@ -30,9 +30,7 @@ const SearchTrailScreen = ({ navigation }) => {
   const user = useSelector((state) => state.user.profile.name);
   const isAuth = useSelector((state) => state.user.isAuth);
   const locationStatus = useSelector((state) => state.user.userLocation.status);
-  // const filteredTrails = useSelector(
-  //   (state) => state.trails.filteredTrails.data
-  // );
+  const [filter, setFilter] = useState({});
   const [trails, setTrails] = useState([]);
 
   const easyParams = {
@@ -63,7 +61,6 @@ const SearchTrailScreen = ({ navigation }) => {
       },
     },
   };
-  const [filter, setFilter] = useState(easyParams);
 
   let content,
     spinner = true;
@@ -98,6 +95,7 @@ const SearchTrailScreen = ({ navigation }) => {
 
   //Initial Trail Fetch
   useEffect(() => {
+    setFilter(easyParams);
     getTrailsByQuery({
       query: filter?.query,
       location: filter?.location,
