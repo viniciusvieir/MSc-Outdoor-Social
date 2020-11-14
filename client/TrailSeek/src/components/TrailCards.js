@@ -107,7 +107,6 @@ const TrailCards = ({ trails, fetchMoreData, filter }) => {
                       fullStar={'ios-star'}
                       halfStar={'ios-star-half'}
                       iconSet={'Ionicons'}
-<<<<<<< HEAD
                       maxStars={1}
                       rating={1}
                       fullStarColor={ColorConstants.secondary}
@@ -119,14 +118,6 @@ const TrailCards = ({ trails, fetchMoreData, filter }) => {
                     >
                       {item.avg_rating}
                     </Text>
-=======
-                      maxStars={5}
-                      rating={item.avg_rating}
-                      fullStarColor={'gold'}
-                      starSize={24}
-                      starStyle={styles.rating}
-                    />
->>>>>>> 6823897b08dcfb322761a58dd0fa645da4a7cdde
                   </Left>
                   <Right>
                     <Button
