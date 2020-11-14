@@ -17,7 +17,7 @@ const CovidWidget = ({ data }) => {
     return date;
   };
   let content;
-  if (data) {
+  if (data && data.length > 0) {
     const lastItem = data.length - 1;
     content = (
       <View style={{ flex: 1 }}>

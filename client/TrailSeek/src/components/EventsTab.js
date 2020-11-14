@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { Text, Button, List, ListItem, Body } from "native-base";
 import { useNavigation } from "@react-navigation/native";
+
 import { useDispatch, useSelector } from "react-redux";
 import { unwrapResult } from "@reduxjs/toolkit";
 // import trailSeek from "../api/trailSeek";

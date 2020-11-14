@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, ScrollView } from "react-native";
+import { StyleSheet, ScrollView, View } from "react-native";
 import { SearchBar } from "react-native-elements";
 import { useDispatch, useSelector } from "react-redux";
 import { unwrapResult } from "@reduxjs/toolkit";
@@ -139,7 +139,7 @@ const SearchTrailScreen = ({ navigation }) => {
             }}
           >
             {" "}
-            Hi! {user ? user : "User"}
+            Hey, {user ? user : ""}
           </Title>
         </Body>
       </Header>
@@ -204,10 +204,7 @@ const SearchTrailScreen = ({ navigation }) => {
           <Text style={styles.filterButtonsText}>Near You</Text>
         </Button>
       </ScrollView>
-      <Content
-        style={{ backgroundColor: ColorConstants.LGreen, flex: 1 }}
-        contentContainerStyle={{ flex: 1 }}
-      >
+      <View style={{ backgroundColor: ColorConstants.LGreen, flex: 1 }}>
         <TrailCard
           title={filter.title}
           trails={trails}
@@ -220,7 +217,7 @@ const SearchTrailScreen = ({ navigation }) => {
           //   })
           // }
         />
-      </Content>
+      </View>
     </Container>
   );
 };
