@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+<<<<<<< HEAD
 import { StyleSheet, Dimensions, View, Image } from 'react-native'
 import { Tile } from 'react-native-elements'
 import { useSelector, useDispatch } from 'react-redux'
@@ -17,6 +18,14 @@ import {
 
 import { Entypo } from '@expo/vector-icons'
 
+=======
+import { StyleSheet, Dimensions, View } from 'react-native'
+import { Tile } from 'react-native-elements'
+import { useSelector, useDispatch } from 'react-redux'
+import { unwrapResult } from '@reduxjs/toolkit'
+import { Container, Tab, Tabs, Header, Content, Text } from 'native-base'
+
+>>>>>>> 6823897b08dcfb322761a58dd0fa645da4a7cdde
 import { fetchTrailsByID } from '../app/trailSlice'
 import ToastAlert from '../components/ToastAlert'
 import LoadSpinner from '../components/LoadSpinner'
@@ -25,7 +34,10 @@ import DetailsTab from '../components/DetailsTab'
 import MapsTab from '../components/MapsTab'
 import EventsTab from '../components/EventsTab'
 import ColorConstants from '../util/ColorConstants'
+<<<<<<< HEAD
 import StarRating from 'react-native-star-rating'
+=======
+>>>>>>> 6823897b08dcfb322761a58dd0fa645da4a7cdde
 
 const ViewTrailScreen = ({ route }) => {
   const { id, showEvents } = route.params
@@ -147,22 +159,37 @@ const ViewTrailScreen = ({ route }) => {
         >
           <Tab
             heading='Details'
+<<<<<<< HEAD
             tabStyle={{ backgroundColor: ColorConstants.primary }}
             activeTabStyle={{ backgroundColor: ColorConstants.primary }}
+=======
+            tabStyle={{ backgroundColor: ColorConstants.Black }}
+            activeTabStyle={{ backgroundColor: ColorConstants.Black }}
+>>>>>>> 6823897b08dcfb322761a58dd0fa645da4a7cdde
           >
             <DetailsTab trailData={trailData} />
           </Tab>
           <Tab
             heading='Maps'
+<<<<<<< HEAD
             tabStyle={{ backgroundColor: ColorConstants.primary }}
             activeTabStyle={{ backgroundColor: ColorConstants.primary }}
+=======
+            tabStyle={{ backgroundColor: ColorConstants.Black }}
+            activeTabStyle={{ backgroundColor: ColorConstants.Black }}
+>>>>>>> 6823897b08dcfb322761a58dd0fa645da4a7cdde
           >
             <MapsTab trailData={trailData} />
           </Tab>
           <Tab
             heading='Events'
+<<<<<<< HEAD
             tabStyle={{ backgroundColor: ColorConstants.primary }}
             activeTabStyle={{ backgroundColor: ColorConstants.primary }}
+=======
+            tabStyle={{ backgroundColor: ColorConstants.Black }}
+            activeTabStyle={{ backgroundColor: ColorConstants.Black }}
+>>>>>>> 6823897b08dcfb322761a58dd0fa645da4a7cdde
           >
             <EventsTab trailData={trailData} />
           </Tab>
