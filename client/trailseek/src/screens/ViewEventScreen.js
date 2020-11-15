@@ -254,7 +254,7 @@ const ViewEventScreen = ({ navigation, route }) => {
         <FlatList
           data={list}
           keyExtractor={(item) => {
-            return item.id;
+            return item.id.toString();
           }}
           style={{
             marginVertical: 10,

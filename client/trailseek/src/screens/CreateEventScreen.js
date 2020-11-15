@@ -8,10 +8,14 @@ import { useSelector, useDispatch } from "react-redux";
 import { Formik, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
+import { postEvents } from "../app/eventSlice";
+import ToastAlert from "../components/ToastAlert";
+
 const CreateEventScreen = ({ route, navigation }) => {
-  const { trailName, trailID } = route.params;
+  const { trailName, trailID, refreshEvents } = route.params;
   const username = useSelector((state) => state.user.profile.name);
   const [show, setShow] = useState(false);
+  const dispatch = useDispatch();
 
   return (
     <>
@@ -41,13 +45,22 @@ const CreateEventScreen = ({ route, navigation }) => {
               "Please select less than 20 Participants"
             ),
           })}
-          onSubmit={(values, formikActions) => {
-            setTimeout(() => {
-              Alert.alert(JSON.stringify(values));
-              // Important: Make sure to setSubmitting to false so our loading indicator
-              // goes away.
+          onSubmit={async (values, formikActions) => {
+            try {
+              const response = await dispatch(
+                postEvents({ inputs: values, trailID })
+              );
               formikActions.setSubmitting(false);
-            }, 500);
+              // refreshEvents();
+              navigation.goBack();
+            } catch (e) {
+              ToastAlert(e.message);
+            }
+            // setTimeout(() => {
+            //   Alert.alert(JSON.stringify(values));
+            //   // Important: Make sure to setSubmitting to false so our loading indicator
+            //   // goes away.
+            // }, 500);
           }}
         >
           {(props) => (
