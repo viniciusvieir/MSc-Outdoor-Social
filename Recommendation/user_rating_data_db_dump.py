@@ -1,10 +1,16 @@
 
 
+from dotenv import load_dotenv
+from pathlib import Path
 import pandas as pd
 import pymongo
+import os
 
 ## Connect to database:
-client = pymongo.MongoClient("#####")
+load_dotenv(dotenv_path = Path('/.env'))
+mongo_url = os.getenv('MONGO_URL')
+client = pymongo.MongoClient(mongo_url)
+
 db = client['trailseek']
 db['user_rating'].drop()
 collection = db['user_rating']
