@@ -172,7 +172,6 @@ const CreateEventScreen = ({ route, navigation }) => {
     </>
   );
 };
-// 979aad
 const styles = StyleSheet.create({});
 
 export default CreateEventScreen;

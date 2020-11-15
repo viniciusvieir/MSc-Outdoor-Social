@@ -13,6 +13,7 @@ import StarRating from "react-native-star-rating";
 import { Col, Row, Grid } from "react-native-easy-grid";
 import { useNavigation } from "@react-navigation/native";
 import moment from "moment";
+import { useSelector } from "react-redux";
 
 import WeatherWidget from "./WeatherWidget";
 import CovidWidget from "./CovidWidget";
@@ -21,6 +22,7 @@ import NoData from "./NoData";
 
 const DetaiTabs = ({ trailData }) => {
   const navigation = useNavigation();
+  const covidToggle = useSelector((state) => state.user.covidToggle);
   return (
     <ScrollView
       style={{ backgroundColor: ColorConstants.LGreen, flex: 1 }}
@@ -86,16 +88,20 @@ const DetaiTabs = ({ trailData }) => {
             {trailData.description}
           </Text>
         </Row>
-        <View
-          style={{
-            marginVertical: 10,
-            borderBottomColor: ColorConstants.White,
-            borderBottomWidth: 1,
-          }}
-        />
-        <Row>
-          <CovidWidget data={trailData.covidData} />
-        </Row>
+        {covidToggle ? (
+          <>
+            <View
+              style={{
+                marginVertical: 10,
+                borderBottomColor: ColorConstants.White,
+                borderBottomWidth: 1,
+              }}
+            />
+            <Row>
+              <CovidWidget data={trailData.covidData} />
+            </Row>
+          </>
+        ) : null}
         <View
           style={{
             marginVertical: 10,
