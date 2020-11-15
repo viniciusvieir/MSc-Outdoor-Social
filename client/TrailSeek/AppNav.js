@@ -117,6 +117,19 @@ const TrailFlow = () => {
       <Stack.Screen
         name="CreateEvent"
         component={CreateEventScreen}
+        options={{
+          headerStyle: { backgroundColor: ColorConstants.Black },
+          headerTitleStyle: { color: ColorConstants.DWhite },
+          title: "Create Event",
+          headerBackImage: () => (
+            <MaterialIcons
+              name="arrow-back"
+              size={24}
+              color="white"
+              style={styles.shadow}
+            />
+          ),
+        }}
         listeners={({ navigation }) => ({
           focus: (e) => {
             autFlag ? null : navigation.navigate("Signin");
