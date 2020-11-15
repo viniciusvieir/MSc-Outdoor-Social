@@ -27,6 +27,28 @@ export const fetchEvents = createAsyncThunk(
   }
 );
 
+export const postEvents = createAsyncThunk(
+  "event/postEvents",
+  async ({ trailID, inputs }, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await trailSeek.post(
+        `/trails/${trailID}/events`,
+        inputs
+      );
+      // try{}catch(e)
+      return { eventID: response.data, data: inputs, trailID };
+    } catch (e) {
+      return rejectWithValue(
+        e.response.data.errors
+          .map((item) => {
+            return item.msg;
+          })
+          .join(" ")
+      );
+    }
+  }
+);
+
 export const eventSlice = createSlice({
   name: "event",
   initialState,
@@ -53,9 +75,31 @@ export const eventSlice = createSlice({
       state.error = action.payload;
     },
     //////////////////////////////////////////////////////////////
+    [postEvents.pending]: (state, action) => {
+      state.status = CONSTANTS.LOADING;
+    },
+    [postEvents.fulfilled]: (state, action) => {
+      // console.log(action.payload.eventID.eventId);
+      // const { data, trailID, eventID } = action.payload;
+      // data._id = eventID.eventId;
+      state.status = CONSTANTS.SUCCESS;
+      // const idx = state.events.findIndex((obj) => obj.trailID === trailID);
+      // if (idx === -1) {
+      //   state.events.push({ data, trailID });
+      // } else {
+      //   state.events[idx].data.push(data);
+      // }
+    },
+    [postEvents.rejected]: (state, action) => {
+      state.status = CONSTANTS.FAILED;
+      state.error = action.payload;
+    },
+    //////////////////////////////////////////////////////////////
   },
 });
 
 export const { logOut1 } = eventSlice.actions;
+
+// export const eventData =
 
 export default eventSlice.reducer;

@@ -29,6 +29,7 @@ const TrailCards = ({ title, trails, fetchMoreData, filter }) => {
           marginLeft: 10,
           marginVertical: 5,
           fontWeight: "bold",
+          fontSize: 22,
         }}
       >
         {title}

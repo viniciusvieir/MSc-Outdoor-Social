@@ -58,8 +58,12 @@ const ViewTrailScreen = ({ route }) => {
         />
 
         <Tabs
+          // page={showEvents ? 2 : 0}
           initialPage={showEvents ? 2 : 0}
           locked={true}
+          // onChangeTab={(test) => {
+          //   console.log(test);
+          // }}
           // tabBarBackgroundColor={ColorConstants.LGreen}
           // tabStyle={{ backgroundColor: ColorConstants.LGreen }}
         >

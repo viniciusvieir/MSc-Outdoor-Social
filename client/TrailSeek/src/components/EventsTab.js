@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, ScrollView } from "react-native";
 import { Text, Button, List, ListItem, Body } from "native-base";
 import { useNavigation } from "@react-navigation/native";
+
 import { useDispatch, useSelector } from "react-redux";
 import { unwrapResult } from "@reduxjs/toolkit";
 // import trailSeek from "../api/trailSeek";
@@ -13,22 +14,30 @@ import ToastAlert from "../components/ToastAlert";
 const EventsTab = ({ trailData }) => {
   const dispatch = useDispatch();
   const [events, setEvents] = useState([]);
+  // const [isFocused,setIsFocused] = useState(fasle)
+  const navigation = useNavigation();
+  // const isFocused = navigation.isFocused();
+  const getEvents = async () => {
+    try {
+      const results = await dispatch(fetchEvents(trailData._id));
+      const uResults = unwrapResult(results);
+      setEvents(uResults.data);
+    } catch (e) {
+      console.log(e);
+      ToastAlert(e.message);
+    }
+  };
+
+  // isFocused ? getEvents() : null;
 
   useEffect(() => {
-    const getEvents = async () => {
-      try {
-        const results = await dispatch(fetchEvents(trailData._id));
-        const uResults = unwrapResult(results);
-        setEvents(uResults.data);
-      } catch (e) {
-        console.log(e);
-        ToastAlert(e.message);
-      }
-    };
+    const unsubscribe = navigation.addListener("focus", () => {
+      getEvents();
+    });
     getEvents();
-  }, []);
+    return unsubscribe;
+  }, [navigation]);
 
-  const navigation = useNavigation();
   return (
     <View
       style={{
@@ -41,6 +50,7 @@ const EventsTab = ({ trailData }) => {
           navigation.navigate("CreateEvent", {
             trailID: trailData._id,
             trailName: trailData.name,
+            // refreshEvents: getEvents,
           });
         }}
         full
@@ -48,31 +58,33 @@ const EventsTab = ({ trailData }) => {
       >
         <Text>Create Event</Text>
       </Button>
-      <List>
-        {events.map((l, i) => (
-          //ViewNavigation to be changes part of a different stack in navigation, maybe use navigation reset TBD
-          <ListItem
-            key={i}
-            onPress={() => {
-              navigation.navigate("ViewEvent", {
-                // screen: "ViewEvent",
-                // initial: false,
-                trailData,
-                eventData: l,
-              });
-            }}
-            noIndent
-            style={{ backgroundColor: ColorConstants.LGreen }}
-          >
-            <Body>
-              <Text style={styles.listText}>{l.title}</Text>
-              <Text note style={styles.listText}>
-                {l.description}
-              </Text>
-            </Body>
-          </ListItem>
-        ))}
-      </List>
+      <ScrollView>
+        <List>
+          {events.map((l, i) => (
+            //ViewNavigation to be changes part of a different stack in navigation, maybe use navigation reset TBD
+            <ListItem
+              key={i}
+              onPress={() => {
+                navigation.navigate("ViewEvent", {
+                  // screen: "ViewEvent",
+                  // initial: false,
+                  trailData,
+                  eventData: l,
+                });
+              }}
+              noIndent
+              style={{ backgroundColor: ColorConstants.LGreen }}
+            >
+              <Body>
+                <Text style={styles.listText}>{l.title}</Text>
+                <Text note style={styles.listText}>
+                  {l.description}
+                </Text>
+              </Body>
+            </ListItem>
+          ))}
+        </List>
+      </ScrollView>
     </View>
   );
 };

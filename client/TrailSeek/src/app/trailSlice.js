@@ -57,6 +57,7 @@ export const fetchTrailsByQuery = createAsyncThunk(
       location = false,
       maxDist = 10000,
       minDist = 0,
+      fields = "name,avg_rating,location,img_url",
     },
     { rejectWithValue, getState }
   ) => {
@@ -83,7 +84,7 @@ export const fetchTrailsByQuery = createAsyncThunk(
           q: JSON.stringify(query),
           limit,
           skip,
-          fields: "name,avg_rating,location,img_url",
+          fields,
         },
       });
       return { response: response.data, query };

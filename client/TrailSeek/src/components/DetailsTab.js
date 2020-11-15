@@ -47,11 +47,10 @@ const DetaiTabs = ({ trailData }) => {
               maxStars={5}
               rating={trailData.avg_rating}
               fullStarColor={"gold"}
-              starSize={30}
+              starSize={25}
             />
           </Col>
         </Row>
-
         <Row style={{ marginVertical: 10 }}>
           <Col size={1}>
             <Text style={styles.textInfoLabel}>Activity</Text>
@@ -116,75 +115,67 @@ const DetaiTabs = ({ trailData }) => {
         }}
       />
       <Text style={styles.similarTrails}>Similar Trails : </Text>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
+      <FlatList
+        ListEmptyComponent={<NoData />}
         nestedScrollEnabled
-      >
-        <FlatList
-          ListEmptyComponent={<NoData />}
-          nestedScrollEnabled
-          horizontal
-          data={trailData.recommended}
-          keyExtractor={(trails) => {
-            return trails._id;
-          }}
-          renderItem={({ item }) => {
-            return (
-              <View style={{ flex: 1 }}>
-                <Card
-                  style={{
-                    width: 250,
-                    marginLeft: 10,
-                    backgroundColor: ColorConstants.DWhite,
+        horizontal
+        data={trailData.recommended}
+        keyExtractor={(trails) => {
+          return trails._id;
+        }}
+        renderItem={({ item }) => {
+          return (
+            <View style={{ flex: 1 }}>
+              <Card
+                style={{
+                  width: 250,
+                  marginLeft: 10,
+                  backgroundColor: ColorConstants.DWhite,
+                }}
+              >
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.push("ViewTrail", {
+                      id: item._id,
+                      name: item.name,
+                    });
                   }}
                 >
-                  <TouchableOpacity
-                    onPress={() => {
-                      navigation.push("ViewTrail", {
-                        id: item._id,
-                        name: item.name,
-                      });
-                    }}
-                  >
-                    <CardItem cardBody>
-                      <Image
-                        source={{ uri: item.img_url }}
-                        style={styles.imageStyle}
-                        PlaceholderContent={<ActivityIndicator />}
-                        resizeMethod="auto"
-                        resizeMode="cover"
-                      />
-                    </CardItem>
-                    <CardItem
-                      style={{ backgroundColor: ColorConstants.DWhite }}
-                    >
-                      <Grid>
-                        <Col size={4}>
-                          <Text>{item.name}</Text>
-                        </Col>
-                        <Col size={2}>
-                          <StarRating
-                            disabled={true}
-                            emptyStar={"ios-star-outline"}
-                            fullStar={"ios-star"}
-                            halfStar={"ios-star-half"}
-                            iconSet={"Ionicons"}
-                            maxStars={5}
-                            rating={item.avg_rating}
-                            fullStarColor={"gold"}
-                            starSize={16}
-                          />
-                        </Col>
-                      </Grid>
-                    </CardItem>
-                  </TouchableOpacity>
-                </Card>
-              </View>
-            );
-          }}
-        />
-      </ScrollView>
+                  <CardItem cardBody>
+                    <Image
+                      source={{ uri: item.img_url }}
+                      style={styles.imageStyle}
+                      PlaceholderContent={<ActivityIndicator />}
+                      resizeMethod="auto"
+                      resizeMode="cover"
+                    />
+                  </CardItem>
+                  <CardItem style={{ backgroundColor: ColorConstants.DWhite }}>
+                    <Grid>
+                      <Col size={4}>
+                        <Text>{item.name}</Text>
+                      </Col>
+                      <Col size={2}>
+                        <StarRating
+                          disabled={true}
+                          emptyStar={"ios-star-outline"}
+                          fullStar={"ios-star"}
+                          halfStar={"ios-star-half"}
+                          iconSet={"Ionicons"}
+                          maxStars={5}
+                          rating={item.avg_rating}
+                          fullStarColor={"gold"}
+                          starSize={16}
+                        />
+                      </Col>
+                    </Grid>
+                  </CardItem>
+                </TouchableOpacity>
+              </Card>
+            </View>
+          );
+        }}
+      />
     </ScrollView>
   );
 };
@@ -192,7 +183,7 @@ const DetaiTabs = ({ trailData }) => {
 const styles = StyleSheet.create({
   textInfo: {
     color: ColorConstants.DWhite,
-    fontSize: 25,
+    fontSize: 20,
   },
   textInfoLabel: {
     fontSize: 12,
