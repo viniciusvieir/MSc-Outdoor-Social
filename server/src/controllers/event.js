@@ -64,6 +64,8 @@ class EventController {
       return res.status(400).json({ errors: errors.array() })
 
     const { id: userId } = req.context
+    // TODO: check if user owns the event
+
     const { eventId } = req.params
     const {
       title,
@@ -81,14 +83,36 @@ class EventController {
       { title, description, date, duration_min, max_participants }
     )
 
-    res.json({ success: true })
+    const event = await Event.findById(eventId)
+
+    res.json(event)
   }
 
   async deleteEvent(req, res) {
     const { id: userId } = req.context
+    // TODO: check if user owns the event
     const { eventId } = req.params
     await Event.deleteOne({ eventId })
     res.json({ success: true })
+  }
+
+  async joinEvent(req, res) {
+    const { id: userId, name } = req.context
+    const { eventId } = req.params
+
+    await Event.update(
+      { _id: eventId },
+      {
+        $push: {
+          participants: {
+            userId,
+            name,
+          },
+        },
+      }
+    )
+      .then(() => res.json({ success: true }))
+      .catch((error) => res.json(errorHandler(error)))
   }
 
   // VALIDATION
