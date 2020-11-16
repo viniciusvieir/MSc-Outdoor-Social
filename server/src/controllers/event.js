@@ -81,7 +81,9 @@ class EventController {
       { title, description, date, duration_min, max_participants }
     )
 
-    res.json({ success: true })
+    const event = await Event.findById(eventId)
+
+    res.json(event)
   }
 
   async deleteEvent(req, res) {
