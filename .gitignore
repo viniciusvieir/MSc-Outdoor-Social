@@ -16,3 +16,5 @@ database.sqlite
 *.http
 client/TrailSeek/trail.http
 client/TrailSeek/.vscode/settings.json
+client/trailseek/yarn.lock
+client/trailseek/yarn.lock

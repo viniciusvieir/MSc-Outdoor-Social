@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 import {
   StyleSheet,
   View,
@@ -7,7 +7,6 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
-
 } from "react-native";
 import { Text, CardItem, Card } from "native-base";
 import StarRating from "react-native-star-rating";
@@ -16,15 +15,14 @@ import { useNavigation } from "@react-navigation/native";
 import moment from "moment";
 import { useSelector } from "react-redux";
 
+import { FontAwesome5 } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
 
-import { FontAwesome5 } from '@expo/vector-icons'
-import { Entypo } from '@expo/vector-icons'
-
-import WeatherWidget from './WeatherWidget'
-import CovidWidget from './CovidWidget'
-import ColorConstants from '../util/ColorConstants'
-import NoData from './NoData'
-import Constants from '../util/Constants'
+import WeatherWidget from "./WeatherWidget";
+import CovidWidget from "./CovidWidget";
+import ColorConstants from "../util/ColorConstants";
+import NoData from "./NoData";
+import Constants from "../util/Constants";
 
 const DetaiTabs = ({ trailData }) => {
   const navigation = useNavigation();
@@ -46,19 +44,19 @@ const DetaiTabs = ({ trailData }) => {
               style={{
                 color: ColorConstants.primary,
                 fontSize: 26,
-                fontWeight: 'bold',
+                fontWeight: "bold",
               }}
             >
               {trailData.name}
             </Text>
           </Col>
-          <Col size={1} style={{ flex: 1, flexDirection: 'row' }}>
+          <Col size={1} style={{ flex: 1, flexDirection: "row" }}>
             <StarRating
               disabled={true}
-              emptyStar={'ios-star-outline'}
-              fullStar={'ios-star'}
-              halfStar={'ios-star-half'}
-              iconSet={'Ionicons'}
+              emptyStar={"ios-star-outline"}
+              fullStar={"ios-star"}
+              halfStar={"ios-star-half"}
+              iconSet={"Ionicons"}
               maxStars={1}
               rating={1}
               fullStarColor={ColorConstants.secondary}
@@ -70,7 +68,7 @@ const DetaiTabs = ({ trailData }) => {
                 marginTop: 4,
                 color: ColorConstants.secondary,
                 fontSize: 22,
-                fontWeight: 'bold',
+                fontWeight: "bold",
               }}
             >
               {trailData.avg_rating}
@@ -79,7 +77,7 @@ const DetaiTabs = ({ trailData }) => {
         </Row>
 
         <Row>
-          <Entypo name='location-pin' size={16} color='gray' />
+          <Entypo name="location-pin" size={16} color="gray" />
           <Text style={{ fontSize: 14 }}>{trailData.location}</Text>
         </Row>
 
@@ -87,7 +85,7 @@ const DetaiTabs = ({ trailData }) => {
           <Col size={1}>
             <Row>
               <FontAwesome5
-                name='hiking'
+                name="hiking"
                 size={20}
                 color={ColorConstants.Black2}
               />
@@ -97,7 +95,7 @@ const DetaiTabs = ({ trailData }) => {
           <Col size={1}>
             <Row>
               <FontAwesome5
-                name='mountain'
+                name="mountain"
                 size={16}
                 color={ColorConstants.Black2}
               />
@@ -107,7 +105,7 @@ const DetaiTabs = ({ trailData }) => {
           <Col size={1}>
             <Row>
               <FontAwesome5
-                name='route'
+                name="route"
                 size={20}
                 color={ColorConstants.Black2}
               />
@@ -117,16 +115,16 @@ const DetaiTabs = ({ trailData }) => {
           <Col size={1}>
             <Row>
               <FontAwesome5
-                name='clock'
+                name="clock"
                 size={20}
                 color={ColorConstants.Black2}
               />
               <Text style={styles.textInfo}>
                 {moment
                   .utc()
-                  .startOf('day')
+                  .startOf("day")
                   .add({ minutes: trailData.estimate_time_min })
-                  .format('H[h]mm')}
+                  .format("H[h]mm")}
               </Text>
             </Row>
           </Col>
@@ -181,74 +179,67 @@ const DetaiTabs = ({ trailData }) => {
       <FlatList
         ListEmptyComponent={<NoData />}
         nestedScrollEnabled
-      >
-        <FlatList
-          ListEmptyComponent={<NoData />}
-          nestedScrollEnabled
-          horizontal
-          data={trailData.recommended}
-          keyExtractor={(trails) => {
-            return trails._id
-          }}
-          renderItem={({ item }) => {
-            return (
-              <View style={{ flex: 1 }}>
-                <Card
-                  style={{
-                    width: 250,
-                    marginLeft: 10,
-                    backgroundColor: ColorConstants.DWhite,
+        horizontal
+        data={trailData.recommended}
+        keyExtractor={(trails) => {
+          return trails._id;
+        }}
+        renderItem={({ item }) => {
+          return (
+            <View style={{ flex: 1 }}>
+              <Card
+                style={{
+                  width: 250,
+                  marginLeft: 10,
+                  backgroundColor: ColorConstants.DWhite,
+                }}
+              >
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.push("ViewTrail", {
+                      id: item._id,
+                      name: item.name,
+                    });
                   }}
                 >
-                  <TouchableOpacity
-                    onPress={() => {
-                      navigation.push('ViewTrail', {
-                        id: item._id,
-                        name: item.name,
-                      })
-                    }}
-                  >
-                    <CardItem cardBody>
-                      <Image
-                        source={{ uri: item.img_url }}
-                        style={styles.imageStyle}
-                        PlaceholderContent={<ActivityIndicator />}
-                        resizeMethod='auto'
-                        resizeMode='cover'
-                      />
-                    </CardItem>
-                    <CardItem
-                      style={{ backgroundColor: ColorConstants.DWhite }}
-                    >
-                      <Grid>
-                        <Col size={4}>
-                          <Text>{item.name}</Text>
-                        </Col>
-                        <Col size={2}>
-                          <StarRating
-                            disabled={true}
-                            emptyStar={'ios-star-outline'}
-                            fullStar={'ios-star'}
-                            halfStar={'ios-star-half'}
-                            iconSet={'Ionicons'}
-                            maxStars={5}
-                            rating={item.avg_rating}
-                            fullStarColor={'gold'}
-                            starSize={16}
-                          />
-                        </Col>
-                      </Grid>
-                    </CardItem>
-                  </TouchableOpacity>
-                </Card>
-              </View>
-            )
-          }}
-        />
-      </ScrollView>
+                  <CardItem cardBody>
+                    <Image
+                      source={{ uri: item.img_url }}
+                      style={styles.imageStyle}
+                      PlaceholderContent={<ActivityIndicator />}
+                      resizeMethod="auto"
+                      resizeMode="cover"
+                    />
+                  </CardItem>
+                  <CardItem style={{ backgroundColor: ColorConstants.DWhite }}>
+                    <Grid>
+                      <Col size={4}>
+                        <Text>{item.name}</Text>
+                      </Col>
+                      <Col size={2}>
+                        <StarRating
+                          disabled={true}
+                          emptyStar={"ios-star-outline"}
+                          fullStar={"ios-star"}
+                          halfStar={"ios-star-half"}
+                          iconSet={"Ionicons"}
+                          maxStars={5}
+                          rating={item.avg_rating}
+                          fullStarColor={"gold"}
+                          starSize={16}
+                        />
+                      </Col>
+                    </Grid>
+                  </CardItem>
+                </TouchableOpacity>
+              </Card>
+            </View>
+          );
+        }}
+      />
     </ScrollView>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   textInfo: {
@@ -273,9 +264,9 @@ const styles = StyleSheet.create({
   similarTrails: {
     marginLeft: 10,
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: ColorConstants.darkGray,
   },
-})
+});
 
-export default DetaiTabs
+export default DetaiTabs;
