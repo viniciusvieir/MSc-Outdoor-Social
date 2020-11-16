@@ -42,7 +42,7 @@ const EventsTab = ({ trailData }) => {
   return (
     <View
       style={{
-        backgroundColor: ColorConstants.LGreen,
+        backgroundColor: ColorConstants.DWhite,
         flex: 1,
       }}
     >
@@ -75,7 +75,7 @@ const EventsTab = ({ trailData }) => {
                   });
                 }}
                 noIndent
-                style={{ backgroundColor: ColorConstants.LGreen }}
+                style={{ backgroundColor: ColorConstants.DWhite }}
               >
                 <Body>
                   <Text style={styles.listText}>{l.title}</Text>
@@ -95,7 +95,7 @@ const EventsTab = ({ trailData }) => {
 
 const styles = StyleSheet.create({
   listText: {
-    color: ColorConstants.DWhite,
+    color: ColorConstants.Black2,
   },
 });
 
