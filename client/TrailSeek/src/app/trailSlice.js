@@ -113,7 +113,7 @@ export const fetchTrailsByID = createAsyncThunk(
     { rejectWithValue, getState }
   ) => {
     let weatherResponse;
-    let covidRespons;
+    let covidResponse;
     try {
       const existTrail = getState().trails.trailDetails.find(
         (item) => item._id === id
@@ -135,7 +135,7 @@ export const fetchTrailsByID = createAsyncThunk(
       }
       if (covFlag) {
         try {
-          covidRespons = await covid.get("", {
+          covidResponse = await covid.get("", {
             params: {
               geometry: `${response.data.start.coordinates[1]},${response.data.start.coordinates[0]}`,
             },
@@ -146,7 +146,7 @@ export const fetchTrailsByID = createAsyncThunk(
         }
       }
       response.data.weatherData = weatherResponse.data;
-      response.data.covidData = covidRespons.data.features;
+      response.data.covidData = covidResponse.data.features;
       return response.data;
     } catch (error) {
       console.log(error);

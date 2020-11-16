@@ -11,18 +11,17 @@ import {
   Header,
   Title,
   Body,
-  View,
-} from 'native-base'
+} from "native-base";
 
-import LoadSpinner from '../components/LoadSpinner'
-import ToastAlert from '../components/ToastAlert'
-import TrailCard from '../components/TrailCards'
-import CONSTANTS from '../util/Constants'
-import ColorConstants from '../util/ColorConstants'
-import { fetchTrailsByQuery } from '../app/trailSlice'
-import { getLocation, fetchUserData } from '../app/userSlice'
-import Constants from '../util/Constants'
-import TrailFilter from '../components/TrailFilter'
+import LoadSpinner from "../components/LoadSpinner";
+import ToastAlert from "../components/ToastAlert";
+import TrailCard from "../components/TrailCards";
+import CONSTANTS from "../util/Constants";
+import ColorConstants from "../util/ColorConstants";
+import { fetchTrailsByQuery } from "../app/trailSlice";
+import { getLocation, fetchUserData } from "../app/userSlice";
+import Constants from "../util/Constants";
+import TrailFilter from "../components/TrailFilter";
 
 const SearchTrailScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -37,27 +36,27 @@ const SearchTrailScreen = ({ navigation }) => {
   const [trails, setTrails] = useState([]);
 
   const easyParams = {
-    title: 'Easy Trails',
+    title: "Easy Trails",
     query: {
-      difficulty: 'Easy',
+      difficulty: "Easy",
       length_km: { $lt: 5 },
     },
-  }
+  };
 
   const bestParams = {
-    title: 'Best Rated',
+    title: "Best Rated",
     query: {
       avg_rating: { $gt: 4 },
     },
-  }
+  };
 
   const nearMe = {
-    title: 'Near You',
+    title: "Near You",
     location: true,
-  }
+  };
 
   let searchParam = {
-    titel: 'Search Results',
+    titel: "Search Results",
     query: {
       $text: {
         $search: `${searchTerm}`,
@@ -66,36 +65,36 @@ const SearchTrailScreen = ({ navigation }) => {
   };
 
   let content,
-    spinner = true
+    spinner = true;
 
   const getTrailsByQuery = async ({ location = false, query, skip = 0 }) => {
     try {
-      let gpsLoc
+      let gpsLoc;
       if (location) {
         try {
-          gpsLoc = await dispatch(getLocation())
+          gpsLoc = await dispatch(getLocation());
         } catch (e) {
-          ToastAlert(e.message)
+          ToastAlert(e.message);
         }
       }
       const results = await dispatch(
         fetchTrailsByQuery({ query, location, skip })
-      )
-      const uResult = unwrapResult(results)
-      setTrails(uResult.response)
+      );
+      const uResult = unwrapResult(results);
+      setTrails(uResult.response);
     } catch (e) {
-      ToastAlert(e.message)
-      ToastAlert(error)
+      ToastAlert(e.message);
+      ToastAlert(error);
     }
-  }
+  };
 
   const getUserData = async () => {
     try {
-      const response = await dispatch(fetchUserData())
+      const response = await dispatch(fetchUserData());
     } catch (e) {
-      ToastAlert(e.message)
+      ToastAlert(e.message);
     }
-  }
+  };
 
   //Initial Trail Fetch
   useEffect(() => {
@@ -103,27 +102,27 @@ const SearchTrailScreen = ({ navigation }) => {
     getTrailsByQuery({
       query: filter?.query,
       location: filter?.location,
-    })
+    });
     if (isAuth) {
-      getUserData()
+      getUserData();
     }
-    setSearchTerm('')
-  }, [])
+    setSearchTerm("");
+  }, []);
 
   if (
     trailStatus === CONSTANTS.LOADING ||
     locationStatus === CONSTANTS.LOADING
   ) {
-    spinner = true
+    spinner = true;
   } else if (trailStatus === CONSTANTS.FAILED) {
-    spinner = false
-    ToastAlert(error)
-    content = <Text>{error}</Text>
+    spinner = false;
+    ToastAlert(error);
+    content = <Text>{error}</Text>;
   } else if (
     trailStatus === CONSTANTS.SUCCESS ||
     locationStatus === CONSTANTS.LOADING
   ) {
-    spinner = false
+    spinner = false;
   }
 
   return (
@@ -131,12 +130,12 @@ const SearchTrailScreen = ({ navigation }) => {
       style={{ backgroundColor: ColorConstants.primary, flex: 1 }}
       contentContainerStyle={{ flex: 1 }}
     >
-      <Header transparent androidStatusBarColor='#ffffff00'>
+      <Header transparent androidStatusBarColor="#ffffff00">
         <Body>
           <Title
             style={{
               color: ColorConstants.White,
-              fontWeight: 'bold',
+              fontWeight: "bold",
               fontSize: 40,
             }}
           >
@@ -154,26 +153,26 @@ const SearchTrailScreen = ({ navigation }) => {
           marginHorizontal: Constants.POINTS.marginHorizontal,
           height: 44,
         }}
-        placeholder='Search'
+        placeholder="Search"
         value={searchTerm}
         onChangeText={(text) => {
-          setSearchTerm(text)
+          setSearchTerm(text);
         }}
         inputContainerStyle={{ height: 29, marginLeft: 2 }}
-        autoCapitalize='none'
-        platform='android'
-        autoCompleteType='name'
+        autoCapitalize="none"
+        platform="android"
+        autoCompleteType="name"
         enablesReturnKeyAutomatically
         onSubmitEditing={() => {
-          navigation.navigate('ListTrail', { query: searchParam.query })
+          navigation.navigate("ListTrail", { query: searchParam.query });
         }}
       />
 
       <View
         style={{
           flex: 1,
-          flexDirection: 'row',
-          justifyContent: 'space-between',
+          flexDirection: "row",
+          justifyContent: "space-between",
           marginTop: 10,
           maxHeight: 44,
           marginHorizontal: 40,
@@ -184,36 +183,36 @@ const SearchTrailScreen = ({ navigation }) => {
           title={bestParams.title}
           active={filter.title === bestParams.title}
           action={() => {
-            setFilter(bestParams)
-            setTrails([])
+            setFilter(bestParams);
+            setTrails([]);
             getTrailsByQuery({
               query: filter?.query,
               location: filter?.location,
-            })
+            });
           }}
         />
         <TrailFilter
           title={easyParams.title}
           active={filter.title === easyParams.title}
           action={() => {
-            setFilter(easyParams)
-            setTrails([])
+            setFilter(easyParams);
+            setTrails([]);
             getTrailsByQuery({
               query: filter?.query,
               location: filter?.location,
-            })
+            });
           }}
         />
         <TrailFilter
           title={nearMe.title}
           active={filter.title === nearMe.title}
           action={() => {
-            setFilter(nearMe)
-            setTrails([])
+            setFilter(nearMe);
+            setTrails([]);
             getTrailsByQuery({
               query: filter?.query,
               location: filter?.location,
-            })
+            });
           }}
         />
       </View>
@@ -238,12 +237,12 @@ const SearchTrailScreen = ({ navigation }) => {
         />
       </View>
     </Container>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   filterButtons: {
-    borderColor: '#a1a1a1',
+    borderColor: "#a1a1a1",
     borderWidth: 1,
     marginHorizontal: 3,
     height: 44,
@@ -252,6 +251,6 @@ const styles = StyleSheet.create({
   filterButtonsText: {
     color: ColorConstants.Black2,
   },
-})
+});
 
-export default SearchTrailScreen
+export default SearchTrailScreen;

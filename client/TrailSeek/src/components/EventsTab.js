@@ -10,6 +10,7 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import ColorConstants from "../util/ColorConstants";
 import { fetchEvents } from "../app/eventSlice";
 import ToastAlert from "../components/ToastAlert";
+import moment from "moment";
 
 const EventsTab = ({ trailData }) => {
   const dispatch = useDispatch();
@@ -60,29 +61,32 @@ const EventsTab = ({ trailData }) => {
       </Button>
       <ScrollView>
         <List>
-          {events.map((l, i) => (
-            //ViewNavigation to be changes part of a different stack in navigation, maybe use navigation reset TBD
-            <ListItem
-              key={i}
-              onPress={() => {
-                navigation.navigate("ViewEvent", {
-                  // screen: "ViewEvent",
-                  // initial: false,
-                  trailData,
-                  eventData: l,
-                });
-              }}
-              noIndent
-              style={{ backgroundColor: ColorConstants.LGreen }}
-            >
-              <Body>
-                <Text style={styles.listText}>{l.title}</Text>
-                <Text note style={styles.listText}>
-                  {l.description}
-                </Text>
-              </Body>
-            </ListItem>
-          ))}
+          {events.map(
+            (l, i) => (
+              // moment(l.date).isAfter(moment()) ? (
+              <ListItem
+                key={i}
+                onPress={() => {
+                  navigation.navigate("ViewEvent", {
+                    // screen: "ViewEvent",
+                    // initial: false,
+                    trailData,
+                    eventData: l,
+                  });
+                }}
+                noIndent
+                style={{ backgroundColor: ColorConstants.LGreen }}
+              >
+                <Body>
+                  <Text style={styles.listText}>{l.title}</Text>
+                  <Text note style={styles.listText}>
+                    {l.description}
+                  </Text>
+                </Body>
+              </ListItem>
+            )
+            // ) : null
+          )}
         </List>
       </ScrollView>
     </View>

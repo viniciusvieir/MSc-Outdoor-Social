@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet } from "react-native";
 // import { Text, Button, ListItem } from 'react-native-elements';
 import {
@@ -10,19 +10,35 @@ import {
   Content,
   Header,
 } from "native-base";
+import { useDispatch } from "react-redux";
+
 import ColorConstants from "../util/ColorConstants";
 
 const MyEventScreen = ({ navigation }) => {
-  const list = [
-    {
-      name: "Event0",
-      subtitle: "Location",
-    },
-    {
-      name: "Event1",
-      subtitle: "Location",
-    },
-  ];
+  const dispatch = useDispatch();
+  const [events, setEvents] = useState([]);
+
+  // const getEvents = async () => {
+  //   try {
+  //     // const results = await dispatch(fetchEvents(trailData._id));
+  //     const uResults = unwrapResult(results);
+  //     setEvents(uResults.data);
+  //   } catch (e) {
+  //     console.log(e);
+  //     ToastAlert(e.message);
+  //   }
+  // };
+
+  // isFocused ? getEvents() : null;
+
+  // useEffect(() => {
+  //   const unsubscribe = navigation.addListener("focus", () => {
+  //     getEvents();
+  //   });
+  //   getEvents();
+  //   return unsubscribe;
+  // }, [navigation]);
+
   return (
     <Container
       style={{ backgroundColor: ColorConstants.LGreen, flex: 1 }}
@@ -33,27 +49,7 @@ const MyEventScreen = ({ navigation }) => {
           <Text>My Events</Text>
         </Body>
       </Header> */}
-      <Content>
-        <List>
-          {/* <Text h3>MyEventScreen</Text> */}
-          {list.map((l, i) => (
-            <ListItem
-              key={i}
-              onPress={() => {
-                navigation.navigate("ViewEvent");
-              }}
-              noIndent
-            >
-              <Body>
-                <Text style={styles.listText}>{l.name}</Text>
-                <Text style={styles.listText} note>
-                  {l.subtitle}
-                </Text>
-              </Body>
-            </ListItem>
-          ))}
-        </List>
-      </Content>
+      <Content></Content>
     </Container>
   );
 };
