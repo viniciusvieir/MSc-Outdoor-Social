@@ -10,7 +10,7 @@ import { Root } from "native-base";
 import * as Font from "expo-font";
 
 import ColorConstants from "./src/util/ColorConstants";
-import { getToken } from "./src/app/userSlice";
+import { fetchUserData, getToken, logOut } from "./src/app/userSlice";
 import CreateEventScreen from "./src/screens/CreateEventScreen";
 import ViewEventScreen from "./src/screens/ViewEventScreen";
 import ViewTrailScreen from "./src/screens/ViewTrailScreen";
@@ -41,7 +41,7 @@ const AuthenticationFlow = () => {
       <Stack.Screen
         name="Signup"
         component={SignupScreen}
-        options={{ headerTransparent: true, title: "" }}
+        options={{ headerTransparent: true, title: "", headerLeft: null }}
       />
     </Stack.Navigator>
   );
@@ -132,7 +132,9 @@ const TrailFlow = () => {
         }}
         listeners={({ navigation }) => ({
           focus: (e) => {
-            autFlag ? null : navigation.navigate("Signin");
+            autFlag
+              ? null
+              : navigation.navigate("Authentication", { screen: "Signin" });
           },
         })}
       />
@@ -189,7 +191,9 @@ const MainTabFlow = () => {
         component={EventFlow}
         listeners={({ navigation }) => ({
           tabPress: (e) => {
-            autFlag ? null : navigation.navigate("Signin");
+            autFlag
+              ? null
+              : navigation.navigate("Authentication", { screen: "Signin" });
           },
         })}
         options={{
@@ -204,7 +208,9 @@ const MainTabFlow = () => {
         component={ProfileFlow}
         listeners={({ navigation }) => ({
           tabPress: (e) => {
-            autFlag ? null : navigation.navigate("Signin");
+            autFlag
+              ? null
+              : navigation.navigate("Authentication", { screen: "Signin" });
           },
         })}
         options={{
@@ -270,22 +276,24 @@ const AppNav = () => {
       : null
   );
 
-  const getAsyncToken = async () => {
+  const getAsyncTokenAndUserData = async () => {
     try {
       await Font.loadAsync({
         Roboto: require("./node_modules/native-base/Fonts/Roboto.ttf"),
         Roboto_medium: require("./node_modules/native-base/Fonts/Roboto_medium.ttf"),
       });
       const results = await dispatch(getToken());
-      return results;
+      const results1 = await dispatch(fetchUserData());
+      return results1;
     } catch (e) {
+      dispatch(logOut());
       console.log(e.message);
     }
   };
   if (isLoading) {
     return (
       <AppLoading
-        startAsync={getAsyncToken}
+        startAsync={getAsyncTokenAndUserData}
         onFinish={() => {
           autFlag
             ? setInitRoutName("MainTab")
@@ -303,7 +311,7 @@ const AppNav = () => {
           <Stack.Screen
             name="Authentication"
             component={AuthenticationFlow}
-            options={{ headerTransparent: true, title: "" }}
+            options={{ headerTransparent: true, title: "", headerLeft: null }}
           />
           <Stack.Screen
             name="MainTab"

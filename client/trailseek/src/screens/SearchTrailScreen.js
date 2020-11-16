@@ -3,15 +3,7 @@ import { StyleSheet, ScrollView, View } from "react-native";
 import { SearchBar } from "react-native-elements";
 import { useDispatch, useSelector } from "react-redux";
 import { unwrapResult } from "@reduxjs/toolkit";
-import {
-  Container,
-  Content,
-  Button,
-  Text,
-  Header,
-  Title,
-  Body,
-} from "native-base";
+import { Container, Text, Header, Title, Body } from "native-base";
 
 import LoadSpinner from "../components/LoadSpinner";
 import ToastAlert from "../components/ToastAlert";
@@ -19,7 +11,7 @@ import TrailCard from "../components/TrailCards";
 import CONSTANTS from "../util/Constants";
 import ColorConstants from "../util/ColorConstants";
 import { fetchTrailsByQuery } from "../app/trailSlice";
-import { getLocation, fetchUserData } from "../app/userSlice";
+import { getLocation } from "../app/userSlice";
 import Constants from "../util/Constants";
 import TrailFilter from "../components/TrailFilter";
 
@@ -88,13 +80,14 @@ const SearchTrailScreen = ({ navigation }) => {
     }
   };
 
-  const getUserData = async () => {
-    try {
-      const response = await dispatch(fetchUserData());
-    } catch (e) {
-      ToastAlert(e.message);
-    }
-  };
+  // const getUserData = async () => {
+  //   try {
+  //     const response = await dispatch(fetchUserData());
+  //   } catch (e) {
+  //     dispatch(logOut);
+  //     ToastAlert(e.message);
+  //   }
+  // };
 
   //Initial Trail Fetch
   useEffect(() => {
@@ -103,9 +96,9 @@ const SearchTrailScreen = ({ navigation }) => {
       query: filter?.query,
       location: filter?.location,
     });
-    if (isAuth) {
-      getUserData();
-    }
+    // if (isAuth) {
+    //   getUserData();
+    // }
     setSearchTerm("");
   }, []);
 

@@ -37,11 +37,13 @@ export const fetchAllTrails = createAsyncThunk(
       console.log(error.message);
       retrun(error.message);
       return rejectWithValue(
-        error.response.data.errors
-          .map((item) => {
-            return item.msg;
-          })
-          .join(" ")
+        error.response.data?.errors
+          ? error.response.data.errors
+              .map((item) => {
+                return item.msg;
+              })
+              .join(" ")
+          : error.status
       );
     }
   }
@@ -89,13 +91,15 @@ export const fetchTrailsByQuery = createAsyncThunk(
       });
       return { response: response.data, query };
     } catch (error) {
-      console.log(error);
+      console.log(error.response);
       return rejectWithValue(
-        error.response.data.errors
-          .map((item) => {
-            return item.msg;
-          })
-          .join(" ")
+        error.response.data?.errors
+          ? error.response.data.errors
+              .map((item) => {
+                return item.msg;
+              })
+              .join(" ")
+          : error.message
       );
     }
   }
@@ -151,11 +155,13 @@ export const fetchTrailsByID = createAsyncThunk(
     } catch (error) {
       console.log(error);
       return rejectWithValue(
-        error.response.data.errors
-          .map((item) => {
-            return item.msg;
-          })
-          .join(" ")
+        error.response.data?.errors
+          ? error.response.data.errors
+              .map((item) => {
+                return item.msg;
+              })
+              .join(" ")
+          : error.status
       );
     }
   }
@@ -212,6 +218,7 @@ export const trailSlice = createSlice({
     },
     [fetchTrailsByQuery.rejected]: (state, action) => {
       state.status = CONSTANTS.FAILED;
+      console.log(action.payloade);
       state.error = action.payloade;
     },
   },

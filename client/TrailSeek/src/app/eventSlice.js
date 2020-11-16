@@ -18,11 +18,13 @@ export const fetchEvents = createAsyncThunk(
       return { data: response.data, trailID };
     } catch (e) {
       return rejectWithValue(
-        e.response.data.errors
-          .map((item) => {
-            return item.msg;
-          })
-          .join(" ")
+        error.response.data?.errors
+          ? error.response.data.errors
+              .map((item) => {
+                return item.msg;
+              })
+              .join(" ")
+          : error.status
       );
     }
   }
@@ -40,11 +42,13 @@ export const postEvents = createAsyncThunk(
       return { eventID: response.data, data: inputs, trailID };
     } catch (e) {
       return rejectWithValue(
-        e.response.data.errors
-          .map((item) => {
-            return item.msg;
-          })
-          .join(" ")
+        error.response.data?.errors
+          ? error.response.data.errors
+              .map((item) => {
+                return item.msg;
+              })
+              .join(" ")
+          : error.status
       );
     }
   }
@@ -62,11 +66,13 @@ export const putEvents = createAsyncThunk(
       return { eventID: response.data, data: inputs, trailID };
     } catch (e) {
       return rejectWithValue(
-        e.response.data.errors
-          .map((item) => {
-            return item.msg;
-          })
-          .join(" ")
+        error.response.data?.errors
+          ? error.response.data.errors
+              .map((item) => {
+                return item.msg;
+              })
+              .join(" ")
+          : error.status
       );
     }
   }
