@@ -40,11 +40,13 @@ export const signIn = createAsyncThunk(
     } catch (e) {
       // console.log(e.response.data.errors);
       return rejectWithValue(
-        e.response.data.errors
-          .map((item) => {
-            return item.msg;
-          })
-          .join(" ")
+        error.response.data?.errors
+          ? error.response.data.errors
+              .map((item) => {
+                return item.msg;
+              })
+              .join(" ")
+          : error.status
       );
     }
   }
@@ -63,11 +65,13 @@ export const signUp = createAsyncThunk(
       return response.data;
     } catch (e) {
       return rejectWithValue(
-        e.response.data.errors
-          .map((item) => {
-            return item.msg;
-          })
-          .join(" ")
+        error.response.data?.errors
+          ? error.response.data.errors
+              .map((item) => {
+                return item.msg;
+              })
+              .join(" ")
+          : error.status
       );
     }
   }
@@ -82,11 +86,13 @@ export const fetchUserData = createAsyncThunk(
     } catch (error) {
       console.log(error.response);
       return rejectWithValue(
-        e.response.data.errors
-          .map((item) => {
-            return item.msg;
-          })
-          .join(" ")
+        error.response.data?.errors
+          ? error.response.data.errors
+              .map((item) => {
+                return item.msg;
+              })
+              .join(" ")
+          : error.status
       );
     }
   }

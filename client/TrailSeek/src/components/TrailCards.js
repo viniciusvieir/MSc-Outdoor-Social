@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -7,14 +7,14 @@ import {
   FlatList,
   Image,
   Dimensions,
-} from 'react-native'
+} from "react-native";
 
-import { Entypo } from '@expo/vector-icons'
-import { FontAwesome5 } from '@expo/vector-icons'
+import { Entypo } from "@expo/vector-icons";
+import { FontAwesome5 } from "@expo/vector-icons";
 
-import { useNavigation } from '@react-navigation/native'
-import StarRating from 'react-native-star-rating'
-import { Col, Row, Grid } from 'react-native-easy-grid'
+import { useNavigation } from "@react-navigation/native";
+import StarRating from "react-native-star-rating";
+import { Col, Row, Grid } from "react-native-easy-grid";
 import {
   Button,
   Text,
@@ -24,14 +24,14 @@ import {
   Left,
   Right,
   Icon,
-} from 'native-base'
+} from "native-base";
 
-import ColorConstants from '../util/ColorConstants'
-import NoData from './NoData'
-import Constants from '../util/Constants'
+import ColorConstants from "../util/ColorConstants";
+import NoData from "./NoData";
+import Constants from "../util/Constants";
 
 const TrailCards = ({ trails, fetchMoreData, filter }) => {
-  const navigation = useNavigation()
+  const navigation = useNavigation();
 
   let content = trails ? (
     <View style={{ flex: 1 }}>
@@ -40,19 +40,20 @@ const TrailCards = ({ trails, fetchMoreData, filter }) => {
           paddingTop: 20,
           paddingBottom: 20,
           paddingHorizontal: Constants.POINTS.marginHorizontal,
+          flex: 1,
         }}
-        ListEmptyComponent={<NoData type={'funny'} />}
+        ListEmptyComponent={<NoData type={"funny"} />}
         // initialNumToRender={10}
         data={trails}
         keyExtractor={(trails) => {
-          return trails._id
+          return trails._id;
         }}
         ListFooterComponent={
           trails.length >= 10 ? (
             <Button
               block
               onPress={() => {
-                navigation.navigate('ListTrail', { filter })
+                navigation.navigate("ListTrail", { filter });
               }}
               style={{
                 margin: 5,
@@ -69,11 +70,11 @@ const TrailCards = ({ trails, fetchMoreData, filter }) => {
           return (
             <TouchableOpacity
               onPress={() => {
-                navigation.navigate('ViewTrail', {
+                navigation.navigate("ViewTrail", {
                   id: item._id,
                   name: item.name,
                   showEvents: false,
-                })
+                });
               }}
             >
               <Card>
@@ -82,8 +83,8 @@ const TrailCards = ({ trails, fetchMoreData, filter }) => {
                     source={{ uri: item.img_url }}
                     style={styles.imageStyle}
                     PlaceholderContent={<ActivityIndicator />}
-                    resizeMethod='auto'
-                    resizeMode='cover'
+                    resizeMethod="auto"
+                    resizeMode="cover"
                   />
                 </CardItem>
                 <CardItem>
@@ -92,7 +93,7 @@ const TrailCards = ({ trails, fetchMoreData, filter }) => {
                       <Text style={styles.nameStyle}>{item.name}</Text>
                     </Row>
                     <Row>
-                      <Entypo name='location-pin' size={16} color='gray' />
+                      <Entypo name="location-pin" size={16} color="gray" />
                       <Text style={{ fontSize: 14 }}>{item.location}</Text>
                     </Row>
                   </Grid>
@@ -102,10 +103,10 @@ const TrailCards = ({ trails, fetchMoreData, filter }) => {
                   <Left>
                     <StarRating
                       disabled={true}
-                      emptyStar={'ios-star-outline'}
-                      fullStar={'ios-star'}
-                      halfStar={'ios-star-half'}
-                      iconSet={'Ionicons'}
+                      emptyStar={"ios-star-outline"}
+                      fullStar={"ios-star"}
+                      halfStar={"ios-star-half"}
+                      iconSet={"Ionicons"}
                       maxStars={1}
                       rating={1}
                       fullStarColor={ColorConstants.secondary}
@@ -122,11 +123,11 @@ const TrailCards = ({ trails, fetchMoreData, filter }) => {
                     <Button
                       transparent
                       onPress={() => {
-                        navigation.navigate('ViewTrail', {
+                        navigation.navigate("ViewTrail", {
                           id: item._id,
                           name: item.name,
                           showEvents: true,
-                        })
+                        });
                       }}
                     >
                       <Text
@@ -138,7 +139,7 @@ const TrailCards = ({ trails, fetchMoreData, filter }) => {
                         2 outings happening
                       </Text>
                       <FontAwesome5
-                        name='arrow-right'
+                        name="arrow-right"
                         size={16}
                         color={ColorConstants.primary}
                       />
@@ -147,13 +148,13 @@ const TrailCards = ({ trails, fetchMoreData, filter }) => {
                 </CardItem>
               </Card>
             </TouchableOpacity>
-          )
+          );
         }}
       />
     </View>
-  ) : null
-  return content
-}
+  ) : null;
+  return content;
+};
 
 const styles = StyleSheet.create({
   imageStyle: {
@@ -162,16 +163,16 @@ const styles = StyleSheet.create({
     height: 180,
   },
   nameStyle: {
-    fontWeight: '800',
+    fontWeight: "800",
     fontSize: 16,
     flexShrink: 1,
-    color: '#404040',
+    color: "#404040",
   },
   viewMore: {
     padding: 15,
-    justifyContent: 'center',
+    justifyContent: "center",
     marginLeft: 5,
   },
-})
+});
 
-export default TrailCards
+export default TrailCards;

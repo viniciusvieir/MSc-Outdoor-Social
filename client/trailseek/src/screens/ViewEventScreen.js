@@ -14,8 +14,12 @@ import { Button, Text, Thumbnail } from "native-base";
 import { Grid, Col, Row } from "react-native-easy-grid";
 import { useDispatch } from "react-redux";
 
+import { FontAwesome5 } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
+
 import ColorConstants from "../util/ColorConstants";
 import { updateCurrentEvent } from "../app/eventSlice";
+import Constants from "../util/Constants";
 
 const ViewEventScreen = ({ route, navigation }) => {
   const list = [
@@ -63,17 +67,27 @@ const ViewEventScreen = ({ route, navigation }) => {
     eventWeather = trailData.weatherData.daily.find(
       (item) =>
         moment(item * 1000)
-          .format('DD/MM/YYYY')
-          .toString() === moment(eventData.date).format('DD/MM/YYYY').toString()
-    )
+          .format("DD/MM/YYYY")
+          .toString() === moment(eventData.date).format("DD/MM/YYYY").toString()
+    );
   }
   // console.log(eventWeather);
   return (
     <>
-      <ScrollView style={{ flex: 1, backgroundColor: ColorConstants.LGreen }}>
+      <ScrollView
+        style={{
+          backgroundColor: ColorConstants.DWhite,
+          flex: 1,
+        }}
+      >
         {trailData && eventData ? (
           <>
-            <View>
+            <View
+              style={{
+                borderBottomWidth: 2,
+                borderBottomColor: ColorConstants.Black2,
+              }}
+            >
               <MapView
                 style={styles.mapStyle}
                 initialRegion={{
@@ -116,7 +130,10 @@ const ViewEventScreen = ({ route, navigation }) => {
                 }}
               >
                 <Button
-                  style={{ borderRadius: 50 }}
+                  style={{
+                    borderRadius: 50,
+                    backgroundColor: ColorConstants.secondary,
+                  }}
                   onPress={() => {
                     const scheme = Platform.select({
                       ios: "maps:0,0?q=",
@@ -136,60 +153,34 @@ const ViewEventScreen = ({ route, navigation }) => {
                 </Button>
               </View>
             </View>
-
-            {/* <Row> */}
-            <Text
-              style={[
-                styles.textInfo,
-                { fontSize: 30, fontWeight: "500", marginLeft: 10 },
-              ]}
-            >
-              {eventData.title}
-            </Text>
-            {/* </Row> */}
-            <Grid
-              style={{
-                backgroundColor: ColorConstants.LGreen,
-                margin: 10,
-                flex: 0.8,
-              }}
-            >
+            <Grid style={{ padding: Constants.POINTS.marginHorizontal }}>
               <Row>
-                <Col size={2}>
-                  <Text style={styles.textInfoLabel}>Difficulty</Text>
-                  <Text style={styles.textInfo}>{trailData.difficulty}</Text>
-                </Col>
-                <Col size={2}>
-                  <Text style={styles.textInfoLabel}>Length</Text>
-                  <Text style={styles.textInfo}>{trailData.length_km} km</Text>
-                </Col>
-                <Col size={1}>
-                  <Text style={styles.textInfoLabel}>Est Time</Text>
-                  <Text style={styles.textInfo}>
-                    {moment
-                      .utc()
-                      .startOf("day")
-                      .add({ minutes: trailData.estimate_time_min })
-                      .format("H:mm")}{" "}
-                    hr
+                <Col size={3}>
+                  <Text
+                    style={{
+                      color: ColorConstants.primary,
+                      fontSize: 26,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {eventData.title}
                   </Text>
                 </Col>
               </Row>
               <Row>
-                <Col size={60}>
-                  <Text style={styles.textInfoLabel}>Location</Text>
-                  <Text style={styles.textInfo}>{trailData.location}</Text>
-                </Col>
-                <Col size={40}>
-                  <Text style={styles.textInfoLabel}>Date</Text>
-                  <Text style={styles.textInfo}>
-                    {moment(eventData.date).format("DD/MM/YYYY")}
-                  </Text>
-                </Col>
+                <Entypo name="location-pin" size={16} color="gray" />
+                <Text style={{ fontSize: 14 }}>{trailData.location}</Text>
               </Row>
-
-              <Row>
+              <Row style={{ marginTop: 10 }}>
                 <Col>
+                  <Row>
+                    <FontAwesome5 name="calendar-alt" size={24} color="black" />
+                    <Text style={styles.textInfo}>
+                      {moment(eventData.date).format("DD/MM/YYYY")}
+                    </Text>
+                  </Row>
+                </Col>
+                {/* <Col>
                   <Text style={styles.textInfoLabel}>Duration</Text>
                   <Text style={styles.textInfo}>
                     {moment
@@ -199,53 +190,102 @@ const ViewEventScreen = ({ route, navigation }) => {
                       .format("H:mm")}{" "}
                     hr
                   </Text>
-                </Col>
+                </Col> */}
                 <Col>
-                  <Text style={styles.textInfoLabel}>Max People</Text>
-                  <Text style={styles.textInfo}>
-                    {eventData.max_participants}
-                  </Text>
+                  <Row>
+                    <FontAwesome5 name="male" size={24} color="black" />
+
+                    <Text style={styles.textInfo}>
+                      {eventData.max_participants}
+                    </Text>
+                  </Row>
                 </Col>
+              </Row>
+
+              <Row style={{ marginTop: 16 }}>
+                <Col size={1}>
+                  <Row>
+                    <FontAwesome5
+                      name="hiking"
+                      size={20}
+                      color={ColorConstants.Black2}
+                    />
+                    <Text style={styles.textInfo}>
+                      {trailData.activity_type}
+                    </Text>
+                  </Row>
+                </Col>
+                <Col size={1}>
+                  <Row>
+                    <FontAwesome5
+                      name="mountain"
+                      size={16}
+                      color={ColorConstants.Black2}
+                    />
+                    <Text style={styles.textInfo}>{trailData.difficulty}</Text>
+                  </Row>
+                </Col>
+                <Col size={1}>
+                  <Row>
+                    <FontAwesome5
+                      name="route"
+                      size={20}
+                      color={ColorConstants.Black2}
+                    />
+                    <Text style={styles.textInfo}>
+                      {trailData.length_km} km
+                    </Text>
+                  </Row>
+                </Col>
+                <Col size={1}>
+                  <Row>
+                    <FontAwesome5
+                      name="clock"
+                      size={20}
+                      color={ColorConstants.Black2}
+                    />
+                    <Text style={styles.textInfo}>
+                      {moment
+                        .utc()
+                        .startOf("day")
+                        .add({ minutes: trailData.estimate_time_min })
+                        .format("H[h]mm")}
+                    </Text>
+                  </Row>
+                </Col>
+              </Row>
+
+              <View
+                style={{
+                  marginTop: 16,
+                  borderBottomColor: ColorConstants.darkGray,
+                  borderBottomWidth: 1,
+                }}
+              />
+
+              <Row style={{ marginTop: 16 }}>
+                <Text style={styles.textInfoDescription}>
+                  {eventData.description}
+                </Text>
               </Row>
               <View
                 style={{
-                  marginBottom: 10,
-                  borderBottomColor: ColorConstants.White,
+                  marginTop: 16,
+                  marginBottom: 16,
+                  borderBottomColor: ColorConstants.darkGray,
                   borderBottomWidth: 1,
                 }}
               />
               <Button block style={{ backgroundColor: ColorConstants.Yellow }}>
                 <Text style={{ color: ColorConstants.Black }}>Join</Text>
               </Button>
-              <View
-                style={{
-                  marginTop: 10,
-                  marginBottom: 5,
-                  borderBottomColor: ColorConstants.White,
-                  borderBottomWidth: 1,
-                }}
-              />
             </Grid>
-
-            <Text style={[styles.textInfoLabel, { marginLeft: 10 }]}>
-              Description
-            </Text>
-
-            <Text style={[styles.textInfoDescription, { marginLeft: 10 }]}>
-              {eventData.description}
-            </Text>
-
-            {/* <Text></Text>
-            <Text>{eventData.createdAt}</Text> */}
-            {/* <Text></Text>
-            <Text>{trailData.activity_type}</Text> */}
-            {/* <Text>{JSON.stringify(trailData.start)}</Text> */}
             <Text>{JSON.stringify(eventWeather)}</Text>
           </>
         ) : null}
         <View
           style={{
-            backgroundColor: ColorConstants.Black,
+            backgroundColor: ColorConstants.Black + 40,
             alignItems: "center",
             justifyContent: "center",
             height: 50,
@@ -284,7 +324,7 @@ const ViewEventScreen = ({ route, navigation }) => {
                     uri: `https://eu.ui-avatars.com/api/?name=${item.name}`,
                   }}
                 />
-                <Text style={{ color: ColorConstants.DWhite, fontSize: 18 }}>
+                <Text style={{ color: ColorConstants.Black, fontSize: 18 }}>
                   {item.name}
                 </Text>
               </View>
@@ -293,8 +333,8 @@ const ViewEventScreen = ({ route, navigation }) => {
         />
       </ScrollView>
     </>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   mapStyle: {
@@ -303,17 +343,18 @@ const styles = StyleSheet.create({
     height: 400,
   },
   textInfo: {
-    color: ColorConstants.DWhite,
-    fontSize: 20,
+    marginLeft: 4,
+    color: ColorConstants.Black2,
+    fontSize: 16,
   },
   textInfoLabel: {
     fontSize: 12,
-    color: ColorConstants.DWhite,
+    color: ColorConstants.darkGray,
   },
   textInfoDescription: {
-    color: ColorConstants.DWhite,
+    color: ColorConstants.darkGray,
     fontSize: 15,
   },
 });
 
-export default ViewEventScreen
+export default ViewEventScreen;

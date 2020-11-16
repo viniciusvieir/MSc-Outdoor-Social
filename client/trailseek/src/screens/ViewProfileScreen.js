@@ -1,15 +1,13 @@
 import React, { useState } from "react";
-import { StyleSheet, Platform, Switch } from "react-native";
+import { StyleSheet, Platform, Switch, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { CommonActions } from "@react-navigation/native";
 import NetInfo from "@react-native-community/netinfo";
 import { AntDesign } from "@expo/vector-icons";
 import { Col, Row, Grid } from "react-native-easy-grid";
 import { Button, Text, H1, Container, Content, Thumbnail } from "native-base";
-// import { unwrapResult } from "@reduxjs/toolkit";
 
 import { logOut, toggleCovid } from "../app/userSlice";
-// import { fetchUserData } from "../app/userSlice";
 import ToastAlert from "../components/ToastAlert";
 import ColorConstants from "../util/ColorConstants";
 
@@ -18,13 +16,6 @@ const ViewProfileScreen = ({ navigation }) => {
   const userData = useSelector((state) => state.user.profile);
   const dispatch = useDispatch();
   const covidToggle = useSelector((state) => state.user.covidToggle);
-  // const [tCov, setTCov] = useState(null);
-  // setTCov(covidToggle);
-  // const [userData, setUserData] = useState({});
-
-  // useEffect(() => {
-  //   setUserData(userDataState)
-  // }, []);
 
   const userLogout = async () => {
     try {
@@ -55,120 +46,115 @@ const ViewProfileScreen = ({ navigation }) => {
   };
 
   return (
-    <Container style={{ backgroundColor: ColorConstants.LGreen }}>
-      <Content
+    <Container style={{ backgroundColor: ColorConstants.DWhite }}>
+      <View
         style={{
-          backgroundColor: "#ffffff20",
-          margin: 30,
-          borderRadius: 100,
-          padding: 50,
+          flex: 1,
+          shadowColor: "#000",
+          shadowOffset: {
+            width: 0,
+            height: 12,
+          },
+          shadowOpacity: 0.58,
+          shadowRadius: 16.0,
+          backgroundColor: ColorConstants.DWhite,
+          elevation: 24,
+          margin: 50,
+          padding: 20,
         }}
       >
-        <Grid style={{ alignItems: "center" }}>
-          <Row
-            size={25}
-            style={{
-              height: 150,
-              flex: 1,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Thumbnail
-              style={{ borderColor: ColorConstants.DGreen, borderWidth: 3 }}
-              large
-              source={{
-                uri: `https://eu.ui-avatars.com/api/?name=${userData.name}`,
-              }}
-            />
-          </Row>
-          <Row size={20} style={{ alignItems: "center" }}>
-            {/* <View style={styles.databox}> */}
-            <Text
-              style={{
-                color: ColorConstants.DWhite,
-                fontSize: 40,
-                fontWeight: "bold",
-                alignSelf: "center",
-                // marginHorizontal: 20,
-              }}
-            >
-              {userData.name}
+        <Thumbnail
+          style={{
+            borderColor: ColorConstants.DGreen,
+            borderWidth: 3,
+            alignSelf: "center",
+          }}
+          large
+          source={{
+            uri: `https://eu.ui-avatars.com/api/?name=${userData.name}`,
+          }}
+        />
+        <Text
+          style={{
+            color: ColorConstants.Black,
+            fontSize: 40,
+            fontWeight: "bold",
+            alignSelf: "center",
+          }}
+        >
+          {userData.name}
+        </Text>
+        {/* <Grid> */}
+        <View style={{ flex: 1 }}>
+          <View style={styles.infoContainers}>
+            <Text style={styles.textInfoLabel}>Email</Text>
+            <Text style={styles.textInfo}>{userData.email}</Text>
+          </View>
+          <View style={styles.infoContainers}>
+            <Text style={styles.textInfoLabel}>Gender</Text>
+            <Text style={styles.textInfo}>
+              {userData.gender === "M" ? "Male" : "Female"}
             </Text>
-          </Row>
-          <Row size={10}>
-            <Text style={styles.attribute1}>Email</Text>
-            <Text style={styles.attribute}>{userData.email}</Text>
-          </Row>
-          <Row size={10}>
-            <Text style={styles.attribute1}>Gender</Text>
-            <Text style={styles.attribute}>{userData.gender}</Text>
-          </Row>
-          <Row size={10}>
-            <Text style={styles.attribute1}>DoB</Text>
-            <Text style={styles.attribute}>{userData.dob}</Text>
-          </Row>
-          <Row size={10}>
-            <Text style={styles.attribute1}>Toggle Covid Information</Text>
+          </View>
+          <View style={styles.infoContainers}>
+            <Text style={styles.textInfoLabel}>Date of Birth</Text>
+
+            <Text style={styles.textInfo}>{userData.dob}</Text>
+          </View>
+          <View
+            style={[
+              styles.infoContainers,
+              {
+                alignItems: "center",
+              },
+            ]}
+          >
+            <Text style={[styles.textInfoLabel, { fontSize: 22 }]}>
+              Toggle Covid Information
+            </Text>
             <Switch
               value={covidToggle}
               onValueChange={() => dispatch(toggleCovid())}
             />
-          </Row>
-          {/* </View> */}
-
-          {isAuth ? (
-            <>
-              {/*             
-              <Row size={10}>
-                <Button
-                  block
-                  style={styles.button}
-                  onPress={() => {
-                    navigation.navigate("EditProfile");
-                  }}
-                >
-                  <Text style={{ fontSize: 16, color: "white" }}>
-                    Edit Profile
-                  </Text>
-                </Button>
-              </Row> */}
-              <Row size={10}>
-                <Button
-                  danger
-                  block
-                  style={{ marginTop: 30 }}
-                  onPress={async () => {
-                    const res = await userLogout();
-                    console.log(res);
-                    await navigation.dispatch(
-                      CommonActions.reset({
-                        index: 0,
-                        routes: [{ name: "Authentication" }],
-                      })
-                    );
-                    // navigation.navigate("Authentication");
-                  }}
-                >
-                  <Text style={{ fontSize: 16, color: "white" }}>Logout</Text>
-                </Button>
-              </Row>
-            </>
-          ) : null}
-        </Grid>
-      </Content>
+          </View>
+        </View>
+        {/* </Grid> */}
+        {isAuth ? (
+          <Button
+            danger
+            block
+            style={{ marginTop: 30 }}
+            onPress={async () => {
+              const res = await userLogout();
+              console.log(res);
+              await navigation.dispatch(
+                CommonActions.reset({
+                  index: 0,
+                  routes: [{ name: "Authentication" }],
+                })
+              );
+              // navigation.navigate("Authentication");
+            }}
+          >
+            <Text style={{ fontSize: 16, color: "white" }}>Logout</Text>
+          </Button>
+        ) : null}
+      </View>
     </Container>
   );
 };
 
 const styles = StyleSheet.create({
-  attribute1: {
-    color: ColorConstants.DWhite,
-    width: "30%",
+  textInfo: {
+    color: ColorConstants.Black2,
+    fontSize: 20,
   },
-  attribute: {
-    color: ColorConstants.DWhite,
-    width: "70%",
+  textInfoLabel: {
+    fontSize: 14,
+    color: ColorConstants.darkGray,
+  },
+  infoContainers: {
+    flex: 1,
   },
 });
 

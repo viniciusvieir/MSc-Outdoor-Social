@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, ScrollView } from "react-native";
+import { StyleSheet, View, FlatList } from "react-native";
 import { Text, Button, List, ListItem, Body } from "native-base";
 import { useNavigation } from "@react-navigation/native";
 
@@ -42,7 +42,7 @@ const EventsTab = ({ trailData }) => {
   return (
     <View
       style={{
-        backgroundColor: ColorConstants.LGreen,
+        backgroundColor: ColorConstants.DWhite,
         flex: 1,
       }}
     >
@@ -59,43 +59,45 @@ const EventsTab = ({ trailData }) => {
       >
         <Text>Create Event</Text>
       </Button>
-      <ScrollView>
-        <List>
-          {events.map(
-            (l, i) => (
-              // moment(l.date).isAfter(moment()) ? (
-              <ListItem
-                key={i}
-                onPress={() => {
-                  navigation.navigate("ViewEvent", {
-                    // screen: "ViewEvent",
-                    // initial: false,
-                    trailData,
-                    eventData: l,
-                  });
-                }}
-                noIndent
-                style={{ backgroundColor: ColorConstants.LGreen }}
-              >
-                <Body>
-                  <Text style={styles.listText}>{l.title}</Text>
-                  <Text note style={styles.listText}>
-                    {l.description}
-                  </Text>
-                </Body>
-              </ListItem>
-            )
-            // ) : null
-          )}
-        </List>
-      </ScrollView>
+      <List>
+        <FlatList
+          style={{ marginBottom: 60 }}
+          data={events}
+          keyExtractor={(item) => {
+            return item._id;
+          }}
+          renderItem={({ item }) => {
+            if (!moment(item.date).isBefore(moment(), "day")) {
+              return (
+                <ListItem
+                  onPress={() => {
+                    navigation.navigate("ViewEvent", {
+                      trailData,
+                      eventData: item,
+                    });
+                  }}
+                  noIndent
+                  style={{ backgroundColor: ColorConstants.DWhite }}
+                >
+                  <Body>
+                    <Text style={styles.listText}>{item.title}</Text>
+                    <Text note style={styles.listText}>
+                      {item.description}
+                    </Text>
+                  </Body>
+                </ListItem>
+              );
+            }
+          }}
+        />
+      </List>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   listText: {
-    color: ColorConstants.DWhite,
+    color: ColorConstants.Black2,
   },
 });
 

@@ -41,7 +41,7 @@ const MyEventScreen = ({ navigation }) => {
 
   return (
     <Container
-      style={{ backgroundColor: ColorConstants.LGreen, flex: 1 }}
+      style={{ backgroundColor: ColorConstants.DWhite, flex: 1 }}
       // contentContainerStyle={{ flex: 1 }}
     >
       {/* <Header androidStatusBarColor="#ffffff00">

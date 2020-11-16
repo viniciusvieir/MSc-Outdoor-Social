@@ -164,7 +164,7 @@ const DetaiTabs = ({ trailData }) => {
             borderBottomWidth: 1,
           }}
         />
-        <Row>
+        <Row style={{ marginVertical: 10 }}>
           <WeatherWidget data={trailData.weatherData} />
         </Row>
       </Grid>

@@ -10,7 +10,7 @@ import { Root } from "native-base";
 import * as Font from "expo-font";
 
 import ColorConstants from "./src/util/ColorConstants";
-import { getToken } from "./src/app/userSlice";
+import { fetchUserData, getToken, logOut } from "./src/app/userSlice";
 import CreateEventScreen from "./src/screens/CreateEventScreen";
 import ViewEventScreen from "./src/screens/ViewEventScreen";
 import ViewTrailScreen from "./src/screens/ViewTrailScreen";
@@ -41,7 +41,7 @@ const AuthenticationFlow = () => {
       <Stack.Screen
         name="Signup"
         component={SignupScreen}
-        options={{ headerTransparent: true, title: "" }}
+        options={{ headerTransparent: true, title: "", headerLeft: null }}
       />
     </Stack.Navigator>
   );
@@ -54,7 +54,7 @@ const ProfileFlow = () => {
         name="ViewProfile"
         component={ViewProfileScreen}
         options={{
-          headerStyle: { backgroundColor: ColorConstants.Black },
+          headerStyle: { backgroundColor: ColorConstants.primary },
           headerLeft: null,
           headerTitleStyle: { color: ColorConstants.DWhite },
           title: "My Profile",
@@ -83,12 +83,20 @@ const TrailFlow = () => {
         name="ListTrail"
         component={ListTrailScreen}
         options={({ route }) => ({
-          headerStyle: { backgroundColor: ColorConstants.Black },
+          headerStyle: { backgroundColor: ColorConstants.primary },
           headerTitleStyle: { color: ColorConstants.DWhite },
+          headerBackImage: () => (
+            <MaterialIcons
+              name="arrow-back"
+              size={24}
+              color="white"
+              style={styles.shadow}
+            />
+          ),
           title:
             typeof route.params.getParams?.title === "undefined"
               ? "Search"
-              : route.params.getParams.title,
+              : route.params.filter.title,
         })}
       />
       <Stack.Screen
@@ -118,7 +126,7 @@ const TrailFlow = () => {
         name="CreateEvent"
         component={CreateEventScreen}
         options={{
-          headerStyle: { backgroundColor: ColorConstants.Black },
+          headerStyle: { backgroundColor: ColorConstants.primary },
           headerTitleStyle: { color: ColorConstants.DWhite },
           title: "Create Event",
           headerBackImage: () => (
@@ -132,7 +140,9 @@ const TrailFlow = () => {
         }}
         listeners={({ navigation }) => ({
           focus: (e) => {
-            autFlag ? null : navigation.navigate("Signin");
+            autFlag
+              ? null
+              : navigation.navigate("Authentication", { screen: "Signin" });
           },
         })}
       />
@@ -148,7 +158,7 @@ const EventFlow = () => {
         name="MyEvent"
         component={MyEventScreen}
         options={{
-          headerStyle: { backgroundColor: ColorConstants.Black },
+          headerStyle: { backgroundColor: ColorConstants.primary },
           headerLeft: null,
           headerTitleStyle: { color: ColorConstants.DWhite },
           title: "My Events",
@@ -189,7 +199,9 @@ const MainTabFlow = () => {
         component={EventFlow}
         listeners={({ navigation }) => ({
           tabPress: (e) => {
-            autFlag ? null : navigation.navigate("Signin");
+            autFlag
+              ? null
+              : navigation.navigate("Authentication", { screen: "Signin" });
           },
         })}
         options={{
@@ -204,7 +216,9 @@ const MainTabFlow = () => {
         component={ProfileFlow}
         listeners={({ navigation }) => ({
           tabPress: (e) => {
-            autFlag ? null : navigation.navigate("Signin");
+            autFlag
+              ? null
+              : navigation.navigate("Authentication", { screen: "Signin" });
           },
         })}
         options={{
@@ -270,22 +284,24 @@ const AppNav = () => {
       : null
   );
 
-  const getAsyncToken = async () => {
+  const getAsyncTokenAndUserData = async () => {
     try {
       await Font.loadAsync({
         Roboto: require("./node_modules/native-base/Fonts/Roboto.ttf"),
         Roboto_medium: require("./node_modules/native-base/Fonts/Roboto_medium.ttf"),
       });
       const results = await dispatch(getToken());
-      return results;
+      const results1 = await dispatch(fetchUserData());
+      return results1;
     } catch (e) {
+      dispatch(logOut());
       console.log(e.message);
     }
   };
   if (isLoading) {
     return (
       <AppLoading
-        startAsync={getAsyncToken}
+        startAsync={getAsyncTokenAndUserData}
         onFinish={() => {
           autFlag
             ? setInitRoutName("MainTab")
@@ -303,7 +319,7 @@ const AppNav = () => {
           <Stack.Screen
             name="Authentication"
             component={AuthenticationFlow}
-            options={{ headerTransparent: true, title: "" }}
+            options={{ headerTransparent: true, title: "", headerLeft: null }}
           />
           <Stack.Screen
             name="MainTab"
@@ -347,9 +363,17 @@ const AppNav = () => {
             name="EditEvent"
             component={EditEventScreen}
             options={{
-              headerStyle: { backgroundColor: ColorConstants.Black },
+              headerStyle: { backgroundColor: ColorConstants.primary },
               headerTitleStyle: { color: ColorConstants.DWhite },
               title: "Edit Events",
+              headerBackImage: () => (
+                <MaterialIcons
+                  name="arrow-back"
+                  size={24}
+                  color="white"
+                  style={styles.shadow}
+                />
+              ),
               // headerTintColor: ColorConstants.Black,
             }}
           />

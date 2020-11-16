@@ -6,7 +6,7 @@ import ColorConstants from "../util/ColorConstants";
 
 const MapsTab = ({ trailData }) => {
   return (
-    <View style={{ backgroundColor: ColorConstants.LGreen }}>
+    <View style={{ backgroundColor: ColorConstants.LGreen, flex: 1 }}>
       <MapView
         style={styles.mapStyle}
         initialRegion={{
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
   mapStyle: {
     // margin: 10,
     width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height - 355,
+    height: Dimensions.get("window").height - 445,
   },
 });
 
