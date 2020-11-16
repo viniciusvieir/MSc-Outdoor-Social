@@ -165,10 +165,10 @@ const MainTabFlow = () => {
     <Tab.Navigator
       initialRouteName="TrailFlow"
       tabBarOptions={{
-        activeTintColor: ColorConstants.Yellow,
-        inactiveTintColor: ColorConstants.White,
-        inactiveBackgroundColor: ColorConstants.Black,
-        activeBackgroundColor: ColorConstants.Black,
+        activeTintColor: ColorConstants.secondary,
+        inactiveTintColor: ColorConstants.darkGray,
+        inactiveBackgroundColor: ColorConstants.White,
+        activeBackgroundColor: ColorConstants.White,
         tabStyle: {
           paddingTop: 8,
         },
