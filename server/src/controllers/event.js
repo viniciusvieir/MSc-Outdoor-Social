@@ -96,6 +96,25 @@ class EventController {
     res.json({ success: true })
   }
 
+  async joinEvent(req, res) {
+    const { id: userId, name } = req.context
+    const { eventId } = req.params
+
+    await Event.update(
+      { _id: eventId },
+      {
+        $push: {
+          participants: {
+            userId,
+            name,
+          },
+        },
+      }
+    )
+      .then(() => res.json({ success: true }))
+      .catch((error) => res.json(errorHandler(error)))
+  }
+
   // VALIDATION
   get validators() {
     return {

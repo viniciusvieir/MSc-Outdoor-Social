@@ -70,6 +70,7 @@ class User extends Model {
   generateTokenPayload() {
     const payload = {
       id: this.id,
+      name: this.name,
       email: this.email,
     }
 
