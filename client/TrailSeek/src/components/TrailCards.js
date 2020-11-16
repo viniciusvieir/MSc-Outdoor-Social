@@ -40,7 +40,6 @@ const TrailCards = ({ trails, fetchMoreData, filter }) => {
           paddingTop: 20,
           paddingBottom: 20,
           paddingHorizontal: Constants.POINTS.marginHorizontal,
-          // backgroundColor: '#f1f1f1',
         }}
         ListEmptyComponent={<NoData type={'funny'} />}
         // initialNumToRender={10}

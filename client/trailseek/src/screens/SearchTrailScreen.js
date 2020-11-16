@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react'
-import { StyleSheet, ScrollView, Platform } from 'react-native'
-import { SearchBar } from 'react-native-elements'
-import { useDispatch, useSelector } from 'react-redux'
-import { unwrapResult } from '@reduxjs/toolkit'
+import React, { useState, useEffect } from "react";
+import { StyleSheet, ScrollView, View } from "react-native";
+import { SearchBar } from "react-native-elements";
+import { useDispatch, useSelector } from "react-redux";
+import { unwrapResult } from "@reduxjs/toolkit";
 import {
   Container,
   Content,
@@ -25,18 +25,16 @@ import Constants from '../util/Constants'
 import TrailFilter from '../components/TrailFilter'
 
 const SearchTrailScreen = ({ navigation }) => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
-  const [searchTerm, setSearchTerm] = useState('')
-  const trailStatus = useSelector((state) => state.trails.status)
-  const error = useSelector((state) => state.trails.error)
-  const user = useSelector((state) => state.user.profile.name)
-  const isAuth = useSelector((state) => state.user.isAuth)
-  const locationStatus = useSelector((state) => state.user.userLocation.status)
-  // const filteredTrails = useSelector(
-  //   (state) => state.trails.filteredTrails.data
-  // );
-  const [trails, setTrails] = useState([])
+  const [searchTerm, setSearchTerm] = useState("");
+  const trailStatus = useSelector((state) => state.trails.status);
+  const error = useSelector((state) => state.trails.error);
+  const user = useSelector((state) => state.user.profile.name);
+  const isAuth = useSelector((state) => state.user.isAuth);
+  const locationStatus = useSelector((state) => state.user.userLocation.status);
+  const [filter, setFilter] = useState({});
+  const [trails, setTrails] = useState([]);
 
   const easyParams = {
     title: 'Easy Trails',
@@ -65,8 +63,7 @@ const SearchTrailScreen = ({ navigation }) => {
         $search: `${searchTerm}`,
       },
     },
-  }
-  const [filter, setFilter] = useState(easyParams)
+  };
 
   let content,
     spinner = true
@@ -102,6 +99,7 @@ const SearchTrailScreen = ({ navigation }) => {
 
   //Initial Trail Fetch
   useEffect(() => {
+    setFilter(easyParams);
     getTrailsByQuery({
       query: filter?.query,
       location: filter?.location,
@@ -142,8 +140,8 @@ const SearchTrailScreen = ({ navigation }) => {
               fontSize: 40,
             }}
           >
-            {' '}
-            Hi {user ? user : 'User'}
+            {" "}
+            Hey, {user ? user : ""}
           </Title>
         </Body>
       </Header>

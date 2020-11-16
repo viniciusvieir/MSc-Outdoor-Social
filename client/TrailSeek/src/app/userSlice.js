@@ -23,6 +23,7 @@ const initialState = {
     error: null,
   },
   isAuth: false,
+  covidToggle: true,
 };
 
 export const signIn = createAsyncThunk(
@@ -155,6 +156,9 @@ export const userSlice = createSlice({
       state.isAuth = false;
       state.profile = initialState.profile;
     },
+    toggleCovid(state, action) {
+      state.covidToggle = !state.covidToggle;
+    },
   },
   extraReducers: {
     [signIn.pending]: (state, action) => {
@@ -268,7 +272,7 @@ export const userSlice = createSlice({
   },
 });
 
-export const { logOut1 } = userSlice.actions;
+export const { logOut1, toggleCovid } = userSlice.actions;
 
 export default userSlice.reducer;
 

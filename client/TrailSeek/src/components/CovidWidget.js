@@ -17,8 +17,9 @@ const CovidWidget = ({ data }) => {
     return date;
   };
   let content;
-  if (data) {
+  if (data && data.length > 0) {
     const lastItem = data.length - 1;
+    const pastCumiCases = data[0].attributes.ConfirmedCovidCases;
     content = (
       <View style={{ flex: 1 }}>
         <Button
@@ -32,10 +33,11 @@ const CovidWidget = ({ data }) => {
           }}
         >
           <Text style={{ fontWeight: "bold", fontSize: 13 }}>
-            Covid Cases in {data[lastItem].attributes.CountyName} as of{" "}
+            Covid Cases in the last 10 days in{" "}
+            {data[lastItem].attributes.CountyName} as of{" "}
             {day(data[lastItem].attributes.TimeStamp)} (
             {date(data[lastItem].attributes.TimeStamp)}) :{" "}
-            {data[lastItem].attributes.ConfirmedCovidCases} (+
+            {data[lastItem].attributes.ConfirmedCovidCases - pastCumiCases} (+
             {data[lastItem].attributes.ConfirmedCovidCases -
               data[lastItem - 1].attributes.ConfirmedCovidCases}
             )
@@ -59,16 +61,19 @@ const CovidWidget = ({ data }) => {
             }}
           >
             <LineChart
+              fromZero={true}
               data={{
-                labels: data.map((item) => {
+                labels: data.slice(1).map((item) => {
                   return moment(item.attributes.TimeStamp)
                     .format("DD/MM")
                     .toString();
                 }),
                 datasets: [
                   {
-                    data: data.map((item) => {
-                      return item.attributes.ConfirmedCovidCases;
+                    data: data.slice(1).map((item) => {
+                      return (
+                        item.attributes.ConfirmedCovidCases - pastCumiCases
+                      );
                     }),
                   },
                 ],
