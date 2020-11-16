@@ -115,6 +115,18 @@ class EventController {
       .catch((error) => res.json(errorHandler(error)))
   }
 
+  async eventsCreatedByUser(req, res) {
+    const { id: userId } = req.context
+    const events = await Event.find({ userId })
+    res.json(events)
+  }
+
+  async eventsJoinedByUser(req, res) {
+    const { id: userId } = req.context
+    const events = await Event.find({ participants: userId })
+    res.json(events)
+  }
+
   // VALIDATION
   get validators() {
     return {
