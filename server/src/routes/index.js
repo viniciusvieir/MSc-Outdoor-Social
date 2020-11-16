@@ -49,5 +49,10 @@ router.delete(
   verifyToken,
   eventController.deleteEvent
 )
+router.post(
+  '/trails/:trailId/events/:eventId/join',
+  verifyToken,
+  eventController.joinEvent
+)
 
 module.exports = router

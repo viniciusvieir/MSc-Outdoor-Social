@@ -10,7 +10,11 @@ const EventSchema = new mongoose.Schema({
     ref: 'Trail',
     required: true,
   },
-  participants: [{ type: Number }], // [{ type: Schema.Types.ObjectId, ref: 'User' }]
+  participants: {
+    type: [Object],
+    default: [],
+    required: true,
+  }, // [{ type: Schema.Types.ObjectId, ref: 'User' }]
   title: {
     type: String,
     required: true,
