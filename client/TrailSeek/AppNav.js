@@ -263,6 +263,12 @@ const AppNav = () => {
   const [initRoutName, setInitRoutName] = useState(null);
   const autFlag = useSelector((state) => state.user.isAuth);
   const [isLoading, setIsLoading] = useState(true);
+  const userId = useSelector((state) => state.user.profile.id);
+  const currentEventUserID = useSelector((state) =>
+    state.event.currentEvent.length
+      ? state.event.currentEvent[0].eventData.userId
+      : null
+  );
 
   const getAsyncToken = async () => {
     try {
@@ -321,19 +327,20 @@ const AppNav = () => {
                   style={styles.shadow}
                 />
               ),
-              headerRight: () => (
-                <TouchableOpacity
-                  onPress={() => {
-                    navigation.navigate("EditEvent");
-                  }}
-                >
-                  <MaterialIcons
-                    name="edit"
-                    size={24}
-                    style={{ color: "#000000", marginRight: 20 }}
-                  />
-                </TouchableOpacity>
-              ),
+              headerRight: () =>
+                userId === currentEventUserID ? (
+                  <TouchableOpacity
+                    onPress={() => {
+                      navigation.navigate("EditEvent");
+                    }}
+                  >
+                    <MaterialIcons
+                      name="edit"
+                      size={24}
+                      style={{ color: "#000000", marginRight: 20 }}
+                    />
+                  </TouchableOpacity>
+                ) : null,
             })}
           />
           <Stack.Screen
