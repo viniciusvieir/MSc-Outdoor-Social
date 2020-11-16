@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -8,15 +8,16 @@ import {
   ScrollView,
   FlatList,
 } from "react-native";
-import { Tile } from "react-native-elements";
 import moment from "moment";
 import MapView, { Marker, Polyline } from "react-native-maps";
 import { Button, Text, Thumbnail } from "native-base";
 import { Grid, Col, Row } from "react-native-easy-grid";
+import { useDispatch } from "react-redux";
 
 import ColorConstants from "../util/ColorConstants";
+import { updateCurrentEvent } from "../app/eventSlice";
 
-const ViewEventScreen = ({ navigation, route }) => {
+const ViewEventScreen = ({ route, navigation }) => {
   const list = [
     {
       id: 1,
@@ -47,8 +48,16 @@ const ViewEventScreen = ({ navigation, route }) => {
       name: "Dejan Lovren",
     },
   ];
-
+  const dispatch = useDispatch();
   const { trailData, eventData } = route.params || {};
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      dispatch(updateCurrentEvent({ eventData, trailName: trailData.name }));
+    });
+    return unsubscribe;
+  }, [navigation]);
+
   let eventWeather;
   if (trailData && eventData) {
     eventWeather = trailData.weatherData.daily.find(

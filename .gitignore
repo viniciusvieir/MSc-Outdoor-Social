@@ -15,3 +15,4 @@ database.sqlite
 # ignore dev files
 *.http
 client/TrailSeek/trail.http
+client/TrailSeek/.vscode/settings.json
