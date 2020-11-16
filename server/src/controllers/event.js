@@ -64,6 +64,8 @@ class EventController {
       return res.status(400).json({ errors: errors.array() })
 
     const { id: userId } = req.context
+    // TODO: check if user owns the event
+
     const { eventId } = req.params
     const {
       title,
@@ -88,6 +90,7 @@ class EventController {
 
   async deleteEvent(req, res) {
     const { id: userId } = req.context
+    // TODO: check if user owns the event
     const { eventId } = req.params
     await Event.deleteOne({ eventId })
     res.json({ success: true })
