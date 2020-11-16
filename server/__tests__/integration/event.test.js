@@ -152,7 +152,7 @@ describe('Trails', () => {
         title: faker.lorem.words(2),
       })
 
-    expect(updateResponse.body.success).toBe(true)
+    expect(updateResponse.body).toHaveProperty('id')
   })
 
   it('should not be able to update event if event if no information is sent', async () => {
