@@ -3,7 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialIcons } from "@expo/vector-icons";
 import { createStackNavigator } from "@react-navigation/stack";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Linking, TouchableOpacity } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { AppLoading } from "expo";
 import { Root } from "native-base";
@@ -117,6 +117,19 @@ const TrailFlow = () => {
       <Stack.Screen
         name="CreateEvent"
         component={CreateEventScreen}
+        options={{
+          headerStyle: { backgroundColor: ColorConstants.Black },
+          headerTitleStyle: { color: ColorConstants.DWhite },
+          title: "Create Event",
+          headerBackImage: () => (
+            <MaterialIcons
+              name="arrow-back"
+              size={24}
+              color="white"
+              style={styles.shadow}
+            />
+          ),
+        }}
         listeners={({ navigation }) => ({
           focus: (e) => {
             autFlag ? null : navigation.navigate("Signin");
@@ -142,8 +155,6 @@ const EventFlow = () => {
           // headerTintColor: ColorConstants.Black,
         }}
       />
-
-      <Stack.Screen name="EditEvent" component={EditEventScreen} />
     </Stack.Navigator>
   );
 };
@@ -154,10 +165,10 @@ const MainTabFlow = () => {
     <Tab.Navigator
       initialRouteName="TrailFlow"
       tabBarOptions={{
-        activeTintColor: ColorConstants.Yellow,
-        inactiveTintColor: ColorConstants.White,
-        inactiveBackgroundColor: ColorConstants.Black,
-        activeBackgroundColor: ColorConstants.Black,
+        activeTintColor: ColorConstants.secondary,
+        inactiveTintColor: ColorConstants.darkGray,
+        inactiveBackgroundColor: ColorConstants.White,
+        activeBackgroundColor: ColorConstants.White,
         tabStyle: {
           paddingTop: 8,
         },
@@ -220,11 +231,44 @@ const MainTabFlow = () => {
   );
 };
 
+// const prefix = Linking.makeUrl("/");
+// const linking = {
+//   prefixes: [prefix],
+//   config: {
+//     screens: {
+//       Authentication: {
+//         path: "stack",
+//         initialRouteName: "Home",
+//         screens: {
+//           Home: "home",
+//           Profile: {
+//             path: "user/:id/:age",
+//             parse: {
+//               id: id => `there, ${id}`,
+//               age: Number,
+//             },
+//             stringify: {
+//               id: id => id.replace("there, ", ""),
+//             },
+//           },
+//         },
+//       },
+//       MainTab: "settings",
+//     },
+//   },
+// };
+
 const AppNav = () => {
   const dispatch = useDispatch();
   const [initRoutName, setInitRoutName] = useState(null);
   const autFlag = useSelector((state) => state.user.isAuth);
   const [isLoading, setIsLoading] = useState(true);
+  const userId = useSelector((state) => state.user.profile.id);
+  const currentEventUserID = useSelector((state) =>
+    state.event.currentEvent.length
+      ? state.event.currentEvent[0].eventData.userId
+      : null
+  );
 
   const getAsyncToken = async () => {
     try {
@@ -272,18 +316,42 @@ const AppNav = () => {
           <Stack.Screen
             name="ViewEvent"
             component={ViewEventScreen}
-            options={() => ({
+            options={({ navigation }) => ({
               title: "",
               headerTransparent: true,
               headerBackImage: () => (
                 <MaterialIcons
                   name="arrow-back"
                   size={24}
-                  color="white"
+                  color="#000000"
                   style={styles.shadow}
                 />
               ),
+              headerRight: () =>
+                userId === currentEventUserID ? (
+                  <TouchableOpacity
+                    onPress={() => {
+                      navigation.navigate("EditEvent");
+                    }}
+                  >
+                    <MaterialIcons
+                      name="edit"
+                      size={24}
+                      style={{ color: "#000000", marginRight: 20 }}
+                    />
+                  </TouchableOpacity>
+                ) : null,
             })}
+          />
+          <Stack.Screen
+            name="EditEvent"
+            component={EditEventScreen}
+            options={{
+              headerStyle: { backgroundColor: ColorConstants.Black },
+              headerTitleStyle: { color: ColorConstants.DWhite },
+              title: "Edit Events",
+              // headerTintColor: ColorConstants.Black,
+            }}
           />
         </Stack.Navigator>
       </NavigationContainer>

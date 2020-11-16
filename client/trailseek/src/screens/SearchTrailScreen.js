@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, ScrollView } from "react-native";
+import { StyleSheet, ScrollView, View } from "react-native";
 import { SearchBar } from "react-native-elements";
 import { useDispatch, useSelector } from "react-redux";
 import { unwrapResult } from "@reduxjs/toolkit";
@@ -20,6 +20,8 @@ import CONSTANTS from "../util/Constants";
 import ColorConstants from "../util/ColorConstants";
 import { fetchTrailsByQuery } from "../app/trailSlice";
 import { getLocation, fetchUserData } from "../app/userSlice";
+import Constants from "../util/Constants";
+import TrailFilter from "../components/TrailFilter";
 
 const SearchTrailScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -30,9 +32,7 @@ const SearchTrailScreen = ({ navigation }) => {
   const user = useSelector((state) => state.user.profile.name);
   const isAuth = useSelector((state) => state.user.isAuth);
   const locationStatus = useSelector((state) => state.user.userLocation.status);
-  // const filteredTrails = useSelector(
-  //   (state) => state.trails.filteredTrails.data
-  // );
+  const [filter, setFilter] = useState({});
   const [trails, setTrails] = useState([]);
 
   const easyParams = {
@@ -63,7 +63,6 @@ const SearchTrailScreen = ({ navigation }) => {
       },
     },
   };
-  const [filter, setFilter] = useState(easyParams);
 
   let content,
     spinner = true;
@@ -88,6 +87,7 @@ const SearchTrailScreen = ({ navigation }) => {
       ToastAlert(error);
     }
   };
+
   const getUserData = async () => {
     try {
       const response = await dispatch(fetchUserData());
@@ -98,6 +98,7 @@ const SearchTrailScreen = ({ navigation }) => {
 
   //Initial Trail Fetch
   useEffect(() => {
+    setFilter(easyParams);
     getTrailsByQuery({
       query: filter?.query,
       location: filter?.location,
@@ -126,7 +127,7 @@ const SearchTrailScreen = ({ navigation }) => {
 
   return (
     <Container
-      style={{ backgroundColor: ColorConstants.LGreen, flex: 1 }}
+      style={{ backgroundColor: ColorConstants.primary, flex: 1 }}
       contentContainerStyle={{ flex: 1 }}
     >
       <Header transparent androidStatusBarColor="#ffffff00">
@@ -139,19 +140,25 @@ const SearchTrailScreen = ({ navigation }) => {
             }}
           >
             {" "}
-            Hi! {user ? user : "User"}
+            Hey, {user ? user : ""}
           </Title>
         </Body>
       </Header>
+
       <LoadSpinner visible={spinner} />
+
       <SearchBar
-        containerStyle={styles.searchbar}
+        containerStyle={{
+          borderRadius: 22,
+          marginHorizontal: Constants.POINTS.marginHorizontal,
+          height: 44,
+        }}
         placeholder="Search"
         value={searchTerm}
         onChangeText={(text) => {
           setSearchTerm(text);
         }}
-        inputContainerStyle={{ height: 35, marginLeft: 3 }}
+        inputContainerStyle={{ height: 29, marginLeft: 2 }}
         autoCapitalize="none"
         platform="android"
         autoCompleteType="name"
@@ -160,56 +167,64 @@ const SearchTrailScreen = ({ navigation }) => {
           navigation.navigate("ListTrail", { query: searchParam.query });
         }}
       />
-      <ScrollView
-        horizontal
-        style={{ marginTop: 10, maxHeight: 50, marginLeft: 10 }}
+
+      <View
+        style={{
+          flex: 1,
+          flexDirection: "row",
+          justifyContent: "space-between",
+          marginTop: 10,
+          maxHeight: 44,
+          marginHorizontal: 40,
+          marginBottom: 10,
+        }}
       >
-        <Button
-          rounded
-          onPress={() => {
+        <TrailFilter
+          title={bestParams.title}
+          active={filter.title === bestParams.title}
+          action={() => {
             setFilter(bestParams);
+            setTrails([]);
             getTrailsByQuery({
               query: filter?.query,
               location: filter?.location,
             });
           }}
-          style={styles.filterButtons}
-        >
-          <Text style={styles.filterButtonsText}>Best Rated</Text>
-        </Button>
-        <Button
-          rounded
-          style={styles.filterButtons}
-          onPress={() => {
+        />
+        <TrailFilter
+          title={easyParams.title}
+          active={filter.title === easyParams.title}
+          action={() => {
             setFilter(easyParams);
+            setTrails([]);
             getTrailsByQuery({
               query: filter?.query,
               location: filter?.location,
             });
           }}
-        >
-          <Text style={styles.filterButtonsText}>Easy Trails</Text>
-        </Button>
-        <Button
-          rounded
-          style={styles.filterButtons}
-          onPress={() => {
+        />
+        <TrailFilter
+          title={nearMe.title}
+          active={filter.title === nearMe.title}
+          action={() => {
             setFilter(nearMe);
+            setTrails([]);
             getTrailsByQuery({
               query: filter?.query,
               location: filter?.location,
             });
           }}
-        >
-          <Text style={styles.filterButtonsText}>Near You</Text>
-        </Button>
-      </ScrollView>
-      <Content
-        style={{ backgroundColor: ColorConstants.LGreen, flex: 1 }}
+        />
+      </View>
+
+      <View
+        style={{
+          backgroundColor: ColorConstants.DWhite,
+          flex: 1,
+        }}
         contentContainerStyle={{ flex: 1 }}
       >
         <TrailCard
-          title={filter.title}
           trails={trails}
           filter={filter}
           // fetchMoreData={() =>
@@ -220,20 +235,18 @@ const SearchTrailScreen = ({ navigation }) => {
           //   })
           // }
         />
-      </Content>
+      </View>
     </Container>
   );
 };
 
 const styles = StyleSheet.create({
-  searchbar: {
-    borderRadius: 20,
-    marginHorizontal: 10,
-    height: 50,
-  },
   filterButtons: {
+    borderColor: "#a1a1a1",
+    borderWidth: 1,
     marginHorizontal: 3,
-    backgroundColor: ColorConstants.Yellow,
+    height: 44,
+    backgroundColor: ColorConstants.secondayLight,
   },
   filterButtonsText: {
     color: ColorConstants.Black2,
