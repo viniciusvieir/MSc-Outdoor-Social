@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Platform } from "react-native";
+import React, { useState } from "react";
+import { StyleSheet, Platform, Switch } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { CommonActions } from "@react-navigation/native";
 import NetInfo from "@react-native-community/netinfo";
@@ -8,7 +8,7 @@ import { Col, Row, Grid } from "react-native-easy-grid";
 import { Button, Text, H1, Container, Content, Thumbnail } from "native-base";
 // import { unwrapResult } from "@reduxjs/toolkit";
 
-import { logOut } from "../app/userSlice";
+import { logOut, toggleCovid } from "../app/userSlice";
 // import { fetchUserData } from "../app/userSlice";
 import ToastAlert from "../components/ToastAlert";
 import ColorConstants from "../util/ColorConstants";
@@ -17,6 +17,9 @@ const ViewProfileScreen = ({ navigation }) => {
   const isAuth = useSelector((state) => state.user.isAuth);
   const userData = useSelector((state) => state.user.profile);
   const dispatch = useDispatch();
+  const covidToggle = useSelector((state) => state.user.covidToggle);
+  // const [tCov, setTCov] = useState(null);
+  // setTCov(covidToggle);
   // const [userData, setUserData] = useState({});
 
   // useEffect(() => {
@@ -104,6 +107,13 @@ const ViewProfileScreen = ({ navigation }) => {
           <Row size={10}>
             <Text style={styles.attribute1}>DoB</Text>
             <Text style={styles.attribute}>{userData.dob}</Text>
+          </Row>
+          <Row size={10}>
+            <Text style={styles.attribute1}>Toggle Covid Information</Text>
+            <Switch
+              value={covidToggle}
+              onValueChange={() => dispatch(toggleCovid())}
+            />
           </Row>
           {/* </View> */}
 

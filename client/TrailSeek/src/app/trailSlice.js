@@ -104,7 +104,12 @@ export const fetchTrailsByQuery = createAsyncThunk(
 export const fetchTrailsByID = createAsyncThunk(
   "trails/fetchTrailsByID",
   async (
-    { fields, id, excludeWeather = "hourly,current,minutely,alerts" },
+    {
+      fields,
+      id,
+      excludeWeather = "hourly,current,minutely,alerts",
+      covFlag = true,
+    },
     { rejectWithValue, getState }
   ) => {
     let weatherResponse;
@@ -128,15 +133,17 @@ export const fetchTrailsByID = createAsyncThunk(
         console.log("Weather API Error");
         console.log(e.response.data.message);
       }
-      try {
-        covidRespons = await covid.get("", {
-          params: {
-            geometry: `${response.data.start.coordinates[1]},${response.data.start.coordinates[0]}`,
-          },
-        });
-      } catch (e) {
-        console.log("Covid API Error");
-        console.log(e.response.data.message);
+      if (covFlag) {
+        try {
+          covidRespons = await covid.get("", {
+            params: {
+              geometry: `${response.data.start.coordinates[1]},${response.data.start.coordinates[0]}`,
+            },
+          });
+        } catch (e) {
+          console.log("Covid API Error");
+          console.log(e.response.data.message);
+        }
       }
       response.data.weatherData = weatherResponse.data;
       response.data.covidData = covidRespons.data.features;

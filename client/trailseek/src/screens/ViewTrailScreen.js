@@ -13,6 +13,7 @@ import DetailsTab from "../components/DetailsTab";
 import MapsTab from "../components/MapsTab";
 import EventsTab from "../components/EventsTab";
 import ColorConstants from "../util/ColorConstants";
+import NoData from "../components/NoData";
 
 const ViewTrailScreen = ({ route }) => {
   const { id, showEvents } = route.params;
@@ -21,6 +22,7 @@ const ViewTrailScreen = ({ route }) => {
   let content;
   const dispatch = useDispatch();
 
+  const covFlag = useSelector((state) => state.user.covidToggle);
   const trailStatus = useSelector((state) => state.trails.status);
   const error = useSelector((state) => state.trails.error);
   const fields =
@@ -29,7 +31,9 @@ const ViewTrailScreen = ({ route }) => {
   useEffect(() => {
     const getTrailDetail = async () => {
       try {
-        const results = await dispatch(fetchTrailsByID({ fields, id }));
+        const results = await dispatch(
+          fetchTrailsByID({ fields, id, covFlag })
+        );
         const uResults = unwrapResult(results);
         setTrailData(uResults);
       } catch (e) {
@@ -102,7 +106,7 @@ const ViewTrailScreen = ({ route }) => {
     trailStatus === CONSTANTS.SUCCESS &&
     JSON.stringify(trailData) === "{}"
   ) {
-    content = <Text>No Data</Text>;
+    content = <NoData />;
   }
   return (
     <Container style={{ backgroundColor: ColorConstants.LGreen, flex: 1 }}>
