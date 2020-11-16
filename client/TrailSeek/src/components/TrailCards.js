@@ -136,7 +136,7 @@ const TrailCards = ({ trails, fetchMoreData, filter }) => {
                           color: ColorConstants.primary,
                         }}
                       >
-                        2 outings happening
+                        {item.outing_count} outing(s) happening
                       </Text>
                       <FontAwesome5
                         name="arrow-right"

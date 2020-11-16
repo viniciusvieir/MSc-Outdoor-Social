@@ -30,6 +30,29 @@ export const fetchEvents = createAsyncThunk(
   }
 );
 
+export const joinEvent = createAsyncThunk(
+  "event/joinEvent",
+  async ({ trailID, eventID }, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await trailSeek.post(
+        `/trails/${trailID}/events/${eventID}/join`
+      );
+      return response.data;
+    } catch (e) {
+      console.log(e.response);
+      return rejectWithValue(
+        e.response.data?.errors
+          ? e.response.data.errors
+              .map((item) => {
+                return item.msg;
+              })
+              .join(" ")
+          : e.status
+      );
+    }
+  }
+);
+
 export const postEvents = createAsyncThunk(
   "event/postEvents",
   async ({ trailID, inputs }, { dispatch, rejectWithValue }) => {
@@ -136,6 +159,17 @@ export const eventSlice = createSlice({
       state.status = CONSTANTS.SUCCESS;
     },
     [putEvents.rejected]: (state, action) => {
+      state.status = CONSTANTS.FAILED;
+      state.error = action.payload;
+    },
+    //////////////////////////////////////////////////////////////
+    [joinEvent.pending]: (state, action) => {
+      state.status = CONSTANTS.LOADING;
+    },
+    [joinEvent.fulfilled]: (state, action) => {
+      state.status = CONSTANTS.SUCCESS;
+    },
+    [joinEvent.rejected]: (state, action) => {
       state.status = CONSTANTS.FAILED;
       state.error = action.payload;
     },

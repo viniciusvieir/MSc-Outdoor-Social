@@ -20,7 +20,7 @@ import {
   // Toast,
 } from "native-base";
 
-import { signIn } from "../app/userSlice";
+import { fetchUserData, signIn } from "../app/userSlice";
 import ToastAlert from "../components/ToastAlert";
 import ColorConstants from "../util/ColorConstants";
 import { unwrapResult } from "@reduxjs/toolkit";
@@ -41,7 +41,10 @@ const SigninScreen = ({ navigation }) => {
     try {
       const res = await dispatch(signIn({ inputs }));
       const user = unwrapResult(res);
+      const results = await dispatch(fetchUserData());
+
       setAuth(isAuth);
+
       navigation.navigate("MainTab");
       //clearing inputs object after login
       setInputs({});
