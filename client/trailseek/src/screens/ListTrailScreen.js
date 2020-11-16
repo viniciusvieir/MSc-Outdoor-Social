@@ -1,56 +1,54 @@
-import React, { useState, useEffect } from "react";
-import { ScrollView, StyleSheet } from "react-native";
-import { ListItem, Text } from "react-native-elements";
-import { useSelector, useDispatch } from "react-redux";
-import { useNavigation } from "@react-navigation/native";
-import { unwrapResult } from "@reduxjs/toolkit";
+import React, { useState, useEffect } from 'react'
+import { ScrollView, StyleSheet } from 'react-native'
+import { ListItem, Text } from 'react-native-elements'
+import { useSelector, useDispatch } from 'react-redux'
+import { useNavigation } from '@react-navigation/native'
+import { unwrapResult } from '@reduxjs/toolkit'
 
-import ToastAlert from "../components/ToastAlert";
-import LoadSpinner from "../components/LoadSpinner";
-import { fetchTrailsByQuery } from "../app/trailSlice";
-import CONSTANTS from "../util/Constants";
-import NoData from "../components/NoData";
-import ColorConstants from "../util/ColorConstants";
+import ToastAlert from '../components/ToastAlert'
+import LoadSpinner from '../components/LoadSpinner'
+import { fetchTrailsByQuery } from '../app/trailSlice'
+import CONSTANTS from '../util/Constants'
 
 const ListTrailScreen = ({ route }) => {
-  const { query } = route.params;
-  let content;
-  const limit = 100000;
-  let spinner = true;
-  const navigation = useNavigation();
-  const dispatch = useDispatch();
+  const { query } = route.params
+  let content
+  const limit = 100000
+  let spinner = true
+  const navigation = useNavigation()
+  const dispatch = useDispatch()
 
-  const [filteredTrails, setFilteredTrails] = useState([]);
+  const [filteredTrails, setFilteredTrails] = useState([])
 
-  const trailStatus = useSelector((state) => state.trails.status);
-  const error = useSelector((state) => state.trails.error);
+  const trailStatus = useSelector((state) => state.trails.status)
+  const error = useSelector((state) => state.trails.error)
 
   useEffect(() => {
     const getTrailsByQuery = async () => {
       try {
-        const results = await dispatch(fetchTrailsByQuery({ query, limit }));
-        const uResults = unwrapResult(results);
-        setFilteredTrails(uResults.response);
+        const results = await dispatch(fetchTrailsByQuery({ query, limit }))
+        const uResults = unwrapResult(results)
+        setFilteredTrails(uResults.response)
       } catch (e) {
-        ToastAlert(e.message);
-        ToastAlert(error);
+        ToastAlert(e.message)
+        ToastAlert(error)
       }
-    };
-    getTrailsByQuery();
-  }, []);
+    }
+    getTrailsByQuery()
+  }, [])
 
   useEffect(() => {
-    dispatch(fetchTrailsByQuery({ query, limit }));
-  }, []);
+    dispatch(fetchTrailsByQuery({ query, limit }))
+  }, [])
 
   if (trailStatus === CONSTANTS.LOADING) {
-    spinner = true;
+    spinner = true
   } else if (trailStatus === CONSTANTS.FAILED) {
-    spinner = false;
-    ToastAlert(error);
-    content = <Text>{error}</Text>;
+    spinner = false
+    ToastAlert(error)
+    content = <Text>{error}</Text>
   } else if (trailStatus === CONSTANTS.SUCCESS) {
-    spinner = false;
+    spinner = false
     content =
       filteredTrails.length > 0 ? (
         filteredTrails.map((l, item) => (
@@ -58,7 +56,7 @@ const ListTrailScreen = ({ route }) => {
             key={item}
             bottomDivider
             onPress={() => {
-              navigation.navigate("ViewTrail", { id: l._id, name: l.name });
+              navigation.navigate('ViewTrail', { id: l._id, name: l.name })
             }}
           >
             <ListItem.Content>
@@ -77,16 +75,16 @@ const ListTrailScreen = ({ route }) => {
         ))
       ) : (
         <NoData />
-      );
+      )
   }
   return (
     <ScrollView style={{ backgroundColor: ColorConstants.LGreen }}>
       <LoadSpinner visible={spinner} />
       {content}
     </ScrollView>
-  );
-};
+  )
+}
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({})
 
-export default ListTrailScreen;
+export default ListTrailScreen

@@ -54,9 +54,9 @@ const ViewEventScreen = ({ navigation, route }) => {
     eventWeather = trailData.weatherData.daily.find(
       (item) =>
         moment(item * 1000)
-          .format("DD/MM/YYYY")
-          .toString() === moment(eventData.date).format("DD/MM/YYYY").toString()
-    );
+          .format('DD/MM/YYYY')
+          .toString() === moment(eventData.date).format('DD/MM/YYYY').toString()
+    )
   }
   // console.log(eventWeather);
   return (
@@ -284,8 +284,8 @@ const ViewEventScreen = ({ navigation, route }) => {
         />
       </ScrollView>
     </>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   mapStyle: {
@@ -307,4 +307,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ViewEventScreen;
+export default ViewEventScreen
