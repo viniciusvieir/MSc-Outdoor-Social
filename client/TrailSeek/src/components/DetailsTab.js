@@ -7,12 +7,15 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
-} from 'react-native'
-import { Text, CardItem, Card } from 'native-base'
-import StarRating from 'react-native-star-rating'
-import { Col, Row, Grid } from 'react-native-easy-grid'
-import { useNavigation } from '@react-navigation/native'
-import moment from 'moment'
+
+} from "react-native";
+import { Text, CardItem, Card } from "native-base";
+import StarRating from "react-native-star-rating";
+import { Col, Row, Grid } from "react-native-easy-grid";
+import { useNavigation } from "@react-navigation/native";
+import moment from "moment";
+import { useSelector } from "react-redux";
+
 
 import { FontAwesome5 } from '@expo/vector-icons'
 import { Entypo } from '@expo/vector-icons'
@@ -24,7 +27,9 @@ import NoData from './NoData'
 import Constants from '../util/Constants'
 
 const DetaiTabs = ({ trailData }) => {
-  const navigation = useNavigation()
+  const navigation = useNavigation();
+  const covidToggle = useSelector((state) => state.user.covidToggle);
+
   return (
     <ScrollView
       style={{
@@ -140,16 +145,20 @@ const DetaiTabs = ({ trailData }) => {
             {trailData.description}
           </Text>
         </Row>
-        <View
-          style={{
-            marginVertical: 10,
-            borderBottomColor: ColorConstants.White,
-            borderBottomWidth: 1,
-          }}
-        />
-        <Row>
-          <CovidWidget data={trailData.covidData} />
-        </Row>
+        {covidToggle ? (
+          <>
+            <View
+              style={{
+                marginVertical: 10,
+                borderBottomColor: ColorConstants.White,
+                borderBottomWidth: 1,
+              }}
+            />
+            <Row>
+              <CovidWidget data={trailData.covidData} />
+            </Row>
+          </>
+        ) : null}
         <View
           style={{
             marginVertical: 10,
@@ -169,9 +178,8 @@ const DetaiTabs = ({ trailData }) => {
         }}
       />
       <Text style={styles.similarTrails}>Similar Trails : </Text>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
+      <FlatList
+        ListEmptyComponent={<NoData />}
         nestedScrollEnabled
       >
         <FlatList

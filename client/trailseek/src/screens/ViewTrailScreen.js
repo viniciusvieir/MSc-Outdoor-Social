@@ -15,15 +15,15 @@ import {
   Row,
 } from 'native-base'
 
-import { fetchTrailsByID } from '../app/trailSlice'
-import ToastAlert from '../components/ToastAlert'
-import LoadSpinner from '../components/LoadSpinner'
-import CONSTANTS from '../util/Constants'
-import DetailsTab from '../components/DetailsTab'
-import MapsTab from '../components/MapsTab'
-import EventsTab from '../components/EventsTab'
-import ColorConstants from '../util/ColorConstants'
-import StarRating from 'react-native-star-rating'
+import { fetchTrailsByID } from "../app/trailSlice";
+import ToastAlert from "../components/ToastAlert";
+import LoadSpinner from "../components/LoadSpinner";
+import CONSTANTS from "../util/Constants";
+import DetailsTab from "../components/DetailsTab";
+import MapsTab from "../components/MapsTab";
+import EventsTab from "../components/EventsTab";
+import ColorConstants from "../util/ColorConstants";
+import NoData from "../components/NoData";
 
 const ViewTrailScreen = ({ route }) => {
   const { id, showEvents } = route.params
@@ -31,18 +31,20 @@ const ViewTrailScreen = ({ route }) => {
   let spinner = true
   let content
   const dispatch = useDispatch()
-
-  const trailStatus = useSelector((state) => state.trails.status)
-  const error = useSelector((state) => state.trails.error)
+  const covFlag = useSelector((state) => state.user.covidToggle);
+  const trailStatus = useSelector((state) => state.trails.status);
+  const error = useSelector((state) => state.trails.error);
   const fields =
     'name,avg_rating,location,path,bbox,img_url,difficulty,length_km,description,activity_type,estimate_time_min,start,recommended'
 
   useEffect(() => {
     const getTrailDetail = async () => {
       try {
-        const results = await dispatch(fetchTrailsByID({ fields, id }))
-        const uResults = unwrapResult(results)
-        setTrailData(uResults)
+        const results = await dispatch(
+          fetchTrailsByID({ fields, id, covFlag })
+        );
+        const uResults = unwrapResult(results);
+        setTrailData(uResults);
       } catch (e) {
         ToastAlert(e.message)
       }
@@ -137,8 +139,12 @@ const ViewTrailScreen = ({ route }) => {
         />
 
         <Tabs
+          // page={showEvents ? 2 : 0}
           initialPage={showEvents ? 2 : 0}
           locked={true}
+          // onChangeTab={(test) => {
+          //   console.log(test);
+          // }}
           // tabBarBackgroundColor={ColorConstants.LGreen}
           // tabStyle={{ backgroundColor: ColorConstants.LGreen }}
           activeTextStyle={{ color: ColorConstants.secondary }}
@@ -178,7 +184,7 @@ const ViewTrailScreen = ({ route }) => {
     trailStatus === CONSTANTS.SUCCESS &&
     JSON.stringify(trailData) === '{}'
   ) {
-    content = <Text>No Data</Text>
+    content = <NoData />;
   }
   return (
     <Container style={{ backgroundColor: ColorConstants.LGreen, flex: 1 }}>
