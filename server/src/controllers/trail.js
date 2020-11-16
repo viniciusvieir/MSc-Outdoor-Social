@@ -3,6 +3,7 @@ const { errorHandler } = require('../utils/error-handling')
 const { PythonShell } = require('python-shell')
 
 const Trail = require('../models/trail')
+const Event = require('../models/event')
 
 class TrailController {
   async trails(req, res) {
@@ -12,6 +13,7 @@ class TrailController {
 
     const { q: query, fields, limit, skip } = req.query
 
+    // search for nearest places to a point
     if (query && query.near && query.near.lat && query.near.lon) {
       const project = {}
 
@@ -51,6 +53,20 @@ class TrailController {
       .limit(limit || 20)
       .skip(skip || 0)
       .select((fields && fields.replace(/,|;/g, ' ')) || '-path')
+      .lean()
+
+    if (fields && fields.includes('outing_count')) {
+      const date = new Date()
+      for (let i = 0; i < trails.length; i++) {
+        trails[i].outing_count = await Event.find({
+          trailId: trails[i]._id,
+          date: {
+            $gte: date,
+          },
+        }).countDocuments()
+      }
+    }
+
     res.json(trails)
   }
 
