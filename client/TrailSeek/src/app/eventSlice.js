@@ -18,13 +18,13 @@ export const fetchEvents = createAsyncThunk(
       return { data: response.data, trailID };
     } catch (e) {
       return rejectWithValue(
-        error.response.data?.errors
-          ? error.response.data.errors
+        e.response.data?.errors
+          ? e.response.data.errors
               .map((item) => {
                 return item.msg;
               })
               .join(" ")
-          : error.status
+          : e.status
       );
     }
   }
@@ -41,14 +41,15 @@ export const postEvents = createAsyncThunk(
       // try{}catch(e)
       return { eventID: response.data, data: inputs, trailID };
     } catch (e) {
+      console.log(e.response);
       return rejectWithValue(
-        error.response.data?.errors
-          ? error.response.data.errors
+        e.response.data?.errors
+          ? e.response.data.errors
               .map((item) => {
                 return item.msg;
               })
               .join(" ")
-          : error.status
+          : e.status
       );
     }
   }
@@ -66,13 +67,13 @@ export const putEvents = createAsyncThunk(
       return { eventID: response.data, data: inputs, trailID };
     } catch (e) {
       return rejectWithValue(
-        error.response.data?.errors
-          ? error.response.data.errors
+        e.response.data?.errors
+          ? e.response.data.errors
               .map((item) => {
                 return item.msg;
               })
               .join(" ")
-          : error.status
+          : e.status
       );
     }
   }

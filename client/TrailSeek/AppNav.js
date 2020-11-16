@@ -54,7 +54,7 @@ const ProfileFlow = () => {
         name="ViewProfile"
         component={ViewProfileScreen}
         options={{
-          headerStyle: { backgroundColor: ColorConstants.Black },
+          headerStyle: { backgroundColor: ColorConstants.primary },
           headerLeft: null,
           headerTitleStyle: { color: ColorConstants.DWhite },
           title: "My Profile",
@@ -83,12 +83,20 @@ const TrailFlow = () => {
         name="ListTrail"
         component={ListTrailScreen}
         options={({ route }) => ({
-          headerStyle: { backgroundColor: ColorConstants.Black },
+          headerStyle: { backgroundColor: ColorConstants.primary },
           headerTitleStyle: { color: ColorConstants.DWhite },
+          headerBackImage: () => (
+            <MaterialIcons
+              name="arrow-back"
+              size={24}
+              color="white"
+              style={styles.shadow}
+            />
+          ),
           title:
             typeof route.params.getParams?.title === "undefined"
               ? "Search"
-              : route.params.getParams.title,
+              : route.params.filter.title,
         })}
       />
       <Stack.Screen
@@ -118,7 +126,7 @@ const TrailFlow = () => {
         name="CreateEvent"
         component={CreateEventScreen}
         options={{
-          headerStyle: { backgroundColor: ColorConstants.Black },
+          headerStyle: { backgroundColor: ColorConstants.primary },
           headerTitleStyle: { color: ColorConstants.DWhite },
           title: "Create Event",
           headerBackImage: () => (
@@ -150,7 +158,7 @@ const EventFlow = () => {
         name="MyEvent"
         component={MyEventScreen}
         options={{
-          headerStyle: { backgroundColor: ColorConstants.Black },
+          headerStyle: { backgroundColor: ColorConstants.primary },
           headerLeft: null,
           headerTitleStyle: { color: ColorConstants.DWhite },
           title: "My Events",
@@ -355,9 +363,17 @@ const AppNav = () => {
             name="EditEvent"
             component={EditEventScreen}
             options={{
-              headerStyle: { backgroundColor: ColorConstants.Black },
+              headerStyle: { backgroundColor: ColorConstants.primary },
               headerTitleStyle: { color: ColorConstants.DWhite },
               title: "Edit Events",
+              headerBackImage: () => (
+                <MaterialIcons
+                  name="arrow-back"
+                  size={24}
+                  color="white"
+                  style={styles.shadow}
+                />
+              ),
               // headerTintColor: ColorConstants.Black,
             }}
           />
