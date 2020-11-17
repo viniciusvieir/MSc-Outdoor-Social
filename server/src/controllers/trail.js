@@ -57,11 +57,12 @@ class TrailController {
 
     if (fields && fields.includes('outing_count')) {
       const date = new Date()
+      date.setHours(0, 0, 0, 0)
       for (let i = 0; i < trails.length; i++) {
         trails[i].outing_count = await Event.find({
           trailId: trails[i]._id,
           date: {
-            $gte: date,
+            $gte: date.toLocaleString(),
           },
         }).countDocuments()
       }
