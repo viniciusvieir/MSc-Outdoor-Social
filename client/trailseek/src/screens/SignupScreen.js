@@ -56,7 +56,7 @@ const SignupScreen = ({ navigation }) => {
 
   const options = ["M", "F"];
 
-  const [selectedOption, setSelectedOption] = useState("M");
+  const [selectedOption, setSelectedOption] = useState("");
 
   function renderOption(option, selected, onSelect, index) {
     const style = selected

@@ -65,21 +65,25 @@ export const fetchTrailsByQuery = createAsyncThunk(
   ) => {
     try {
       if (location) {
-        query = {
-          start: {
-            $near: {
-              $geometry: {
-                type: "Point",
-                coordinates: [
-                  getState().user.userLocation.latitude,
-                  getState().user.userLocation.longitude,
-                ],
+        if (getState().user.userLocation.latitude != null) {
+          query = {
+            start: {
+              $near: {
+                $geometry: {
+                  type: "Point",
+                  coordinates: [
+                    getState().user.userLocation.latitude,
+                    getState().user.userLocation.longitude,
+                  ],
+                },
+                $minDistance: minDist,
+                $maxDistance: maxDist,
               },
-              $minDistance: minDist,
-              $maxDistance: maxDist,
             },
-          },
-        };
+          };
+        } else {
+          return [];
+        }
       }
       const response = await trailSeek.get("/trails", {
         params: {
@@ -108,16 +112,12 @@ export const fetchTrailsByQuery = createAsyncThunk(
 export const fetchTrailsByID = createAsyncThunk(
   "trails/fetchTrailsByID",
   async (
-    {
-      fields,
-      id,
-      excludeWeather = "hourly,current,minutely,alerts",
-      covFlag = true,
-    },
+    { fields, id, excludeWeather = "hourly,current,minutely,alerts" },
     { rejectWithValue, getState }
   ) => {
     let weatherResponse;
     let covidResponse;
+    const covFlag = getState().user.covidToggle;
     try {
       const existTrail = getState().trails.trailDetails.find(
         (item) => item._id === id
@@ -150,7 +150,7 @@ export const fetchTrailsByID = createAsyncThunk(
         }
       }
       response.data.weatherData = weatherResponse.data;
-      response.data.covidData = covidResponse.data.features;
+      response.data.covidData = covFlag ? covidResponse.data.features : [];
       return response.data;
     } catch (error) {
       console.log(error);
