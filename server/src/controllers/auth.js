@@ -33,7 +33,7 @@ class AuthController {
     if (!errors.isEmpty())
       return res.status(400).json({ errors: errors.array() })
 
-    const { email, password, name, gender } = req.body
+    const { email, password, name, dob, gender } = req.body
 
     const checkIfExists = await User.findOne({
       where: { email },
@@ -46,7 +46,7 @@ class AuthController {
 
     const user = await User.create({
       name,
-      dob: new Date(),
+      dob,
       gender,
       email,
       password,
@@ -63,6 +63,7 @@ class AuthController {
         body('email').isEmail(),
         body('password').not().isEmpty(),
         body('name').not().isEmpty().trim().escape(),
+        body('dob').isDate().toDate(),
         body('gender').isIn(['F', 'M']),
       ],
     }
