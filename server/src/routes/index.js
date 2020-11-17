@@ -17,6 +17,17 @@ router.post('/signup', authController.validators.signUp, authController.signUp)
 router.get('/user', verifyToken, userController.user)
 router.post('/user', verifyToken, userController.changeUserInfo)
 
+router.get(
+  '/user/eventsCreated',
+  verifyToken,
+  eventController.eventsCreatedByUser
+)
+router.get(
+  '/user/eventsJoined',
+  verifyToken,
+  eventController.eventsJoinedByUser
+)
+
 // =============== TRAIL ==============
 router.get('/trails', trailController.validators.trails, trailController.trails)
 router.get(
