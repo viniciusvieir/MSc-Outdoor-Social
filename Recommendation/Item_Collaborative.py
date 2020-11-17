@@ -18,7 +18,7 @@ class itemCollaborative:
     
     def __init__(self, user_id):
         self.user_id = user_id
-        load_dotenv(dotenv_path = Path('D:\Masters\Semester3\Project\Code\.env'))
+        load_dotenv(dotenv_path = Path('/.env'))
         mongo_url = os.getenv('MONGO_URL')
         client = pymongo.MongoClient(mongo_url)
         
