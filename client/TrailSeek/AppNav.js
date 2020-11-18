@@ -298,6 +298,7 @@ const AppNav = () => {
       console.log(e.message);
     }
   };
+  
   if (isLoading) {
     return (
       <AppLoading

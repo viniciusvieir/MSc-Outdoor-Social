@@ -88,7 +88,6 @@ export const fetchTrailsByQuery = createAsyncThunk(
           return [];
         }
       }
-      console.log(query);
       const response = await trailSeek.get("/trails", {
         params: {
           q: JSON.stringify(query),
@@ -123,10 +122,10 @@ export const fetchTrailsByID = createAsyncThunk(
     let covidResponse;
     const covFlag = getState().user.covidToggle;
     try {
-      const existTrail = getState().trails.trailDetails.find(
-        (item) => item._id === id
-      );
-      if (existTrail) return existTrail;
+      // const existTrail = getState().trails.trailDetails.find(
+      //   (item) => item._id === id
+      // );
+      // if (existTrail) return existTrail;
       const response = await trailSeek.get(`/trails/${id}?fields=${fields}`);
       try {
         weatherResponse = await weather.get("/onecall", {
@@ -202,9 +201,15 @@ export const trailSlice = createSlice({
       state.status = CONSTANTS.LOADING;
     },
     [fetchTrailsByID.fulfilled]: (state, action) => {
-      state.status = CONSTANTS.SUCCESS;
-      if (!state.trailDetails.some((item) => item._id === action.payload._id))
+      const idx = state.trailDetails.findIndex(
+        (item) => item._id === action.payload._id
+      );
+      if (idx === -1) {
         state.trailDetails.push(action.payload);
+      } else {
+        state.trailDetails[idx] = action.payload;
+      }
+      state.status = CONSTANTS.SUCCESS;
     },
     [fetchTrailsByID.rejected]: (state, action) => {
       state.status = CONSTANTS.FAILED;
@@ -216,7 +221,6 @@ export const trailSlice = createSlice({
     },
     [fetchTrailsByQuery.fulfilled]: (state, action) => {
       state.status = CONSTANTS.SUCCESS;
-
       state.filteredTrails.query = action.payload.query;
       state.filteredTrails.data = action.payload.response;
     },

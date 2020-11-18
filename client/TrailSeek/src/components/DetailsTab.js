@@ -24,7 +24,7 @@ import ColorConstants from "../util/ColorConstants";
 import NoData from "./NoData";
 import Constants from "../util/Constants";
 
-const DetaiTabs = ({ trailData }) => {
+const DetaiTabs = ({ trailData, covData }) => {
   const navigation = useNavigation();
   const covidToggle = useSelector((state) => state.user.covidToggle);
   let covContent;
@@ -38,7 +38,7 @@ const DetaiTabs = ({ trailData }) => {
         }}
       />
       <Row>
-        <CovidWidget data={trailData.covidData} />
+        <CovidWidget data={covData} />
       </Row>
     </>
   ) : null;
