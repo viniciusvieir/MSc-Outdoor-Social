@@ -1,5 +1,6 @@
 const { query, body, validationResult } = require('express-validator')
 const { errorHandler } = require('../utils/error-handling')
+const faker = require('faker')
 
 const Trail = require('../models/trail')
 const Event = require('../models/event')
@@ -100,6 +101,8 @@ class EventController {
     const { id: userId, name } = req.context
     const { eventId } = req.params
 
+    const imageUrl = faker.internet.avatar()
+
     await Event.update(
       { _id: eventId },
       {
@@ -107,12 +110,25 @@ class EventController {
           participants: {
             userId,
             name,
+            imageUrl,
           },
         },
       }
     )
       .then(() => res.json({ success: true }))
       .catch((error) => res.json(errorHandler(error)))
+  }
+
+  async eventsCreatedByUser(req, res) {
+    const { id: userId } = req.context
+    const events = await Event.find({ userId })
+    res.json(events)
+  }
+
+  async eventsJoinedByUser(req, res) {
+    const { id: userId } = req.context
+    const events = await Event.find({ participants: userId })
+    res.json(events)
   }
 
   // VALIDATION
