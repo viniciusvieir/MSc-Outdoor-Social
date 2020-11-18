@@ -66,11 +66,9 @@ const ViewEventScreen = ({ route, navigation }) => {
       } else if (jEvents.length > 0) {
         if (
           jEvents.findIndex((item) => {
-            console.log(item);
             return item === eventData._id;
           }) === -1
         ) {
-          console.log("inhere");
           joinFlag = true;
         }
       }
