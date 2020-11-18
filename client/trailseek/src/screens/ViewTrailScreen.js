@@ -25,7 +25,7 @@ import EventsTab from "../components/EventsTab";
 import ColorConstants from "../util/ColorConstants";
 import NoData from "../components/NoData";
 
-const ViewTrailScreen = ({ route, navigation }) => {
+const ViewTrailScreen = ({ route }) => {
   const { id, showEvents } = route.params;
   const [trailData, setTrailData] = useState({});
   const [covData, setCovData] = useState([]);
