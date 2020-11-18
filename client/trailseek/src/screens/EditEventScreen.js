@@ -15,7 +15,7 @@ const EditEventScreen = () => {
       putEvents({
         inputs: values,
         trailID: eventData.trailId,
-        eventID: eventData._ID,
+        eventID: eventData._id,
       })
     );
   };
