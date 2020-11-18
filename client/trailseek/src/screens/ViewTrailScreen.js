@@ -50,12 +50,8 @@ const ViewTrailScreen = ({ route, navigation }) => {
   };
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      getTrailDetail();
-    });
     getTrailDetail();
-    return unsubscribe;
-  }, [navigation]);
+  }, [covFlag]);
 
   if (!(JSON.stringify(trailData) === "{}")) {
     spinner = false;
