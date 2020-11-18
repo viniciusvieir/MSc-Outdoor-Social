@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -18,18 +18,25 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 
 import ColorConstants from "../util/ColorConstants";
-import { updateCurrentEvent, joinEvent } from "../app/eventSlice";
+import {
+  updateCurrentEvent,
+  joinEvent,
+  addJoinedEvent,
+} from "../app/eventSlice";
 import Constants from "../util/Constants";
 import ToastAlert from "../components/ToastAlert";
 
 const ViewEventScreen = ({ route, navigation }) => {
   const dispatch = useDispatch();
   const userID = useSelector((state) => state.user.profile.id);
+  const joinedEventList = useSelector((state) => state.event.joinedEvents); //Need to be changed temp fix
+  const [jEvents, setJEvents] = useState([]);
   const { trailData, eventData } = route.params || {};
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       dispatch(updateCurrentEvent({ eventData, trailName: trailData.name }));
+      setJEvents(joinedEventList);
     });
     return unsubscribe;
   }, [navigation]);
@@ -43,9 +50,33 @@ const ViewEventScreen = ({ route, navigation }) => {
           .toString() === moment(eventData.date).format("DD/MM/YYYY").toString()
     );
   }
-  const findUserInParticipants = (item) => {
-    return item._id === userID;
-  };
+  // const findUserInParticipants =
+
+  let joinFlag = false;
+  if (userID !== eventData.userId) {
+    if (eventData.participants.length < eventData.max_participants) {
+      if (
+        eventData.participants.findIndex((item) => {
+          return item.userId === userID;
+        }) === -1
+      ) {
+        eventData.participants;
+
+        joinFlag = true;
+      } else if (jEvents.length > 0) {
+        if (
+          jEvents.findIndex((item) => {
+            console.log(item);
+            return item === eventData._id;
+          }) === -1
+        ) {
+          console.log("inhere");
+          joinFlag = true;
+        }
+      }
+    }
+  }
+
   // console.log(eventWeather);
   return (
     <>
@@ -242,10 +273,7 @@ const ViewEventScreen = ({ route, navigation }) => {
                   {eventData.description}
                 </Text>
               </Row>
-              {userID === eventData.userId ||
-              eventData.participants.findIndex(findUserInParticipants) != -1 ||
-              eventData.participants.length >=
-                eventData.max_participants ? null : (
+              {joinFlag ? (
                 <>
                   <View
                     style={{
@@ -267,6 +295,7 @@ const ViewEventScreen = ({ route, navigation }) => {
                             eventID: eventData._id,
                           })
                         );
+                        dispatch(addJoinedEvent(eventData._id));
                         navigation.goBack();
                       } catch (e) {
                         ToastAlert(e.message);
@@ -276,7 +305,7 @@ const ViewEventScreen = ({ route, navigation }) => {
                     <Text style={{ color: ColorConstants.Black }}>Join</Text>
                   </Button>
                 </>
-              )}
+              ) : null}
             </Grid>
             {/* <Text>{JSON.stringify(eventWeather)}</Text> */}
 
