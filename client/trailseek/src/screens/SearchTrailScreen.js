@@ -15,9 +15,15 @@ import { getLocation } from "../app/userSlice";
 import Constants from "../util/Constants";
 import TrailFilter from "../components/TrailFilter";
 
+function useConstructor(callBack = () => {}) {
+  const [hasBeenCalled, setHasBeenCalled] = useState(false);
+  if (hasBeenCalled) return;
+  callBack();
+  setHasBeenCalled(true);
+}
+
 const SearchTrailScreen = ({ navigation }) => {
   const dispatch = useDispatch();
-
   const [searchTerm, setSearchTerm] = useState("");
   const trailStatus = useSelector((state) => state.trails.status);
   const error = useSelector((state) => state.trails.error);
@@ -26,6 +32,7 @@ const SearchTrailScreen = ({ navigation }) => {
   const locationStatus = useSelector((state) => state.user.userLocation.status);
 
   const [trails, setTrails] = useState([]);
+  const [filter, setFilter] = useState({});
 
   const easyParams = {
     title: "Easy Trails",
@@ -55,23 +62,30 @@ const SearchTrailScreen = ({ navigation }) => {
       },
     },
   };
-  const [filter, setFilter] = useState(easyParams);
+  useConstructor(() => {
+    setFilter(easyParams);
+  });
+
   let content,
     spinner = true;
 
   const getTrailsByQuery = async ({ location = false, query, skip = 0 }) => {
     try {
+      let results;
       let gpsLoc;
       if (location) {
         try {
           gpsLoc = await dispatch(getLocation());
+          results = await dispatch(
+            fetchTrailsByQuery({ query, location, skip })
+          );
         } catch (e) {
           ToastAlert(e.message);
         }
+      } else {
+        results = await dispatch(fetchTrailsByQuery({ query, location, skip }));
       }
-      const results = await dispatch(
-        fetchTrailsByQuery({ query, location, skip })
-      );
+
       const uResult = unwrapResult(results);
       setTrails(uResult.response);
     } catch (e) {
@@ -82,7 +96,6 @@ const SearchTrailScreen = ({ navigation }) => {
 
   //Initial Trail Fetch
   useEffect(() => {
-    // setFilter(easyParams);
     getTrailsByQuery({
       query: filter?.query,
       location: filter?.location,
@@ -91,8 +104,8 @@ const SearchTrailScreen = ({ navigation }) => {
   }, [filter]);
 
   if (
-    trailStatus === CONSTANTS.LOADING //||
-    // locationStatus === CONSTANTS.LOADING
+    trailStatus === CONSTANTS.LOADING ||
+    locationStatus === CONSTANTS.LOADING
   ) {
     spinner = true;
   } else if (trailStatus === CONSTANTS.FAILED) {
@@ -101,7 +114,7 @@ const SearchTrailScreen = ({ navigation }) => {
     content = <Text>{error}</Text>;
   } else if (
     trailStatus === CONSTANTS.SUCCESS ||
-    locationStatus === CONSTANTS.LOADING
+    locationStatus === CONSTANTS.SUCCESS
   ) {
     spinner = false;
   }
@@ -165,7 +178,7 @@ const SearchTrailScreen = ({ navigation }) => {
           active={filter.title === bestParams.title}
           action={() => {
             setFilter(bestParams);
-            // setTrails([]);
+            setTrails([]);
             getTrailsByQuery({
               query: filter?.query,
             });
@@ -176,7 +189,7 @@ const SearchTrailScreen = ({ navigation }) => {
           active={filter.title === easyParams.title}
           action={() => {
             setFilter(easyParams);
-            // setTrails([]);
+            setTrails([]);
             getTrailsByQuery({
               query: filter?.query,
             });
@@ -187,7 +200,7 @@ const SearchTrailScreen = ({ navigation }) => {
           active={filter.title === nearMe.title}
           action={() => {
             setFilter(nearMe);
-            // setTrails([]);
+            setTrails([]);
             getTrailsByQuery({
               query: filter?.query,
               location: filter?.location,
@@ -203,17 +216,7 @@ const SearchTrailScreen = ({ navigation }) => {
         }}
         contentContainerStyle={{ flex: 1 }}
       >
-        <TrailCard
-          trails={trails}
-          filter={filter}
-          // fetchMoreData={() =>
-          //   getTrailsByQuery({
-          //     query: filter?.query,
-          //     location: filter?.location,
-          //     skip: trails.length,
-          //   })
-          // }
-        />
+        <TrailCard trails={trails} filter={filter} />
       </View>
     </Container>
   );
