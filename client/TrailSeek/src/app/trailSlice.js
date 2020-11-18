@@ -23,31 +23,31 @@ const initialState = {
   },
 };
 
-export const fetchAllTrails = createAsyncThunk(
-  "trails/fetchAllTrails",
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await trailSeek.get("/trails", {
-        params: {
-          fields: "name,avg_rating,location,img_url",
-        },
-      });
-      return response.data;
-    } catch (error) {
-      console.log(error.message);
-      retrun(error.message);
-      return rejectWithValue(
-        error.response.data?.errors
-          ? error.response.data.errors
-              .map((item) => {
-                return item.msg;
-              })
-              .join(" ")
-          : error.status
-      );
-    }
-  }
-);
+// export const fetchAllTrails = createAsyncThunk(
+//   "trails/fetchAllTrails",
+//   async (_, { rejectWithValue }) => {
+//     try {
+//       const response = await trailSeek.get("/trails", {
+//         params: {
+//           fields: "name,avg_rating,location,img_url",
+//         },
+//       });
+//       return response.data;
+//     } catch (error) {
+//       console.log(error.message);
+//       retrun(error.message);
+//       return rejectWithValue(
+//         error.response.data?.errors
+//           ? error.response.data.errors
+//               .map((item) => {
+//                 return item.msg;
+//               })
+//               .join(" ")
+//           : error.status
+//       );
+//     }
+//   }
+// );
 
 export const fetchTrailsByQuery = createAsyncThunk(
   "trails/fetchTrailsByQuery",
@@ -65,7 +65,10 @@ export const fetchTrailsByQuery = createAsyncThunk(
   ) => {
     try {
       if (location) {
-        if (getState().user.userLocation.latitude != null) {
+        if (
+          getState().user.userLocation.latitude != null ||
+          getState().user.userLocation.latitude != undefined
+        ) {
           query = {
             start: {
               $near: {
@@ -85,6 +88,7 @@ export const fetchTrailsByQuery = createAsyncThunk(
           return [];
         }
       }
+      console.log(query);
       const response = await trailSeek.get("/trails", {
         params: {
           q: JSON.stringify(query),
@@ -182,17 +186,17 @@ export const trailSlice = createSlice({
     },
   },
   extraReducers: {
-    [fetchAllTrails.pending]: (state, action) => {
-      state.status = CONSTANTS.LOADING;
-    },
-    [fetchAllTrails.fulfilled]: (state, action) => {
-      state.status = CONSTANTS.SUCCESS;
-      state.trails = action.payload;
-    },
-    [fetchAllTrails.rejected]: (state, action) => {
-      state.status = CONSTANTS.FAILED;
-      state.error = action.payload;
-    },
+    // [fetchAllTrails.pending]: (state, action) => {
+    //   state.status = CONSTANTS.LOADING;
+    // },
+    // [fetchAllTrails.fulfilled]: (state, action) => {
+    //   state.status = CONSTANTS.SUCCESS;
+    //   state.trails = action.payload;
+    // },
+    // [fetchAllTrails.rejected]: (state, action) => {
+    //   state.status = CONSTANTS.FAILED;
+    //   state.error = action.payload;
+    // },
     //////////////////////////////////////////////////////////////
     [fetchTrailsByID.pending]: (state, action) => {
       state.status = CONSTANTS.LOADING;

@@ -55,7 +55,7 @@ const SearchTrailScreen = ({ navigation }) => {
       },
     },
   };
-  const [filter, setFilter] = useState({});
+  const [filter, setFilter] = useState(easyParams);
   let content,
     spinner = true;
 
@@ -82,17 +82,17 @@ const SearchTrailScreen = ({ navigation }) => {
 
   //Initial Trail Fetch
   useEffect(() => {
-    setFilter(easyParams);
+    // setFilter(easyParams);
     getTrailsByQuery({
       query: filter?.query,
       location: filter?.location,
     });
     setSearchTerm("");
-  }, []);
+  }, [filter]);
 
   if (
-    trailStatus === CONSTANTS.LOADING ||
-    locationStatus === CONSTANTS.LOADING
+    trailStatus === CONSTANTS.LOADING //||
+    // locationStatus === CONSTANTS.LOADING
   ) {
     spinner = true;
   } else if (trailStatus === CONSTANTS.FAILED) {

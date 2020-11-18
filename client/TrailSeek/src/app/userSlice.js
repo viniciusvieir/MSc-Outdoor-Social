@@ -146,7 +146,7 @@ export const getLocation = createAsyncThunk(
         } catch (e) {
           console.log(e);
         }
-        return location.coords;
+        return location?.coords;
       } catch (e) {
         console.log(e);
       }
@@ -231,8 +231,8 @@ export const userSlice = createSlice({
     },
     [getLocation.fulfilled]: (state, action) => {
       state.userLocation.status = CONSTANTS.SUCCESS;
-      state.userLocation.latitude = action.payload.latitude;
-      state.userLocation.longitude = action.payload.longitude;
+      state.userLocation.latitude = action.payload?.latitude;
+      state.userLocation.longitude = action.payload?.longitude;
     },
     [getLocation.rejected]: (state, action) => {
       state.userLocation.status = CONSTANTS.FAILED;
