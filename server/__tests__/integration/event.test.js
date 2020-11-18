@@ -50,6 +50,7 @@ describe('Trails', () => {
       password: faker.internet.password(),
       name: faker.name.findName(),
       gender: 'M',
+      dob: '2000-10-01',
     })
     const response = await supertest(app)
       .post(`/trails/${trailId}/events`)
@@ -74,6 +75,7 @@ describe('Trails', () => {
       password: faker.internet.password(),
       name: faker.name.findName(),
       gender: 'M',
+      dob: '2000-10-01',
     })
     const response = await supertest(app)
       .post(`/trails/${trailId}/events`)
@@ -90,6 +92,7 @@ describe('Trails', () => {
       password: faker.internet.password(),
       name: faker.name.findName(),
       gender: 'M',
+      dob: '2000-10-01',
     })
     const response = await supertest(app)
       .post('/trails/5fa17e26bf8d258042edf4be/events')
@@ -110,6 +113,7 @@ describe('Trails', () => {
       password: faker.internet.password(),
       name: faker.name.findName(),
       gender: 'M',
+      dob: '2000-10-01',
     })
     const trailResponse = await supertest(app)
       .post(`/trails/${trailId}/events`)
@@ -134,6 +138,7 @@ describe('Trails', () => {
       password: faker.internet.password(),
       name: faker.name.findName(),
       gender: 'M',
+      dob: '2000-10-01',
     })
     const trailResponse = await supertest(app)
       .post(`/trails/${trailId}/events`)
@@ -161,6 +166,7 @@ describe('Trails', () => {
       password: faker.internet.password(),
       name: faker.name.findName(),
       gender: 'M',
+      dob: '2000-10-01',
     })
 
     const trailResponse = await supertest(app)

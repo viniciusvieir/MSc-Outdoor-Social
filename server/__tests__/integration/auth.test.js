@@ -33,6 +33,7 @@ describe('Authentication', () => {
       password: 'authentication',
       name: 'Authentication',
       gender: 'M',
+      dob: '2000-10-01',
     })
     expect(response.body).toHaveProperty('token')
   })
@@ -43,12 +44,14 @@ describe('Authentication', () => {
       password: 'authentication',
       name: 'Duplicated',
       gender: 'F',
+      dob: '2000-10-01',
     })
     const response = await supertest(app).post('/signup').send({
       email: 'duplicated@test.com',
       password: 'authentication',
       name: 'Duplicated',
       gender: 'F',
+      dob: '2000-10-01',
     })
     expect(response.body).toHaveProperty('errors')
   })
@@ -122,6 +125,7 @@ describe('Authentication', () => {
       password: faker.internet.password(),
       name: faker.name.findName(),
       gender: 'M',
+      dob: '2000-10-01',
     })
 
     const token = signUpResponse.body.token
@@ -141,6 +145,7 @@ describe('Authentication', () => {
       password: faker.internet.password(),
       name: faker.name.findName(),
       gender: 'M',
+      dob: '2000-10-01',
     })
 
     const token = signUpResponse.body.token
