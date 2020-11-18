@@ -12,7 +12,7 @@ class itemCollaborative:
     
     def __init__(self, user_id):
         self.user_id = user_id
-        mongo_url = os.getenv('mongodb://dev:hCLXZs76ubCXk8ZS@trailseek.eu:27017/trailseek')
+        mongo_url = os.getenv('MONGO_URL')
         client = pymongo.MongoClient(mongo_url)
 
         self.db = client['trailseek']
