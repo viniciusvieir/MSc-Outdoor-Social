@@ -18,12 +18,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.neels198.trailseek",
-      "splash": {
-        "image": "./src/images/tslogov2.3.png",
-        "resizeMode": "contain",
-        "backgroundColor": "#007060"
-      }
+      "bundleIdentifier": "com.neels198.trailseek"
     },
     "web": {
       "favicon": "./assets/favicon.png"

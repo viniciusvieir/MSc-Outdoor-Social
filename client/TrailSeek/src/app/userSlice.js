@@ -37,7 +37,7 @@ export const signIn = createAsyncThunk(
         console.log(e.message);
       }
       return response.data;
-    } catch (e) {
+    } catch (error) {
       // console.log(e.response.data.errors);
       return rejectWithValue(
         error.response.data?.errors
@@ -63,7 +63,7 @@ export const signUp = createAsyncThunk(
         console.log(e.message);
       }
       return response.data;
-    } catch (e) {
+    } catch (error) {
       return rejectWithValue(
         error.response.data?.errors
           ? error.response.data.errors
