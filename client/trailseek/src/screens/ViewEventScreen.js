@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -12,52 +12,31 @@ import moment from "moment";
 import MapView, { Marker, Polyline } from "react-native-maps";
 import { Button, Text, Thumbnail } from "native-base";
 import { Grid, Col, Row } from "react-native-easy-grid";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 
 import ColorConstants from "../util/ColorConstants";
-import { updateCurrentEvent } from "../app/eventSlice";
+import {
+  updateCurrentEvent,
+  joinEvent,
+  addJoinedEvent,
+} from "../app/eventSlice";
 import Constants from "../util/Constants";
+import ToastAlert from "../components/ToastAlert";
 
 const ViewEventScreen = ({ route, navigation }) => {
-  const list = [
-    {
-      id: 1,
-      name: "Dejan Lovren",
-    },
-    {
-      id: 2,
-      name: "Nathaniel Clyne",
-    },
-    {
-      id: 3,
-      name: "Simon Mignolet",
-    },
-    {
-      id: 4,
-      name: "Dejan Lovren",
-    },
-    {
-      id: 5,
-      name: "Nathaniel Clyne",
-    },
-    {
-      id: 6,
-      name: "Simon Mignolet",
-    },
-    {
-      id: 7,
-      name: "Dejan Lovren",
-    },
-  ];
   const dispatch = useDispatch();
+  const userID = useSelector((state) => state.user.profile.id);
+  const joinedEventList = useSelector((state) => state.event.joinedEvents); //Need to be changed temp fix
+  const [jEvents, setJEvents] = useState([]);
   const { trailData, eventData } = route.params || {};
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       dispatch(updateCurrentEvent({ eventData, trailName: trailData.name }));
+      setJEvents(joinedEventList);
     });
     return unsubscribe;
   }, [navigation]);
@@ -71,6 +50,31 @@ const ViewEventScreen = ({ route, navigation }) => {
           .toString() === moment(eventData.date).format("DD/MM/YYYY").toString()
     );
   }
+  // const findUserInParticipants =
+
+  let joinFlag = false;
+  if (userID !== eventData.userId) {
+    if (eventData.participants.length < eventData.max_participants) {
+      if (
+        eventData.participants.findIndex((item) => {
+          return item.userId === userID;
+        }) === -1
+      ) {
+        eventData.participants;
+
+        joinFlag = true;
+      } else if (jEvents.length > 0) {
+        if (
+          jEvents.findIndex((item) => {
+            return item === eventData._id;
+          }) === -1
+        ) {
+          joinFlag = true;
+        }
+      }
+    }
+  }
+
   // console.log(eventWeather);
   return (
     <>
@@ -112,7 +116,6 @@ const ViewEventScreen = ({ route, navigation }) => {
                   strokeWidth={3}
                 />
                 <Marker
-                  // key={index}
                   coordinate={{
                     latitude: trailData.start.coordinates[0],
                     longitude: trailData.start.coordinates[1],
@@ -268,69 +271,92 @@ const ViewEventScreen = ({ route, navigation }) => {
                   {eventData.description}
                 </Text>
               </Row>
-              <View
-                style={{
-                  marginTop: 16,
-                  marginBottom: 16,
-                  borderBottomColor: ColorConstants.darkGray,
-                  borderBottomWidth: 1,
-                }}
-              />
-              <Button block style={{ backgroundColor: ColorConstants.Yellow }}>
-                <Text style={{ color: ColorConstants.Black }}>Join</Text>
-              </Button>
+              {joinFlag ? (
+                <>
+                  <View
+                    style={{
+                      marginTop: 16,
+                      marginBottom: 16,
+                      borderBottomColor: ColorConstants.darkGray,
+                      borderBottomWidth: 1,
+                    }}
+                  />
+
+                  <Button
+                    block
+                    style={{ backgroundColor: ColorConstants.Yellow }}
+                    onPress={async () => {
+                      try {
+                        const response = await dispatch(
+                          joinEvent({
+                            trailID: eventData.trailId,
+                            eventID: eventData._id,
+                          })
+                        );
+                        dispatch(addJoinedEvent(eventData._id));
+                        navigation.goBack();
+                      } catch (e) {
+                        ToastAlert(e.message);
+                      }
+                    }}
+                  >
+                    <Text style={{ color: ColorConstants.Black }}>Join</Text>
+                  </Button>
+                </>
+              ) : null}
             </Grid>
-            <Text>{JSON.stringify(eventWeather)}</Text>
+            {/* <Text>{JSON.stringify(eventWeather)}</Text> */}
+
+            <View
+              style={{
+                backgroundColor: ColorConstants.Black + 40,
+                alignItems: "center",
+                justifyContent: "center",
+                height: 50,
+              }}
+            >
+              <Text
+                style={{
+                  color: ColorConstants.DWhite,
+                  fontSize: 22,
+                }}
+              >
+                Other Participants
+              </Text>
+            </View>
+            <FlatList
+              data={eventData.participants}
+              keyExtractor={(item) => {
+                return item.userId.toString();
+              }}
+              style={{
+                marginVertical: 10,
+              }}
+              horizontal
+              renderItem={({ item }) => {
+                return (
+                  <View style={{ marginLeft: 10, alignItems: "center" }}>
+                    <Thumbnail
+                      style={{
+                        borderColor: ColorConstants.DGreen,
+                        borderWidth: 3,
+                        height: 100,
+                        width: 100,
+                      }}
+                      large
+                      source={{
+                        uri: `https://eu.ui-avatars.com/api/?name=${item.name}`,
+                      }}
+                    />
+                    <Text style={{ color: ColorConstants.Black, fontSize: 18 }}>
+                      {item.name}
+                    </Text>
+                  </View>
+                );
+              }}
+            />
           </>
         ) : null}
-        <View
-          style={{
-            backgroundColor: ColorConstants.Black + 40,
-            alignItems: "center",
-            justifyContent: "center",
-            height: 50,
-          }}
-        >
-          <Text
-            style={{
-              color: ColorConstants.DWhite,
-              fontSize: 22,
-            }}
-          >
-            Other Participants
-          </Text>
-        </View>
-        <FlatList
-          data={list}
-          keyExtractor={(item) => {
-            return item.id.toString();
-          }}
-          style={{
-            marginVertical: 10,
-          }}
-          horizontal
-          renderItem={({ item }) => {
-            return (
-              <View style={{ marginLeft: 10, alignItems: "center" }}>
-                <Thumbnail
-                  style={{
-                    borderColor: ColorConstants.DGreen,
-                    borderWidth: 3,
-                    height: 100,
-                    width: 100,
-                  }}
-                  large
-                  source={{
-                    uri: `https://eu.ui-avatars.com/api/?name=${item.name}`,
-                  }}
-                />
-                <Text style={{ color: ColorConstants.Black, fontSize: 18 }}>
-                  {item.name}
-                </Text>
-              </View>
-            );
-          }}
-        />
       </ScrollView>
     </>
   );

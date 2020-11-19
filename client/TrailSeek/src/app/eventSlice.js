@@ -7,6 +7,7 @@ const initialState = {
   currentEvent: [],
   events: [],
   error: null,
+  joinedEvents: [],
   status: CONSTANTS.IDLE,
 };
 
@@ -17,6 +18,29 @@ export const fetchEvents = createAsyncThunk(
       const response = await trailSeek.get(`/trails/${trailID}/events`);
       return { data: response.data, trailID };
     } catch (e) {
+      return rejectWithValue(
+        e.response.data?.errors
+          ? e.response.data.errors
+              .map((item) => {
+                return item.msg;
+              })
+              .join(" ")
+          : e.status
+      );
+    }
+  }
+);
+
+export const joinEvent = createAsyncThunk(
+  "event/joinEvent",
+  async ({ trailID, eventID }, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await trailSeek.post(
+        `/trails/${trailID}/events/${eventID}/join`
+      );
+      return response.data;
+    } catch (e) {
+      console.log(e.response);
       return rejectWithValue(
         e.response.data?.errors
           ? e.response.data.errors
@@ -57,15 +81,15 @@ export const postEvents = createAsyncThunk(
 
 export const putEvents = createAsyncThunk(
   "event/putEvents",
-  async ({ trailID, inputs, eventID }, { dispatch, rejectWithValue }) => {
+  async ({ trailID, inputs, eventID }, { rejectWithValue }) => {
     try {
       const response = await trailSeek.put(
         `/trails/${trailID}/events/${eventID}`,
         inputs
       );
-      // try{}catch(e)
-      return { eventID: response.data, data: inputs, trailID };
+      return { eventData: response.data };
     } catch (e) {
+      console.log(e);
       return rejectWithValue(
         e.response.data?.errors
           ? e.response.data.errors
@@ -83,6 +107,9 @@ export const eventSlice = createSlice({
   name: "event",
   initialState,
   reducers: {
+    addJoinedEvent(state, action) {
+      state.joinedEvents.push(action.payload);
+    },
     logOut1(state, action) {},
     updateCurrentEvent(state, action) {
       state.currentEvent.length ? state.currentEvent.pop() : null;
@@ -140,10 +167,25 @@ export const eventSlice = createSlice({
       state.error = action.payload;
     },
     //////////////////////////////////////////////////////////////
+    [joinEvent.pending]: (state, action) => {
+      state.status = CONSTANTS.LOADING;
+    },
+    [joinEvent.fulfilled]: (state, action) => {
+      state.status = CONSTANTS.SUCCESS;
+    },
+    [joinEvent.rejected]: (state, action) => {
+      state.status = CONSTANTS.FAILED;
+      state.error = action.payload;
+    },
+    //////////////////////////////////////////////////////////////
   },
 });
 
-export const { logOut1, updateCurrentEvent } = eventSlice.actions;
+export const {
+  logOut1,
+  updateCurrentEvent,
+  addJoinedEvent,
+} = eventSlice.actions;
 
 // export const eventData =
 

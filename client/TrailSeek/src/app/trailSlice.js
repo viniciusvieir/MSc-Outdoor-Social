@@ -23,31 +23,31 @@ const initialState = {
   },
 };
 
-export const fetchAllTrails = createAsyncThunk(
-  "trails/fetchAllTrails",
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await trailSeek.get("/trails", {
-        params: {
-          fields: "name,avg_rating,location,img_url",
-        },
-      });
-      return response.data;
-    } catch (error) {
-      console.log(error.message);
-      retrun(error.message);
-      return rejectWithValue(
-        error.response.data?.errors
-          ? error.response.data.errors
-              .map((item) => {
-                return item.msg;
-              })
-              .join(" ")
-          : error.status
-      );
-    }
-  }
-);
+// export const fetchAllTrails = createAsyncThunk(
+//   "trails/fetchAllTrails",
+//   async (_, { rejectWithValue }) => {
+//     try {
+//       const response = await trailSeek.get("/trails", {
+//         params: {
+//           fields: "name,avg_rating,location,img_url",
+//         },
+//       });
+//       return response.data;
+//     } catch (error) {
+//       console.log(error.message);
+//       retrun(error.message);
+//       return rejectWithValue(
+//         error.response.data?.errors
+//           ? error.response.data.errors
+//               .map((item) => {
+//                 return item.msg;
+//               })
+//               .join(" ")
+//           : error.status
+//       );
+//     }
+//   }
+// );
 
 export const fetchTrailsByQuery = createAsyncThunk(
   "trails/fetchTrailsByQuery",
@@ -59,27 +59,34 @@ export const fetchTrailsByQuery = createAsyncThunk(
       location = false,
       maxDist = 10000,
       minDist = 0,
-      fields = "name,avg_rating,location,img_url",
+      fields = "name,avg_rating,location,img_url,outing_count",
     },
     { rejectWithValue, getState }
   ) => {
     try {
       if (location) {
-        query = {
-          start: {
-            $near: {
-              $geometry: {
-                type: "Point",
-                coordinates: [
-                  getState().user.userLocation.latitude,
-                  getState().user.userLocation.longitude,
-                ],
+        if (
+          getState().user.userLocation.latitude != null ||
+          getState().user.userLocation.latitude != undefined
+        ) {
+          query = {
+            start: {
+              $near: {
+                $geometry: {
+                  type: "Point",
+                  coordinates: [
+                    getState().user.userLocation.latitude,
+                    getState().user.userLocation.longitude,
+                  ],
+                },
+                $minDistance: minDist,
+                $maxDistance: maxDist,
               },
-              $minDistance: minDist,
-              $maxDistance: maxDist,
             },
-          },
-        };
+          };
+        } else {
+          return [];
+        }
       }
       const response = await trailSeek.get("/trails", {
         params: {
@@ -108,21 +115,17 @@ export const fetchTrailsByQuery = createAsyncThunk(
 export const fetchTrailsByID = createAsyncThunk(
   "trails/fetchTrailsByID",
   async (
-    {
-      fields,
-      id,
-      excludeWeather = "hourly,current,minutely,alerts",
-      covFlag = true,
-    },
+    { fields, id, excludeWeather = "hourly,current,minutely,alerts" },
     { rejectWithValue, getState }
   ) => {
     let weatherResponse;
     let covidResponse;
+    const covFlag = getState().user.covidToggle;
     try {
-      const existTrail = getState().trails.trailDetails.find(
-        (item) => item._id === id
-      );
-      if (existTrail) return existTrail;
+      // const existTrail = getState().trails.trailDetails.find(
+      //   (item) => item._id === id
+      // );
+      // if (existTrail) return existTrail;
       const response = await trailSeek.get(`/trails/${id}?fields=${fields}`);
       try {
         weatherResponse = await weather.get("/onecall", {
@@ -150,7 +153,7 @@ export const fetchTrailsByID = createAsyncThunk(
         }
       }
       response.data.weatherData = weatherResponse.data;
-      response.data.covidData = covidResponse.data.features;
+      response.data.covidData = covFlag ? covidResponse.data.features : [];
       return response.data;
     } catch (error) {
       console.log(error);
@@ -182,25 +185,31 @@ export const trailSlice = createSlice({
     },
   },
   extraReducers: {
-    [fetchAllTrails.pending]: (state, action) => {
-      state.status = CONSTANTS.LOADING;
-    },
-    [fetchAllTrails.fulfilled]: (state, action) => {
-      state.status = CONSTANTS.SUCCESS;
-      state.trails = action.payload;
-    },
-    [fetchAllTrails.rejected]: (state, action) => {
-      state.status = CONSTANTS.FAILED;
-      state.error = action.payload;
-    },
+    // [fetchAllTrails.pending]: (state, action) => {
+    //   state.status = CONSTANTS.LOADING;
+    // },
+    // [fetchAllTrails.fulfilled]: (state, action) => {
+    //   state.status = CONSTANTS.SUCCESS;
+    //   state.trails = action.payload;
+    // },
+    // [fetchAllTrails.rejected]: (state, action) => {
+    //   state.status = CONSTANTS.FAILED;
+    //   state.error = action.payload;
+    // },
     //////////////////////////////////////////////////////////////
     [fetchTrailsByID.pending]: (state, action) => {
       state.status = CONSTANTS.LOADING;
     },
     [fetchTrailsByID.fulfilled]: (state, action) => {
-      state.status = CONSTANTS.SUCCESS;
-      if (!state.trailDetails.some((item) => item._id === action.payload._id))
+      const idx = state.trailDetails.findIndex(
+        (item) => item._id === action.payload._id
+      );
+      if (idx === -1) {
         state.trailDetails.push(action.payload);
+      } else {
+        state.trailDetails[idx] = action.payload;
+      }
+      state.status = CONSTANTS.SUCCESS;
     },
     [fetchTrailsByID.rejected]: (state, action) => {
       state.status = CONSTANTS.FAILED;
@@ -212,7 +221,6 @@ export const trailSlice = createSlice({
     },
     [fetchTrailsByQuery.fulfilled]: (state, action) => {
       state.status = CONSTANTS.SUCCESS;
-
       state.filteredTrails.query = action.payload.query;
       state.filteredTrails.data = action.payload.response;
     },

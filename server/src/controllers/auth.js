@@ -12,7 +12,7 @@ class AuthController {
     const { email, password } = req.body
 
     const user = await User.findOne({
-      where: { email },
+      where: { email: email.toLowerCase() },
       attributes: ['id', 'email', 'name', 'password'],
     })
 
@@ -36,7 +36,7 @@ class AuthController {
     const { email, password, name, dob, gender } = req.body
 
     const checkIfExists = await User.findOne({
-      where: { email },
+      where: { email: email.toLowerCase() },
       attributes: ['id'],
     })
 
@@ -48,7 +48,7 @@ class AuthController {
       name,
       dob,
       gender,
-      email,
+      email: email.toLowerCase(),
       password,
     })
 

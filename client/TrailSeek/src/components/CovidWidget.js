@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, Modal, Dimensions } from "react-native";
 import { View, Text, Button } from "native-base";
 import moment from "moment";
@@ -17,7 +17,7 @@ const CovidWidget = ({ data }) => {
     return date;
   };
   let content;
-  if (data && data.length > 0) {
+  if (data.length > 0) {
     const lastItem = data.length - 1;
     const pastCumiCases = data[0].attributes.ConfirmedCovidCases;
     content = (

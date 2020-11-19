@@ -24,9 +24,24 @@ import ColorConstants from "../util/ColorConstants";
 import NoData from "./NoData";
 import Constants from "../util/Constants";
 
-const DetaiTabs = ({ trailData }) => {
+const DetaiTabs = ({ trailData, covData }) => {
   const navigation = useNavigation();
   const covidToggle = useSelector((state) => state.user.covidToggle);
+  let covContent;
+  covContent = covidToggle ? (
+    <>
+      <View
+        style={{
+          marginVertical: 10,
+          borderBottomColor: ColorConstants.White,
+          borderBottomWidth: 1,
+        }}
+      />
+      <Row>
+        <CovidWidget data={covData} />
+      </Row>
+    </>
+  ) : null;
 
   return (
     <ScrollView
@@ -143,20 +158,7 @@ const DetaiTabs = ({ trailData }) => {
             {trailData.description}
           </Text>
         </Row>
-        {covidToggle ? (
-          <>
-            <View
-              style={{
-                marginVertical: 10,
-                borderBottomColor: ColorConstants.White,
-                borderBottomWidth: 1,
-              }}
-            />
-            <Row>
-              <CovidWidget data={trailData.covidData} />
-            </Row>
-          </>
-        ) : null}
+        {covContent}
         <View
           style={{
             marginVertical: 10,

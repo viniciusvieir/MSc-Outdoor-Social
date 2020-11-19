@@ -15,17 +15,24 @@ import { getLocation } from "../app/userSlice";
 import Constants from "../util/Constants";
 import TrailFilter from "../components/TrailFilter";
 
+function useConstructor(callBack = () => {}) {
+  const [hasBeenCalled, setHasBeenCalled] = useState(false);
+  if (hasBeenCalled) return;
+  callBack();
+  setHasBeenCalled(true);
+}
+
 const SearchTrailScreen = ({ navigation }) => {
   const dispatch = useDispatch();
-
   const [searchTerm, setSearchTerm] = useState("");
   const trailStatus = useSelector((state) => state.trails.status);
   const error = useSelector((state) => state.trails.error);
   const user = useSelector((state) => state.user.profile.name);
   const isAuth = useSelector((state) => state.user.isAuth);
   const locationStatus = useSelector((state) => state.user.userLocation.status);
-  const [filter, setFilter] = useState({});
+
   const [trails, setTrails] = useState([]);
+  const [filter, setFilter] = useState({});
 
   const easyParams = {
     title: "Easy Trails",
@@ -48,30 +55,37 @@ const SearchTrailScreen = ({ navigation }) => {
   };
 
   let searchParam = {
-    titel: "Search Results",
+    title: "Search Results",
     query: {
       $text: {
         $search: `${searchTerm}`,
       },
     },
   };
+  useConstructor(() => {
+    setFilter(easyParams);
+  });
 
   let content,
     spinner = true;
 
   const getTrailsByQuery = async ({ location = false, query, skip = 0 }) => {
     try {
+      let results;
       let gpsLoc;
       if (location) {
         try {
           gpsLoc = await dispatch(getLocation());
+          results = await dispatch(
+            fetchTrailsByQuery({ query, location, skip })
+          );
         } catch (e) {
           ToastAlert(e.message);
         }
+      } else {
+        results = await dispatch(fetchTrailsByQuery({ query, location, skip }));
       }
-      const results = await dispatch(
-        fetchTrailsByQuery({ query, location, skip })
-      );
+
       const uResult = unwrapResult(results);
       setTrails(uResult.response);
     } catch (e) {
@@ -80,27 +94,14 @@ const SearchTrailScreen = ({ navigation }) => {
     }
   };
 
-  // const getUserData = async () => {
-  //   try {
-  //     const response = await dispatch(fetchUserData());
-  //   } catch (e) {
-  //     dispatch(logOut);
-  //     ToastAlert(e.message);
-  //   }
-  // };
-
   //Initial Trail Fetch
   useEffect(() => {
-    setFilter(easyParams);
     getTrailsByQuery({
       query: filter?.query,
       location: filter?.location,
     });
-    // if (isAuth) {
-    //   getUserData();
-    // }
     setSearchTerm("");
-  }, []);
+  }, [filter]);
 
   if (
     trailStatus === CONSTANTS.LOADING ||
@@ -113,7 +114,7 @@ const SearchTrailScreen = ({ navigation }) => {
     content = <Text>{error}</Text>;
   } else if (
     trailStatus === CONSTANTS.SUCCESS ||
-    locationStatus === CONSTANTS.LOADING
+    locationStatus === CONSTANTS.SUCCESS
   ) {
     spinner = false;
   }
@@ -180,7 +181,6 @@ const SearchTrailScreen = ({ navigation }) => {
             setTrails([]);
             getTrailsByQuery({
               query: filter?.query,
-              location: filter?.location,
             });
           }}
         />
@@ -192,7 +192,6 @@ const SearchTrailScreen = ({ navigation }) => {
             setTrails([]);
             getTrailsByQuery({
               query: filter?.query,
-              location: filter?.location,
             });
           }}
         />
@@ -217,17 +216,7 @@ const SearchTrailScreen = ({ navigation }) => {
         }}
         contentContainerStyle={{ flex: 1 }}
       >
-        <TrailCard
-          trails={trails}
-          filter={filter}
-          // fetchMoreData={() =>
-          //   getTrailsByQuery({
-          //     query: filter?.query,
-          //     location: filter?.location,
-          //     skip: trails.length,
-          //   })
-          // }
-        />
+        <TrailCard trails={trails} filter={filter} />
       </View>
     </Container>
   );

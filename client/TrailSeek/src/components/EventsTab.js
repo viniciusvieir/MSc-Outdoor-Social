@@ -5,7 +5,6 @@ import { useNavigation } from "@react-navigation/native";
 
 import { useDispatch, useSelector } from "react-redux";
 import { unwrapResult } from "@reduxjs/toolkit";
-// import trailSeek from "../api/trailSeek";
 
 import ColorConstants from "../util/ColorConstants";
 import { fetchEvents } from "../app/eventSlice";
@@ -15,9 +14,7 @@ import moment from "moment";
 const EventsTab = ({ trailData }) => {
   const dispatch = useDispatch();
   const [events, setEvents] = useState([]);
-  // const [isFocused,setIsFocused] = useState(fasle)
   const navigation = useNavigation();
-  // const isFocused = navigation.isFocused();
   const getEvents = async () => {
     try {
       const results = await dispatch(fetchEvents(trailData._id));
@@ -28,8 +25,6 @@ const EventsTab = ({ trailData }) => {
       ToastAlert(e.message);
     }
   };
-
-  // isFocused ? getEvents() : null;
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {

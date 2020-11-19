@@ -28,6 +28,7 @@ import NoData from "../components/NoData";
 const ViewTrailScreen = ({ route }) => {
   const { id, showEvents } = route.params;
   const [trailData, setTrailData] = useState({});
+  const [covData, setCovData] = useState([]);
   let spinner = true;
   let content;
   const dispatch = useDispatch();
@@ -37,20 +38,20 @@ const ViewTrailScreen = ({ route }) => {
   const fields =
     "name,avg_rating,location,path,bbox,img_url,difficulty,length_km,description,activity_type,estimate_time_min,start,recommended";
 
+  const getTrailDetail = async () => {
+    try {
+      const results = await dispatch(fetchTrailsByID({ fields, id, covFlag }));
+      const uResults = unwrapResult(results);
+      setTrailData(uResults);
+      setCovData(uResults.covidData);
+    } catch (e) {
+      ToastAlert(e.message);
+    }
+  };
+
   useEffect(() => {
-    const getTrailDetail = async () => {
-      try {
-        const results = await dispatch(
-          fetchTrailsByID({ fields, id, covFlag })
-        );
-        const uResults = unwrapResult(results);
-        setTrailData(uResults);
-      } catch (e) {
-        ToastAlert(e.message);
-      }
-    };
     getTrailDetail();
-  }, [dispatch]);
+  }, [covFlag]);
 
   if (!(JSON.stringify(trailData) === "{}")) {
     spinner = false;
@@ -81,7 +82,7 @@ const ViewTrailScreen = ({ route }) => {
             tabStyle={{ backgroundColor: ColorConstants.primary }}
             activeTabStyle={{ backgroundColor: ColorConstants.primary }}
           >
-            <DetailsTab trailData={trailData} />
+            <DetailsTab trailData={trailData} covData={covData} />
           </Tab>
           <Tab
             heading="Maps"

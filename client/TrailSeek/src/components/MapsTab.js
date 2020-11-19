@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Linking, Platform, Dimensions, View } from "react-native";
 import { Text, Button } from "native-base";
-import MapView, { Polyline } from "react-native-maps";
+import MapView, { Polyline, Marker } from "react-native-maps";
 import ColorConstants from "../util/ColorConstants";
 
 const MapsTab = ({ trailData }) => {
@@ -19,6 +19,14 @@ const MapsTab = ({ trailData }) => {
         mapType="terrain"
         loadingEnabled
       >
+        <Marker
+          coordinate={{
+            latitude: trailData.start.coordinates[0],
+            longitude: trailData.start.coordinates[1],
+          }}
+          title={"You Start Here"}
+          // description={marker.description}
+        />
         <Polyline
           coordinates={trailData.path}
           strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
