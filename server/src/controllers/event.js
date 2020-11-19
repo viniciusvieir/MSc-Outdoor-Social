@@ -115,8 +115,7 @@ class EventController {
         },
       }
     )
-      .then(() => res.json({ success: true }))
-      .catch((error) => res.json(errorHandler(error)))
+    res.json({ success: true })
   }
 
   async eventsCreatedByUser(req, res) {
