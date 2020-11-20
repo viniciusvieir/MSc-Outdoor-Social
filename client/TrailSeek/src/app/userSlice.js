@@ -38,7 +38,6 @@ export const signIn = createAsyncThunk(
       }
       return response.data;
     } catch (error) {
-      // console.log(e.response.data.errors);
       return rejectWithValue(
         error.response.data?.errors
           ? error.response.data.errors
@@ -115,7 +114,6 @@ export const saveToken = createAsyncThunk(
 export const logOut = createAsyncThunk("user/delToken", async () => {
   try {
     const response = await AsyncStorage.clear();
-    // const response = await AsyncStorage.multiRemove(["@token", "@name"]);
     return response;
   } catch (error) {
     console.log(error.response);
@@ -187,9 +185,6 @@ export const userSlice = createSlice({
     },
     [signUp.fulfilled]: (state, action) => {
       state.profile.status = CONSTANTS.SUCCESS;
-      // state.isAuth = true;
-      // state.profile.name = action.payload.email;
-      // state.profile.token = action.payload.token;
     },
     [signUp.rejected]: (state, action) => {
       state.profile.status = CONSTANTS.FAILED;
@@ -219,7 +214,6 @@ export const userSlice = createSlice({
     },
     [saveToken.fulfilled]: (state, action) => {
       state.profile.status = CONSTANTS.SUCCESS;
-      // state.profile.token = action.payload;
     },
     [saveToken.rejected]: (state, action) => {
       state.profile.status = CONSTANTS.FAILED;
@@ -267,7 +261,6 @@ export const userSlice = createSlice({
       state.profile.gender = action.payload.gender;
       state.profile.email = action.payload.email;
       state.profile.status = CONSTANTS.SUCCESS;
-      // state.profile.data = action.payload;
     },
     [fetchUserData.rejected]: (state, action) => {
       state.profile.status = CONSTANTS.FAILED;

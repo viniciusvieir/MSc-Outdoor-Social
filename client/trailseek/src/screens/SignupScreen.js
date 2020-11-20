@@ -16,11 +16,10 @@ import { Grid, Row, Col } from "react-native-easy-grid";
 import { Text, Container, Button, Content } from "native-base";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Picker } from "@react-native-community/picker";
+import moment from "moment";
 
 import ToastAlert from "../components/ToastAlert";
 import { signUp } from "../app/userSlice";
-
-import moment from "moment";
 import ColorConstants from "../util/ColorConstants";
 
 const SignupScreen = ({ navigation }) => {
@@ -28,16 +27,6 @@ const SignupScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const error = useSelector((state) => state.user.profile.error);
 
-  // const onSignup = async () => {
-  //   try {
-  //     const res = await dispatch(signUp({ inputs }));
-  //     const user = unwrapResult(res);
-  //     setAuth(isAuth);
-  //     navigation.navigate("Signin");
-  //   } catch (e) {
-  //     ToastAlert(error);
-  //   }
-  // };
   return (
     <Container>
       <ImageBackground
@@ -172,6 +161,7 @@ const SignupScreen = ({ navigation }) => {
                             moment(selectedDate).format("YYYY-MM-DD")
                           );
                         }}
+                        maximumDate={moment().toDate()}
                         value={moment(props.values.dob).toDate()}
                       />
                     )}
