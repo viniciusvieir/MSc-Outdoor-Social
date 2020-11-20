@@ -28,22 +28,14 @@ const SearchTrailScreen = ({ navigation }) => {
 
   const easyParams = {
     title: "Easy Trails",
-    query: {
-      difficulty: "Easy",
-      length_km: { $lt: 5 },
-    },
   };
 
   const bestParams = {
     title: "Best Rated",
-    query: {
-      avg_rating: { $gt: 4 },
-    },
   };
 
   const nearMe = {
     title: "Near You",
-    location: true,
   };
 
   let searchParam = {
@@ -85,13 +77,17 @@ const SearchTrailScreen = ({ navigation }) => {
 
   //Initial Trail Fetch
   useEffect(() => {
-    setFilter(easyParams);
+    if (JSON.stringify(filter) === "{}") {
+      setFilter(easyParams);
+      getTrailsByQuery({
+        query: {
+          difficulty: "Easy",
+          length_km: { $lt: 5 },
+        },
+      });
+    }
   }, []);
   useEffect(() => {
-    getTrailsByQuery({
-      query: filter?.query,
-      location: filter?.location,
-    });
     setSearchTerm("");
   }, [filter]);
 
@@ -172,7 +168,9 @@ const SearchTrailScreen = ({ navigation }) => {
             setFilter(bestParams);
             setTrails([]);
             await getTrailsByQuery({
-              query: filter?.query,
+              query: {
+                avg_rating: { $gt: 4 },
+              },
             });
           }}
         />
@@ -183,7 +181,10 @@ const SearchTrailScreen = ({ navigation }) => {
             setFilter(easyParams);
             setTrails([]);
             await getTrailsByQuery({
-              query: filter?.query,
+              query: {
+                difficulty: "Easy",
+                length_km: { $lt: 5 },
+              },
             });
           }}
         />
@@ -194,8 +195,8 @@ const SearchTrailScreen = ({ navigation }) => {
             setFilter(nearMe);
             setTrails([]);
             await getTrailsByQuery({
-              query: filter?.query,
-              location: filter?.location,
+              query: {},
+              location: true,
             });
           }}
         />
