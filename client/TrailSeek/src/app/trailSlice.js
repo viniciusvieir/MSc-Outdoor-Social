@@ -188,8 +188,7 @@ export const trailSlice = createSlice({
     },
     [fetchTrailsByQuery.rejected]: (state, action) => {
       state.status = CONSTANTS.FAILED;
-      console.log(action.payloade);
-      state.error = action.payloade;
+      state.error = action.payload;
     },
   },
 });

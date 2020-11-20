@@ -110,7 +110,6 @@ export const eventSlice = createSlice({
     addJoinedEvent(state, action) {
       state.joinedEvents.push(action.payload);
     },
-    logOut1(state, action) {},
     updateCurrentEvent(state, action) {
       state.currentEvent.length ? state.currentEvent.pop() : null;
       state.currentEvent.push(action.payload);
@@ -181,11 +180,7 @@ export const eventSlice = createSlice({
   },
 });
 
-export const {
-  logOut1,
-  updateCurrentEvent,
-  addJoinedEvent,
-} = eventSlice.actions;
+export const { updateCurrentEvent, addJoinedEvent } = eventSlice.actions;
 
 // export const eventData =
 

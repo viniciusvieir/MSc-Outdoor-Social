@@ -156,10 +156,6 @@ export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    logOut1(state, action) {
-      state.isAuth = false;
-      state.profile = initialState.profile;
-    },
     toggleCovid(state, action) {
       state.covidToggle = !state.covidToggle;
     },
@@ -271,7 +267,7 @@ export const userSlice = createSlice({
   },
 });
 
-export const { logOut1, toggleCovid } = userSlice.actions;
+export const { toggleCovid } = userSlice.actions;
 
 export default userSlice.reducer;
 
