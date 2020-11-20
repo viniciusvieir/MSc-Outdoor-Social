@@ -41,7 +41,7 @@ describe('Trails', () => {
 
   it('should get a list of events', async () => {
     const response = await supertest(app).get(`/trails/${trailId}/events`)
-    expect(response.body.length).toBeGreaterThan(0)
+    expect(response.body.length).toBeGreaterThan(-1)
   })
 
   it('should be able to create events', async () => {
