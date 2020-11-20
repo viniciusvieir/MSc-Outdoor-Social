@@ -38,6 +38,7 @@ export const fetchTrailsByQuery = createAsyncThunk(
     { rejectWithValue, getState }
   ) => {
     try {
+      console.log(query);
       if (location) {
         if (
           getState().user.userLocation.latitude != null ||
@@ -64,13 +65,13 @@ export const fetchTrailsByQuery = createAsyncThunk(
       }
       const response = await trailSeek.get("/trails", {
         params: {
-          q: JSON.stringify(query),
+          q: query,
           limit,
           skip,
           fields,
         },
       });
-      return { response: response.data, query };
+      return response.data;
     } catch (error) {
       console.log(error.response);
       return rejectWithValue(
@@ -183,8 +184,8 @@ export const trailSlice = createSlice({
     },
     [fetchTrailsByQuery.fulfilled]: (state, action) => {
       state.status = CONSTANTS.SUCCESS;
-      state.filteredTrails.query = action.payload.query;
-      state.filteredTrails.data = action.payload.response;
+      // state.filteredTrails.query = action.payload.query;
+      state.filteredTrails.data = action.payload;
     },
     [fetchTrailsByQuery.rejected]: (state, action) => {
       state.status = CONSTANTS.FAILED;

@@ -15,13 +15,6 @@ import { getLocation } from "../app/userSlice";
 import Constants from "../util/Constants";
 import TrailFilter from "../components/TrailFilter";
 
-function useConstructor(callBack = () => {}) {
-  const [hasBeenCalled, setHasBeenCalled] = useState(false);
-  if (hasBeenCalled) return;
-  callBack();
-  setHasBeenCalled(true);
-}
-
 const SearchTrailScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const [searchTerm, setSearchTerm] = useState("");
@@ -61,9 +54,6 @@ const SearchTrailScreen = ({ navigation }) => {
       },
     },
   };
-  useConstructor(() => {
-    setFilter(easyParams);
-  });
 
   let content,
     spinner = true;
@@ -86,7 +76,7 @@ const SearchTrailScreen = ({ navigation }) => {
       }
 
       const uResult = unwrapResult(results);
-      setTrails(uResult.response);
+      setTrails(uResult);
     } catch (e) {
       ToastAlert(e.message);
       ToastAlert(error);
@@ -94,6 +84,9 @@ const SearchTrailScreen = ({ navigation }) => {
   };
 
   //Initial Trail Fetch
+  useEffect(() => {
+    setFilter(easyParams);
+  }, []);
   useEffect(() => {
     getTrailsByQuery({
       query: filter?.query,
@@ -175,10 +168,10 @@ const SearchTrailScreen = ({ navigation }) => {
         <TrailFilter
           title={bestParams.title}
           active={filter.title === bestParams.title}
-          action={() => {
+          action={async () => {
             setFilter(bestParams);
             setTrails([]);
-            getTrailsByQuery({
+            await getTrailsByQuery({
               query: filter?.query,
             });
           }}
@@ -186,10 +179,10 @@ const SearchTrailScreen = ({ navigation }) => {
         <TrailFilter
           title={easyParams.title}
           active={filter.title === easyParams.title}
-          action={() => {
+          action={async () => {
             setFilter(easyParams);
             setTrails([]);
-            getTrailsByQuery({
+            await getTrailsByQuery({
               query: filter?.query,
             });
           }}
@@ -197,10 +190,10 @@ const SearchTrailScreen = ({ navigation }) => {
         <TrailFilter
           title={nearMe.title}
           active={filter.title === nearMe.title}
-          action={() => {
+          action={async () => {
             setFilter(nearMe);
             setTrails([]);
-            getTrailsByQuery({
+            await getTrailsByQuery({
               query: filter?.query,
               location: filter?.location,
             });
