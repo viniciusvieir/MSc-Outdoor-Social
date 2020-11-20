@@ -49,20 +49,51 @@ const AuthenticationFlow = () => {
 };
 
 const ProfileFlow = () => {
+  const isAuth = useSelector((state) => state.user.isAuth);
   return (
     <Stack.Navigator>
       <Stack.Screen
         name="ViewProfile"
         component={ViewProfileScreen}
-        options={{
+        options={({ navigation }) => ({
           headerStyle: { backgroundColor: ColorConstants.primary },
           headerLeft: null,
           headerTitleStyle: { color: ColorConstants.DWhite },
           title: "My Profile",
+          headerRight: () =>
+            isAuth ? (
+              <TouchableOpacity
+                onPress={({}) => {
+                  navigation.navigate("EditProfile");
+                }}
+              >
+                <MaterialIcons
+                  name="edit"
+                  size={24}
+                  style={{ color: "#ffffff", marginRight: 20 }}
+                />
+              </TouchableOpacity>
+            ) : null,
           // headerTintColor: ColorConstants.Black,
+        })}
+      />
+      <Stack.Screen
+        name="EditProfile"
+        component={EditProfileScreen}
+        options={{
+          headerStyle: { backgroundColor: ColorConstants.primary },
+          headerTitleStyle: { color: ColorConstants.DWhite },
+          title: "Edit Profile",
+          headerBackImage: () => (
+            <MaterialIcons
+              name="arrow-back"
+              size={24}
+              color="white"
+              style={styles.shadow}
+            />
+          ),
         }}
       />
-      <Stack.Screen name="EditProfile" component={EditProfileScreen} />
     </Stack.Navigator>
   );
 };

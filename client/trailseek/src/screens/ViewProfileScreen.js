@@ -1,11 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { StyleSheet, Platform, Switch, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { CommonActions } from "@react-navigation/native";
-import NetInfo from "@react-native-community/netinfo";
-import { AntDesign } from "@expo/vector-icons";
-import { Col, Row, Grid } from "react-native-easy-grid";
-import { Button, Text, H1, Container, Content, Thumbnail } from "native-base";
+// import NetInfo from "@react-native-community/netinfo";
+import { Button, Text, Container, Thumbnail, Content } from "native-base";
 
 import { logOut, toggleCovid } from "../app/userSlice";
 import ToastAlert from "../components/ToastAlert";
@@ -25,121 +23,122 @@ const ViewProfileScreen = ({ navigation }) => {
     }
   };
 
-  const checNet = () => {
-    // For Android devices
-    if (Platform.OS === "android") {
-      NetInfo.fetch().then((state) => {
-        if (!state.isConnected) {
-          ToastAlert("Please make sure your internet is connected.");
-        } else {
-          ToastAlert("Internet is connected.");
-        }
-      });
-    } else {
-      // // For iOS devices
-      // NetInfo.isConnected.addEventListener(
-      //   "connectionChange",
-      //   this.handleFirstConnectivityChange
-      // );
-      console.log("in iphone");
-    }
-  };
+  // const checNet = () => {
+  //   // For Android devices
+  //   if (Platform.OS === "android") {
+  //     NetInfo.fetch().then((state) => {
+  //       if (!state.isConnected) {
+  //         ToastAlert("Please make sure your internet is connected.");
+  //       } else {
+  //         ToastAlert("Internet is connected.");
+  //       }
+  //     });
+  //   } else {
+  //     // // For iOS devices
+  //     // NetInfo.isConnected.addEventListener(
+  //     //   "connectionChange",
+  //     //   this.handleFirstConnectivityChange
+  //     // );
+  //     console.log("in iphone");
+  //   }
+  // };
 
   return (
     <Container style={{ backgroundColor: ColorConstants.DWhite }}>
-      <View
-        style={{
-          flex: 1,
-          shadowColor: "#000",
-          shadowOffset: {
-            width: 0,
-            height: 12,
-          },
-          shadowOpacity: 0.58,
-          shadowRadius: 16.0,
-          backgroundColor: ColorConstants.DWhite,
-          elevation: 24,
-          margin: 50,
-          padding: 20,
-        }}
-      >
-        <Thumbnail
+      <Content>
+        <View
           style={{
-            borderColor: ColorConstants.DGreen,
-            borderWidth: 3,
-            alignSelf: "center",
-          }}
-          large
-          source={{
-            uri: `https://eu.ui-avatars.com/api/?name=${userData.name}`,
-          }}
-        />
-        <Text
-          style={{
-            color: ColorConstants.Black,
-            fontSize: 40,
-            fontWeight: "bold",
-            alignSelf: "center",
+            flex: 1,
+            shadowColor: "#000",
+            shadowOffset: {
+              width: 0,
+              height: 12,
+            },
+            shadowOpacity: 0.58,
+            shadowRadius: 16.0,
+            backgroundColor: ColorConstants.DWhite,
+            elevation: 24,
+            margin: 50,
+            padding: 20,
           }}
         >
-          {userData.name}
-        </Text>
-        {/* <Grid> */}
-        <View style={{ flex: 1 }}>
-          <View style={styles.infoContainers}>
-            <Text style={styles.textInfoLabel}>Email</Text>
-            <Text style={styles.textInfo}>{userData.email}</Text>
-          </View>
-          <View style={styles.infoContainers}>
-            <Text style={styles.textInfoLabel}>Gender</Text>
-            <Text style={styles.textInfo}>
-              {userData.gender === "M" ? "Male" : "Female"}
-            </Text>
-          </View>
-          <View style={styles.infoContainers}>
-            <Text style={styles.textInfoLabel}>Date of Birth</Text>
-
-            <Text style={styles.textInfo}>{userData.dob}</Text>
-          </View>
-          <View
-            style={[
-              styles.infoContainers,
-              {
-                alignItems: "center",
-              },
-            ]}
-          >
-            <Text style={[styles.textInfoLabel, { fontSize: 22 }]}>
-              Toggle Covid Information
-            </Text>
-            <Switch
-              value={covidToggle}
-              onValueChange={() => dispatch(toggleCovid())}
-            />
-          </View>
-        </View>
-        {/* </Grid> */}
-        {isAuth ? (
-          <Button
-            danger
-            block
-            style={{ marginTop: 30 }}
-            onPress={async () => {
-              const res = await userLogout();
-              console.log(res);
-              await navigation.dispatch(
-                CommonActions.reset({
-                  index: 0,
-                  routes: [{ name: "Authentication" }],
-                })
-              );
-              // navigation.navigate("Authentication");
+          <Thumbnail
+            style={{
+              borderColor: ColorConstants.DGreen,
+              borderWidth: 3,
+              alignSelf: "center",
+            }}
+            large
+            source={{
+              uri: `https://eu.ui-avatars.com/api/?name=${userData.name}`,
+            }}
+          />
+          <Text
+            style={{
+              color: ColorConstants.Black,
+              fontSize: 40,
+              fontWeight: "bold",
+              alignSelf: "center",
             }}
           >
-            <Text style={{ fontSize: 16, color: "white" }}>Logout</Text>
-          </Button>
-        ) : null}
-      </View>
+            {userData.name}
+          </Text>
+          {/* <Grid> */}
+          <View style={{ flex: 1 }}>
+            <View style={styles.infoContainers}>
+              <Text style={styles.textInfoLabel}>Email</Text>
+              <Text style={styles.textInfo}>{userData.email}</Text>
+            </View>
+            <View style={styles.infoContainers}>
+              <Text style={styles.textInfoLabel}>Gender</Text>
+              <Text style={styles.textInfo}>
+                {userData.gender === "M" ? "Male" : "Female"}
+              </Text>
+            </View>
+            <View style={styles.infoContainers}>
+              <Text style={styles.textInfoLabel}>Date of Birth</Text>
+
+              <Text style={styles.textInfo}>{userData.dob}</Text>
+            </View>
+            <View
+              style={[
+                styles.infoContainers,
+                {
+                  alignItems: "center",
+                },
+              ]}
+            >
+              <Text style={[styles.textInfoLabel, { fontSize: 22 }]}>
+                Toggle Covid Information
+              </Text>
+              <Switch
+                value={covidToggle}
+                onValueChange={() => dispatch(toggleCovid())}
+              />
+            </View>
+          </View>
+          {/* </Grid> */}
+          {isAuth ? (
+            <Button
+              danger
+              block
+              style={{ marginTop: 30 }}
+              onPress={async () => {
+                const res = await userLogout();
+                console.log(res);
+                await navigation.dispatch(
+                  CommonActions.reset({
+                    index: 0,
+                    routes: [{ name: "Authentication" }],
+                  })
+                );
+              }}
+            >
+              <Text style={{ fontSize: 16, color: "white" }}>Logout</Text>
+            </Button>
+          ) : null}
+        </View>
+      </Content>
     </Container>
   );
 };

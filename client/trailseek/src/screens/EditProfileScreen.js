@@ -1,83 +1,53 @@
-import React from 'react';
-import {TextInput, View, StyleSheet, Image, Keyboard} from 'react-native';
-import { Text, Button } from 'react-native-elements';
+import React from "react";
+import { View, StyleSheet, Image, ImageBackground } from "react-native";
+import { useSelector, useDispatch } from "react-redux";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { Container, Content, Toast } from "native-base";
+
+import UserForm from "../components/UserForm";
+import ColorConstants from "../util/ColorConstants";
 
 const EditProfileScreen = () => {
-    return(
-        <>
-            
-
-            <View style={styles.containerform}>
-                <Text h3 style={styles.heading}>Edit Profile</Text>
-
-                <TextInput
-                    onChangeText={(e) => inputsHandler(e, "name")}
-                    placeholder={"Name"}
-                    style={styles.input}
-                />
-                <TextInput
-                    onChangeText={(e) => inputsHandler(e, "gender")}
-                    placeholder={"Gender"}
-                    style={styles.input}
-                />
-                <TextInput
-                    onChangeText={(e) => inputsHandler(e, "dob")}
-                    placeholder={"DOB"}
-                    style={styles.input}
-                />
-                <TextInput
-                    onChangeText={(e) => inputsHandler(e, "email")}
-                    placeholder={"Email"}
-                    style={styles.input}
-                />
-                <TextInput
-                    onChangeText={(e) => inputsHandler(e, "password")}
-                    placeholder={"Password"}
-                    style={styles.input}
-                />
-
-                <View style={styles.flexxx}>
-                    <Button
-                    title="Update Profile"
-                    buttonStyle={styles.button}
-                    />
-                </View>
-            </View>    
-
-
-        </>
-    );
+  const { name, dob, gender, email } = useSelector(
+    (state) => state.user.profile
+  );
+  const onSubmitFunc = async () => {};
+  return (
+    <Container style={{ backgroundColor: ColorConstants.DWhite }}>
+      <Content>
+        <View
+          style={{
+            flex: 1,
+            shadowColor: "#000",
+            shadowOffset: {
+              width: 0,
+              height: 12,
+            },
+            shadowOpacity: 0.58,
+            shadowRadius: 16.0,
+            backgroundColor: ColorConstants.DWhite,
+            elevation: 24,
+            margin: 50,
+            padding: 20,
+          }}
+        >
+          <UserForm
+            userData={{
+              name,
+              dob,
+              gender,
+              email,
+              password: "",
+              confirmPassword: "",
+            }}
+            onSubmitFunc={onSubmitFunc}
+          />
+        </View>
+      </Content>
+    </Container>
+  );
 };
 
-const styles = StyleSheet.create({
-
-
-    heading:{
-        width: "80%",
-    },
-
-    input: {
-        width: "80%",
-        height: 44,
-        padding: 10,
-        borderWidth: 1,
-        borderColor: "black",
-        marginBottom: 10,
-    },
-    containerform: {
-        flex: 2,
-        alignItems: "center",
-        // justifyContent: 'center',
-        width: "100%",
-        flexDirection: "column",
-    },
-    
-    flexxx: {
-        width: "80%",
-        flexDirection: "column",
-        alignItems: "stretch",
-    },
-
-});
+const styles = StyleSheet.create({});
 
 export default EditProfileScreen;

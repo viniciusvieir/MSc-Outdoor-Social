@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import moment from "moment";
 import MapView, { Marker, Polyline } from "react-native-maps";
-import { Button, Text, Thumbnail } from "native-base";
+import { Button, Text, Thumbnail, Toast } from "native-base";
 import { Grid, Col, Row } from "react-native-easy-grid";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -25,6 +25,7 @@ import {
 } from "../app/eventSlice";
 import Constants from "../util/Constants";
 import ToastAlert from "../components/ToastAlert";
+import { unwrapResult } from "@reduxjs/toolkit";
 
 const ViewEventScreen = ({ route, navigation }) => {
   const dispatch = useDispatch();
@@ -293,7 +294,13 @@ const ViewEventScreen = ({ route, navigation }) => {
                             eventID: eventData._id,
                           })
                         );
+                        unwrapResult(response);
                         dispatch(addJoinedEvent(eventData._id));
+                        Toast.show({
+                          text: "Event Joined",
+                          buttonText: "Okay",
+                          type: "success",
+                        });
                         navigation.goBack();
                       } catch (e) {
                         ToastAlert(e.message);

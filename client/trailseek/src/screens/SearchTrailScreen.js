@@ -28,7 +28,6 @@ const SearchTrailScreen = ({ navigation }) => {
   const trailStatus = useSelector((state) => state.trails.status);
   const error = useSelector((state) => state.trails.error);
   const user = useSelector((state) => state.user.profile.name);
-  const isAuth = useSelector((state) => state.user.isAuth);
   const locationStatus = useSelector((state) => state.user.userLocation.status);
 
   const [trails, setTrails] = useState([]);
