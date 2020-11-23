@@ -295,7 +295,7 @@ describe('Trails', () => {
       })
 
     const joinResponse = await supertest(app)
-      .post(`/trails/${trailId}/events/${eventResponse.body.eventId}/join`)
+      .put(`/trails/${trailId}/events/${eventResponse.body.eventId}/join`)
       .set('Authorization', `Bearer ${signUpResponse.body.token}`)
 
     expect(joinResponse.body.success).toBe(true)

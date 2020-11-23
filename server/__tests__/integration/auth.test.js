@@ -150,7 +150,7 @@ describe('Authentication', () => {
 
     const token = signUpResponse.body.token
     const userResponse = await supertest(app)
-      .post('/user')
+      .put('/user')
       .set('Authorization', `Bearer ${token}`)
       .send({
         name: faker.name.findName(),
