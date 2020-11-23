@@ -15,7 +15,7 @@ router.post('/signup', authController.validators.signUp, authController.signUp)
 
 // =============== USER ===============
 router.get('/user', verifyToken, userController.user)
-router.post('/user', verifyToken, userController.changeUserInfo)
+router.put('/user', verifyToken, userController.changeUserInfo)
 
 router.get(
   '/user/eventsCreated',
@@ -60,10 +60,15 @@ router.delete(
   verifyToken,
   eventController.deleteEvent
 )
-router.post(
+router.put(
   '/trails/:trailId/events/:eventId/join',
   verifyToken,
   eventController.joinEvent
+)
+router.put(
+  '/trails/:trailId/events/:eventId/leave',
+  verifyToken,
+  eventController.leaveEvent
 )
 
 module.exports = router

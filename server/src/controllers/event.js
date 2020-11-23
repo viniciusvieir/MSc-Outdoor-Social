@@ -79,13 +79,12 @@ class EventController {
     if (!title && !description && !date && !duration_min && !max_participants)
       return res.status(403).json(errorHandler('Nothing to update'))
 
-    await Event.updateOne(
+    await Event.update(
       { eventId },
       { title, description, date, duration_min, max_participants }
     )
 
     const event = await Event.findById(eventId)
-
     res.json(event)
   }
 
@@ -125,7 +124,7 @@ class EventController {
     res.json({ success: true })
   }
 
-  async disjoinEvent(req, res) {
+  async leaveEvent(req, res) {
     const { id: userId } = req.context
     const { eventId } = req.params
 
