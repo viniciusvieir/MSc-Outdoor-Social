@@ -191,9 +191,7 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
                   <TextInput
                     onChangeText={props.handleChange("duration_min")}
                     onBlur={props.handleBlur("duration_min")}
-                    value={props.values.name}
-                    autoFocus
-                    // placeholder="Event Duration in minutes"
+                    value={props.values.duration_min}
                     style={styles.input}
                     onSubmitEditing={() => {}}
                     keyboardType="number-pad"
@@ -216,9 +214,7 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
                   <TextInput
                     onChangeText={props.handleChange("max_participants")}
                     onBlur={props.handleBlur("max_participants")}
-                    value={props.values.name}
-                    autoFocus
-                    // placeholder="Maximum Participants"
+                    value={props.values.max_participants}
                     style={styles.input}
                     onSubmitEditing={() => {}}
                     keyboardType="number-pad"
