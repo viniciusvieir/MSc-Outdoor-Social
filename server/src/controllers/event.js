@@ -79,8 +79,8 @@ class EventController {
     if (!title && !description && !date && !duration_min && !max_participants)
       return res.status(403).json(errorHandler('Nothing to update'))
 
-    await Event.update(
-      { eventId },
+    await Event.updateOne(
+      { _id: eventId },
       { title, description, date, duration_min, max_participants }
     )
 
