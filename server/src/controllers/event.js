@@ -28,6 +28,14 @@ class EventController {
     res.json(events)
   }
 
+  async events(req, res) {
+    const { eventId } = req.params
+    const { fields } = req.query
+
+    const event = await Event.findById(eventId).lean()
+    res.json(event)
+  }
+
   async createEvent(req, res) {
     const errors = validationResult(req)
     if (!errors.isEmpty())
@@ -103,11 +111,11 @@ class EventController {
     const joined = await Event.find({
       _id: eventId,
       participants: { userId },
-    }).count()
+    }).countDocuments()
 
     if (!joined) {
       const imageUrl = faker.internet.avatar()
-      await Event.update(
+      await Event.updateOne(
         { _id: eventId },
         {
           $push: {
@@ -128,7 +136,7 @@ class EventController {
     const { id: userId } = req.context
     const { eventId } = req.params
 
-    await Event.update(
+    await Event.updateOne(
       { _id: eventId },
       {
         $pull: {
