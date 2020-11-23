@@ -7,7 +7,6 @@ const initialState = {
   currentEvent: [],
   events: [],
   error: null,
-  joinedEvents: [],
   status: CONSTANTS.IDLE,
 };
 
@@ -107,9 +106,6 @@ export const eventSlice = createSlice({
   name: "event",
   initialState,
   reducers: {
-    addJoinedEvent(state, action) {
-      state.joinedEvents.push(action.payload);
-    },
     updateCurrentEvent(state, action) {
       state.currentEvent.length ? state.currentEvent.pop() : null;
       state.currentEvent.push(action.payload);
@@ -180,7 +176,7 @@ export const eventSlice = createSlice({
   },
 });
 
-export const { updateCurrentEvent, addJoinedEvent } = eventSlice.actions;
+export const { updateCurrentEvent } = eventSlice.actions;
 
 // export const eventData =
 

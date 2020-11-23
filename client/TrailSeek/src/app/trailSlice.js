@@ -38,7 +38,6 @@ export const fetchTrailsByQuery = createAsyncThunk(
     { rejectWithValue, getState }
   ) => {
     try {
-      console.log(query);
       if (location) {
         if (
           getState().user.userLocation.latitude != null ||

@@ -24,6 +24,7 @@ const initialState = {
   },
   isAuth: false,
   covidToggle: true,
+  joinedEvents: [],
 };
 
 export const signIn = createAsyncThunk(
@@ -159,6 +160,9 @@ export const userSlice = createSlice({
     toggleCovid(state, action) {
       state.covidToggle = !state.covidToggle;
     },
+    addJoinedEvent(state, action) {
+      state.joinedEvents.push(action.payload);
+    },
   },
   extraReducers: {
     [signIn.pending]: (state, action) => {
@@ -241,6 +245,7 @@ export const userSlice = createSlice({
       state.profile.gender = "";
       state.profile.email = "";
       state.isAuth = false;
+      state.joinedEvents = [];
     },
     [logOut.rejected]: (state, action) => {
       state.profile.status = CONSTANTS.FAILED;
@@ -267,7 +272,7 @@ export const userSlice = createSlice({
   },
 });
 
-export const { toggleCovid } = userSlice.actions;
+export const { toggleCovid, addJoinedEvent } = userSlice.actions;
 
 export default userSlice.reducer;
 

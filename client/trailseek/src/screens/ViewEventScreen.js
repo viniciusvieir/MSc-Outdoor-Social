@@ -10,7 +10,15 @@ import {
 } from "react-native";
 import moment from "moment";
 import MapView, { Marker, Polyline } from "react-native-maps";
-import { Button, Text, Thumbnail, Toast } from "native-base";
+import {
+  Button,
+  Text,
+  Thumbnail,
+  Toast,
+  Container,
+  Content,
+  Footer,
+} from "native-base";
 import { Grid, Col, Row } from "react-native-easy-grid";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -18,29 +26,50 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 
 import ColorConstants from "../util/ColorConstants";
-import {
-  updateCurrentEvent,
-  joinEvent,
-  addJoinedEvent,
-} from "../app/eventSlice";
+import { updateCurrentEvent, joinEvent } from "../app/eventSlice";
+import { addJoinedEvent } from "../app/userSlice";
 import Constants from "../util/Constants";
 import ToastAlert from "../components/ToastAlert";
 import { unwrapResult } from "@reduxjs/toolkit";
 
 const ViewEventScreen = ({ route, navigation }) => {
   const dispatch = useDispatch();
-  const userID = useSelector((state) => state.user.profile.id);
-  const joinedEventList = useSelector((state) => state.event.joinedEvents); //Need to be changed temp fix
+  const userId = useSelector((state) => state.user.profile.id);
+  const isAuth = useSelector((state) => state.user.isAuth);
+  const name = useSelector((state) => state.user.profile.name);
+  const joinedEventList = useSelector((state) => state.user.joinedEvents); //Need to be changed temp fix
   const [jEvents, setJEvents] = useState([]);
+  const [joinFlag, setJoinFlag] = useState(false);
+  const [participants, setParticipants] = useState([]);
   const { trailData, eventData } = route.params || {};
 
   useEffect(() => {
+    if (userId !== eventData.userId) {
+      if (eventData.participants.length < eventData.max_participants) {
+        if (
+          eventData.participants.findIndex((item) => {
+            return item.userId === userId;
+          }) === -1
+        ) {
+          setJoinFlag(true);
+        } else if (jEvents.length > 0) {
+          if (
+            jEvents.findIndex((item) => {
+              return item === eventData._id;
+            }) === -1
+          ) {
+            setJoinFlag(true);
+          }
+        }
+      }
+    }
+    setParticipants(eventData.participants);
     const unsubscribe = navigation.addListener("focus", () => {
       dispatch(updateCurrentEvent({ eventData, trailName: trailData.name }));
       setJEvents(joinedEventList);
     });
     return unsubscribe;
-  }, [navigation]);
+  }, [navigation, dispatch]);
 
   let eventWeather;
   if (trailData && eventData) {
@@ -51,35 +80,11 @@ const ViewEventScreen = ({ route, navigation }) => {
           .toString() === moment(eventData.date).format("DD/MM/YYYY").toString()
     );
   }
-  // const findUserInParticipants =
-
-  let joinFlag = false;
-  if (userID !== eventData.userId) {
-    if (eventData.participants.length < eventData.max_participants) {
-      if (
-        eventData.participants.findIndex((item) => {
-          return item.userId === userID;
-        }) === -1
-      ) {
-        eventData.participants;
-
-        joinFlag = true;
-      } else if (jEvents.length > 0) {
-        if (
-          jEvents.findIndex((item) => {
-            return item === eventData._id;
-          }) === -1
-        ) {
-          joinFlag = true;
-        }
-      }
-    }
-  }
 
   // console.log(eventWeather);
   return (
-    <>
-      <ScrollView
+    <Container>
+      <Content
         style={{
           backgroundColor: ColorConstants.DWhite,
           flex: 1,
@@ -272,45 +277,6 @@ const ViewEventScreen = ({ route, navigation }) => {
                   {eventData.description}
                 </Text>
               </Row>
-              {joinFlag ? (
-                <>
-                  <View
-                    style={{
-                      marginTop: 16,
-                      marginBottom: 16,
-                      borderBottomColor: ColorConstants.darkGray,
-                      borderBottomWidth: 1,
-                    }}
-                  />
-
-                  <Button
-                    block
-                    style={{ backgroundColor: ColorConstants.Yellow }}
-                    onPress={async () => {
-                      try {
-                        const response = await dispatch(
-                          joinEvent({
-                            trailID: eventData.trailId,
-                            eventID: eventData._id,
-                          })
-                        );
-                        unwrapResult(response);
-                        dispatch(addJoinedEvent(eventData._id));
-                        Toast.show({
-                          text: "Event Joined",
-                          buttonText: "Okay",
-                          type: "success",
-                        });
-                        navigation.goBack();
-                      } catch (e) {
-                        ToastAlert(e.message);
-                      }
-                    }}
-                  >
-                    <Text style={{ color: ColorConstants.Black }}>Join</Text>
-                  </Button>
-                </>
-              ) : null}
             </Grid>
             {/* <Text>{JSON.stringify(eventWeather)}</Text> */}
 
@@ -332,7 +298,7 @@ const ViewEventScreen = ({ route, navigation }) => {
               </Text>
             </View>
             <FlatList
-              data={eventData.participants}
+              data={participants}
               keyExtractor={(item) => {
                 return item.userId.toString();
               }}
@@ -364,8 +330,65 @@ const ViewEventScreen = ({ route, navigation }) => {
             />
           </>
         ) : null}
-      </ScrollView>
-    </>
+      </Content>
+      <Footer
+        style={{
+          backgroundColor: "#ffffff",
+          height: 60,
+        }}
+      >
+        {joinFlag ? (
+          <View style={{ justifyContent: "center" }}>
+            <Button
+              style={{
+                backgroundColor: ColorConstants.Yellow,
+              }}
+              onPress={async () => {
+                try {
+                  const response = await dispatch(
+                    joinEvent({
+                      trailID: eventData.trailId,
+                      eventID: eventData._id,
+                    })
+                  );
+                  const h = unwrapResult(response);
+                  dispatch(addJoinedEvent(eventData._id));
+
+                  //Add Modal
+                  Toast.show({
+                    text: "Event Joined",
+                    buttonText: "Okay",
+                    type: "success",
+                  });
+                  setParticipants((oldList) => [...oldList, { name, userId }]);
+                  setJoinFlag(false);
+
+                  // navigation.goBack(); // Comment this
+                } catch (e) {
+                  ToastAlert(e.message);
+                }
+              }}
+            >
+              <Text style={{ color: ColorConstants.Black }}>Join</Text>
+            </Button>
+          </View>
+        ) : (
+          <View style={{ justifyContent: "center" }}>
+            <Button
+              style={{
+                backgroundColor: ColorConstants.Yellow,
+                // paddingHorizontal: 5,
+                paddingStart: 10,
+              }}
+              onPress={() => {}}
+            >
+              <FontAwesome5 name="share-alt" size={20} color="black" />
+              <Text style={{ color: ColorConstants.Black }}>Share</Text>
+            </Button>
+          </View>
+        )}
+      </Footer>
+    </Container>
   );
 };
 

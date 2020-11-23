@@ -17,6 +17,11 @@ import ColorConstants from "../util/ColorConstants";
 const MyEventScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const [events, setEvents] = useState([]);
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {});
+
+    return unsubscribe;
+  }, [navigation]);
 
   return (
     <Container style={{ backgroundColor: ColorConstants.DWhite, flex: 1 }}>
