@@ -28,7 +28,7 @@ class EventController {
     res.json(events)
   }
 
-  async events(req, res) {
+  async event(req, res) {
     const { eventId } = req.params
     const { fields } = req.query
 
