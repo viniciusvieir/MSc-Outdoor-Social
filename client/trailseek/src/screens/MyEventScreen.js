@@ -1,35 +1,34 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Text, Button, ListItem } from 'react-native-elements';
+import React, { useState } from "react";
+import { StyleSheet } from "react-native";
+// import { Text, Button, ListItem } from 'react-native-elements';
+import {
+  List,
+  Body,
+  Text,
+  ListItem,
+  Container,
+  Content,
+  Header,
+} from "native-base";
+import { useDispatch } from "react-redux";
+
+import ColorConstants from "../util/ColorConstants";
 
 const MyEventScreen = ({ navigation }) => {
-    const list = [
-        {
-          name: 'Event0',
-          subtitle: 'Location'
-        },
-        {
-          name: 'Event1',
-          subtitle: 'Location'
-        },
-      ];
-    return(
-        <>
-            <Text h3>MyEventScreen</Text>
-            {
-                list.map((l, i) => (
-                <ListItem key={i} bottomDivider onPress={()=>{navigation.navigate('ViewEvent')}}>
-                    <ListItem.Content>
-                    <ListItem.Title>{l.name}</ListItem.Title>
-                    <ListItem.Subtitle>{l.subtitle}</ListItem.Subtitle>
-                    </ListItem.Content>
-                </ListItem>
-                ))
-            }
-        </>
-    );
+  const dispatch = useDispatch();
+  const [events, setEvents] = useState([]);
+
+  return (
+    <Container style={{ backgroundColor: ColorConstants.DWhite, flex: 1 }}>
+      <Content></Content>
+    </Container>
+  );
 };
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  listText: {
+    color: ColorConstants.DWhite,
+  },
+});
 
 export default MyEventScreen;

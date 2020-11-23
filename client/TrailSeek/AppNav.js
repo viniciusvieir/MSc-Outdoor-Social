@@ -3,13 +3,14 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialIcons } from "@expo/vector-icons";
 import { createStackNavigator } from "@react-navigation/stack";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Linking, TouchableOpacity } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { AppLoading } from "expo";
 import { Root } from "native-base";
 import * as Font from "expo-font";
 
-import { getToken } from "./src/app/userSlice";
+import ColorConstants from "./src/util/ColorConstants";
+import { fetchUserData, getToken, logOut } from "./src/app/userSlice";
 import CreateEventScreen from "./src/screens/CreateEventScreen";
 import ViewEventScreen from "./src/screens/ViewEventScreen";
 import ViewTrailScreen from "./src/screens/ViewTrailScreen";
@@ -40,7 +41,7 @@ const AuthenticationFlow = () => {
       <Stack.Screen
         name="Signup"
         component={SignupScreen}
-        options={{ headerTransparent: true, title: "" }}
+        options={{ headerTransparent: true, title: "", headerLeft: null }}
       />
     </Stack.Navigator>
   );
@@ -52,7 +53,13 @@ const ProfileFlow = () => {
       <Stack.Screen
         name="ViewProfile"
         component={ViewProfileScreen}
-        options={{ headerLeft: null }}
+        options={{
+          headerStyle: { backgroundColor: ColorConstants.primary },
+          headerLeft: null,
+          headerTitleStyle: { color: ColorConstants.DWhite },
+          title: "My Profile",
+          // headerTintColor: ColorConstants.Black,
+        }}
       />
       <Stack.Screen name="EditProfile" component={EditProfileScreen} />
     </Stack.Navigator>
@@ -60,6 +67,7 @@ const ProfileFlow = () => {
 };
 
 const TrailFlow = () => {
+  const autFlag = useSelector((state) => state.user.isAuth);
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -75,16 +83,26 @@ const TrailFlow = () => {
         name="ListTrail"
         component={ListTrailScreen}
         options={({ route }) => ({
+          headerStyle: { backgroundColor: ColorConstants.primary },
+          headerTitleStyle: { color: ColorConstants.DWhite },
+          headerBackImage: () => (
+            <MaterialIcons
+              name="arrow-back"
+              size={24}
+              color="white"
+              style={styles.shadow}
+            />
+          ),
           title:
             typeof route.params.getParams?.title === "undefined"
               ? "Search"
-              : route.params.getParams.title,
+              : route.params.filter.title,
         })}
       />
       <Stack.Screen
         name="ViewTrail"
         component={ViewTrailScreen}
-        options={({ route, navigation }) => ({
+        options={() => ({
           title: "",
           headerTransparent: true,
           headerBackImage: () => (
@@ -104,7 +122,30 @@ const TrailFlow = () => {
           //   },
         })}
       />
-      <Stack.Screen name="CreateEvent" component={CreateEventScreen} />
+      <Stack.Screen
+        name="CreateEvent"
+        component={CreateEventScreen}
+        options={{
+          headerStyle: { backgroundColor: ColorConstants.primary },
+          headerTitleStyle: { color: ColorConstants.DWhite },
+          title: "Create Event",
+          headerBackImage: () => (
+            <MaterialIcons
+              name="arrow-back"
+              size={24}
+              color="white"
+              style={styles.shadow}
+            />
+          ),
+        }}
+        listeners={({ navigation }) => ({
+          focus: (e) => {
+            autFlag
+              ? null
+              : navigation.navigate("Authentication", { screen: "Signin" });
+          },
+        })}
+      />
       <Stack.Screen name="ListEvent" component={ListEventScreen} />
     </Stack.Navigator>
   );
@@ -117,11 +158,13 @@ const EventFlow = () => {
         name="MyEvent"
         component={MyEventScreen}
         options={{
+          headerStyle: { backgroundColor: ColorConstants.primary },
           headerLeft: null,
+          headerTitleStyle: { color: ColorConstants.DWhite },
+          title: "My Events",
+          // headerTintColor: ColorConstants.Black,
         }}
       />
-      <Stack.Screen name="ViewEvent" component={ViewEventScreen} />
-      <Stack.Screen name="EditEvent" component={EditEventScreen} />
     </Stack.Navigator>
   );
 };
@@ -132,7 +175,10 @@ const MainTabFlow = () => {
     <Tab.Navigator
       initialRouteName="TrailFlow"
       tabBarOptions={{
-        activeTintColor: "#e91e63",
+        activeTintColor: ColorConstants.secondary,
+        inactiveTintColor: ColorConstants.darkGray,
+        inactiveBackgroundColor: ColorConstants.White,
+        activeBackgroundColor: ColorConstants.White,
         tabStyle: {
           paddingTop: 8,
         },
@@ -143,7 +189,6 @@ const MainTabFlow = () => {
         component={TrailFlow}
         options={{
           tabBarLabel: "Explore",
-          // tabBarButton: props => <TouchableOpacity {...props} /> ,
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="search" size={24} color={color} />
           ),
@@ -152,6 +197,13 @@ const MainTabFlow = () => {
       <Tab.Screen
         name="EventFlow"
         component={EventFlow}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            autFlag
+              ? null
+              : navigation.navigate("Authentication", { screen: "Signin" });
+          },
+        })}
         options={{
           tabBarLabel: "Events",
           tabBarIcon: ({ color, size }) => (
@@ -164,7 +216,9 @@ const MainTabFlow = () => {
         component={ProfileFlow}
         listeners={({ navigation }) => ({
           tabPress: (e) => {
-            autFlag ? null : navigation.navigate("Signin");
+            autFlag
+              ? null
+              : navigation.navigate("Authentication", { screen: "Signin" });
           },
         })}
         options={{
@@ -191,28 +245,64 @@ const MainTabFlow = () => {
   );
 };
 
+// const prefix = Linking.makeUrl("/");
+// const linking = {
+//   prefixes: [prefix],
+//   config: {
+//     screens: {
+//       Authentication: {
+//         path: "stack",
+//         initialRouteName: "Home",
+//         screens: {
+//           Home: "home",
+//           Profile: {
+//             path: "user/:id/:age",
+//             parse: {
+//               id: id => `there, ${id}`,
+//               age: Number,
+//             },
+//             stringify: {
+//               id: id => id.replace("there, ", ""),
+//             },
+//           },
+//         },
+//       },
+//       MainTab: "settings",
+//     },
+//   },
+// };
+
 const AppNav = () => {
   const dispatch = useDispatch();
   const [initRoutName, setInitRoutName] = useState(null);
   const autFlag = useSelector((state) => state.user.isAuth);
   const [isLoading, setIsLoading] = useState(true);
+  const userId = useSelector((state) => state.user.profile.id);
+  const currentEventUserID = useSelector((state) =>
+    state.event.currentEvent.length
+      ? state.event.currentEvent[0].eventData.userId
+      : null
+  );
 
-  const getAsyncToken = async () => {
+  const getAsyncTokenAndUserData = async () => {
     try {
       await Font.loadAsync({
         Roboto: require("./node_modules/native-base/Fonts/Roboto.ttf"),
         Roboto_medium: require("./node_modules/native-base/Fonts/Roboto_medium.ttf"),
       });
       const results = await dispatch(getToken());
-      return results;
+      const results1 = await dispatch(fetchUserData());
+      return results1;
     } catch (e) {
+      dispatch(logOut());
       console.log(e.message);
     }
   };
+  
   if (isLoading) {
     return (
       <AppLoading
-        startAsync={getAsyncToken}
+        startAsync={getAsyncTokenAndUserData}
         onFinish={() => {
           autFlag
             ? setInitRoutName("MainTab")
@@ -230,7 +320,7 @@ const AppNav = () => {
           <Stack.Screen
             name="Authentication"
             component={AuthenticationFlow}
-            options={{ headerTransparent: true, title: "" }}
+            options={{ headerTransparent: true, title: "", headerLeft: null }}
           />
           <Stack.Screen
             name="MainTab"
@@ -238,6 +328,54 @@ const AppNav = () => {
             options={{
               headerShown: false,
               headerRight: null,
+            }}
+          />
+          <Stack.Screen
+            name="ViewEvent"
+            component={ViewEventScreen}
+            options={({ navigation }) => ({
+              title: "",
+              headerTransparent: true,
+              headerBackImage: () => (
+                <MaterialIcons
+                  name="arrow-back"
+                  size={24}
+                  color="#000000"
+                  style={styles.shadow}
+                />
+              ),
+              headerRight: () =>
+                userId === currentEventUserID ? (
+                  <TouchableOpacity
+                    onPress={() => {
+                      navigation.navigate("EditEvent");
+                    }}
+                  >
+                    <MaterialIcons
+                      name="edit"
+                      size={24}
+                      style={{ color: "#000000", marginRight: 20 }}
+                    />
+                  </TouchableOpacity>
+                ) : null,
+            })}
+          />
+          <Stack.Screen
+            name="EditEvent"
+            component={EditEventScreen}
+            options={{
+              headerStyle: { backgroundColor: ColorConstants.primary },
+              headerTitleStyle: { color: ColorConstants.DWhite },
+              title: "Edit Events",
+              headerBackImage: () => (
+                <MaterialIcons
+                  name="arrow-back"
+                  size={24}
+                  color="white"
+                  style={styles.shadow}
+                />
+              ),
+              // headerTintColor: ColorConstants.Black,
             }}
           />
         </Stack.Navigator>

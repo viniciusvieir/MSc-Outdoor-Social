@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import { View, StyleSheet, FlatList } from "react-native";
 import { ListItem, Text } from "react-native-elements";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
@@ -9,6 +9,8 @@ import ToastAlert from "../components/ToastAlert";
 import LoadSpinner from "../components/LoadSpinner";
 import { fetchTrailsByQuery } from "../app/trailSlice";
 import CONSTANTS from "../util/Constants";
+import NoData from "../components/NoData";
+import ColorConstants from "../util/ColorConstants";
 
 const ListTrailScreen = ({ route }) => {
   const { query } = route.params;
@@ -28,7 +30,7 @@ const ListTrailScreen = ({ route }) => {
       try {
         const results = await dispatch(fetchTrailsByQuery({ query, limit }));
         const uResults = unwrapResult(results);
-        setFilteredTrails(uResults);
+        setFilteredTrails(uResults.response);
       } catch (e) {
         ToastAlert(e.message);
         ToastAlert(error);
@@ -49,31 +51,40 @@ const ListTrailScreen = ({ route }) => {
     content = <Text>{error}</Text>;
   } else if (trailStatus === CONSTANTS.SUCCESS) {
     spinner = false;
-    content =
-      filteredTrails.length > 0 ? (
-        filteredTrails.map((l, item) => (
-          <ListItem
-            key={item}
-            bottomDivider
-            onPress={() => {
-              navigation.navigate("ViewTrail", { id: l._id, name: l.name });
-            }}
-          >
-            <ListItem.Content>
-              <ListItem.Title>{l.name}</ListItem.Title>
-              <ListItem.Subtitle>{l.location}</ListItem.Subtitle>
-            </ListItem.Content>
-          </ListItem>
-        ))
-      ) : (
-        <Text>No Results</Text>
-      );
+    content = (
+      <FlatList
+        data={filteredTrails}
+        keyExtractor={(item) => {
+          return item._id;
+        }}
+        style={{ flex: 1 }}
+        ListEmptyComponent={<NoData type={"funny"} />}
+        renderItem={({ item }) => {
+          return (
+            <ListItem
+              bottomDivider
+              onPress={() => {
+                navigation.navigate("ViewTrail", {
+                  id: item._id,
+                  name: item.name,
+                });
+              }}
+            >
+              <ListItem.Content>
+                <ListItem.Title>{item.name}</ListItem.Title>
+                <ListItem.Subtitle>{item.location}</ListItem.Subtitle>
+              </ListItem.Content>
+            </ListItem>
+          );
+        }}
+      />
+    );
   }
   return (
-    <ScrollView>
+    <View style={{ backgroundColor: ColorConstants.DWhite, flex: 1 }}>
       <LoadSpinner visible={spinner} />
       {content}
-    </ScrollView>
+    </View>
   );
 };
 

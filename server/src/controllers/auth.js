@@ -12,7 +12,7 @@ class AuthController {
     const { email, password } = req.body
 
     const user = await User.findOne({
-      where: { email },
+      where: { email: email.toLowerCase() },
       attributes: ['id', 'email', 'name', 'password'],
     })
 
@@ -33,10 +33,10 @@ class AuthController {
     if (!errors.isEmpty())
       return res.status(400).json({ errors: errors.array() })
 
-    const { email, password, name, gender } = req.body
+    const { email, password, name, dob, gender } = req.body
 
     const checkIfExists = await User.findOne({
-      where: { email },
+      where: { email: email.toLowerCase() },
       attributes: ['id'],
     })
 
@@ -46,17 +46,13 @@ class AuthController {
 
     const user = await User.create({
       name,
-      dob: new Date(),
+      dob,
       gender,
-      email,
+      email: email.toLowerCase(),
       password,
     })
 
     return res.json(user.generateTokenPayload())
-  }
-
-  async privateRoute(req, res) {
-    res.json({ success: true })
   }
 
   // VALIDATION
@@ -67,6 +63,7 @@ class AuthController {
         body('email').isEmail(),
         body('password').not().isEmpty(),
         body('name').not().isEmpty().trim().escape(),
+        body('dob').isDate().toDate(),
         body('gender').isIn(['F', 'M']),
       ],
     }

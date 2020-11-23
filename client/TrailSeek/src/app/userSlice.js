@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk, unwrapResult } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import AsyncStorage from "@react-native-community/async-storage";
 import * as Location from "expo-location";
 
@@ -11,6 +11,10 @@ const initialState = {
     token: null,
     error: null,
     status: CONSTANTS.IDLE,
+    id: null,
+    dob: "",
+    gender: "",
+    email: "",
   },
   userLocation: {
     latitude: null,
@@ -19,6 +23,7 @@ const initialState = {
     error: null,
   },
   isAuth: false,
+  covidToggle: true,
 };
 
 export const signIn = createAsyncThunk(
@@ -33,12 +38,15 @@ export const signIn = createAsyncThunk(
       }
       return response.data;
     } catch (e) {
+      // console.log(e.response.data.errors);
       return rejectWithValue(
-        e.response.data.errors
-          .map((item) => {
-            return item.msg;
-          })
-          .join(" ")
+        error.response.data?.errors
+          ? error.response.data.errors
+              .map((item) => {
+                return item.msg;
+              })
+              .join(" ")
+          : error.status
       );
     }
   }
@@ -57,11 +65,34 @@ export const signUp = createAsyncThunk(
       return response.data;
     } catch (e) {
       return rejectWithValue(
-        e.response.data.errors
-          .map((item) => {
-            return item.msg;
-          })
-          .join(" ")
+        error.response.data?.errors
+          ? error.response.data.errors
+              .map((item) => {
+                return item.msg;
+              })
+              .join(" ")
+          : error.status
+      );
+    }
+  }
+);
+
+export const fetchUserData = createAsyncThunk(
+  "user/fetchUserData",
+  async (_, { rejectWithValue, getState }) => {
+    try {
+      const response = await trailSeek.get("/user");
+      return response.data;
+    } catch (error) {
+      console.log(error.response);
+      return rejectWithValue(
+        error.response.data?.errors
+          ? error.response.data.errors
+              .map((item) => {
+                return item.msg;
+              })
+              .join(" ")
+          : error.status
       );
     }
   }
@@ -102,21 +133,26 @@ export const getToken = createAsyncThunk("user/getToken", async () => {
   }
 });
 
-export const getLocation = createAsyncThunk("user/getLocation", async () => {
-  let location;
-  try {
-    let { status } = await Location.requestPermissionsAsync();
-    try {
-      if (status !== "granted") console.log("Acess to location was denied");
-      location = await Location.getCurrentPositionAsync({});
-    } catch (e) {
-      console.log(e);
+export const getLocation = createAsyncThunk(
+  "user/getLocation",
+  async (_, { getState }) => {
+    let location;
+    if (getState().user.userLocation.status != CONSTANTS.SUCCESS) {
+      try {
+        let { status } = await Location.requestPermissionsAsync();
+        try {
+          if (status !== "granted") console.log("Acess to location was denied");
+          location = await Location.getCurrentPositionAsync({});
+        } catch (e) {
+          console.log(e);
+        }
+        return location?.coords;
+      } catch (e) {
+        console.log(e);
+      }
     }
-    return location.coords;
-  } catch (e) {
-    console.log(e);
   }
-});
+);
 
 export const userSlice = createSlice({
   name: "user",
@@ -125,6 +161,9 @@ export const userSlice = createSlice({
     logOut1(state, action) {
       state.isAuth = false;
       state.profile = initialState.profile;
+    },
+    toggleCovid(state, action) {
+      state.covidToggle = !state.covidToggle;
     },
   },
   extraReducers: {
@@ -192,8 +231,8 @@ export const userSlice = createSlice({
     },
     [getLocation.fulfilled]: (state, action) => {
       state.userLocation.status = CONSTANTS.SUCCESS;
-      state.userLocation.latitude = action.payload.latitude;
-      state.userLocation.longitude = action.payload.longitude;
+      state.userLocation.latitude = action.payload?.latitude;
+      state.userLocation.longitude = action.payload?.longitude;
     },
     [getLocation.rejected]: (state, action) => {
       state.userLocation.status = CONSTANTS.FAILED;
@@ -207,15 +246,40 @@ export const userSlice = createSlice({
       state.profile.status = CONSTANTS.SUCCESS;
       state.profile.token = null;
       state.profile.name = null;
+      state.profile.dob = "";
+      state.profile.id = null;
+      state.profile.gender = "";
+      state.profile.email = "";
       state.isAuth = false;
     },
     [logOut.rejected]: (state, action) => {
       state.profile.status = CONSTANTS.FAILED;
       state.profile.error = action.error.message;
     },
+    //////////////////////////////////////////////////////////////
+    [fetchUserData.pending]: (state, action) => {
+      state.profile.status = CONSTANTS.LOADING;
+    },
+    [fetchUserData.fulfilled]: (state, action) => {
+      state.profile.id = action.payload.id;
+      state.profile.name = action.payload.name;
+      state.profile.dob = action.payload.dob;
+      state.profile.gender = action.payload.gender;
+      state.profile.email = action.payload.email;
+      state.profile.status = CONSTANTS.SUCCESS;
+      // state.profile.data = action.payload;
+    },
+    [fetchUserData.rejected]: (state, action) => {
+      state.profile.status = CONSTANTS.FAILED;
+      state.isAuth = false;
+      state.profile.error = action.payload;
+    },
+    //////////////////////////////////////////////////////////////
   },
 });
 
-export const { logOut1 } = userSlice.actions;
+export const { logOut1, toggleCovid } = userSlice.actions;
 
 export default userSlice.reducer;
+
+export const token = (state) => state.user.token; // remember to return

@@ -1,11 +1,12 @@
 import React from "react";
-import { StyleSheet, Linking, Platform, Dimensions } from "react-native";
+import { StyleSheet, Linking, Platform, Dimensions, View } from "react-native";
 import { Text, Button } from "native-base";
-import MapView, { Polyline } from "react-native-maps";
+import MapView, { Polyline, Marker } from "react-native-maps";
+import ColorConstants from "../util/ColorConstants";
 
 const MapsTab = ({ trailData }) => {
   return (
-    <>
+    <View style={{ backgroundColor: ColorConstants.LGreen, flex: 1 }}>
       <MapView
         style={styles.mapStyle}
         initialRegion={{
@@ -18,6 +19,14 @@ const MapsTab = ({ trailData }) => {
         mapType="terrain"
         loadingEnabled
       >
+        <Marker
+          coordinate={{
+            latitude: trailData.start.coordinates[0],
+            longitude: trailData.start.coordinates[1],
+          }}
+          title={"You Start Here"}
+          // description={marker.description}
+        />
         <Polyline
           coordinates={trailData.path}
           strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
@@ -39,12 +48,12 @@ const MapsTab = ({ trailData }) => {
 
           Linking.openURL(url);
         }}
-        full
-        style={{ margin: 5 }}
+        block
+        style={{ margin: 5, backgroundColor: ColorConstants.Yellow }}
       >
-        <Text>Navigate</Text>
+        <Text style={{ color: ColorConstants.Black }}>Navigate</Text>
       </Button>
-    </>
+    </View>
   );
 };
 
@@ -52,7 +61,7 @@ const styles = StyleSheet.create({
   mapStyle: {
     // margin: 10,
     width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height - 355,
+    height: Dimensions.get("window").height - 445,
   },
 });
 

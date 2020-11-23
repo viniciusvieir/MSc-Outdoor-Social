@@ -10,6 +10,11 @@ const EventSchema = new mongoose.Schema({
     ref: 'Trail',
     required: true,
   },
+  participants: {
+    type: [Object],
+    default: [],
+    required: true,
+  }, // [{ type: Schema.Types.ObjectId, ref: 'User' }]
   title: {
     type: String,
     required: true,
@@ -22,7 +27,11 @@ const EventSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  maxParticipants: {
+  duration_min: {
+    type: Number,
+    required: true,
+  },
+  max_participants: {
     type: Number,
     required: true,
   },

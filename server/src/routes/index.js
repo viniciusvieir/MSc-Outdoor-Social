@@ -3,6 +3,7 @@ const router = require('express').Router()
 const verifyToken = require('../middlewares/verify-token').verifyToken
 
 const authController = require('../controllers/auth')
+const userController = require('../controllers/user')
 const trailController = require('../controllers/trail')
 const eventController = require('../controllers/event')
 
@@ -11,7 +12,21 @@ const eventController = require('../controllers/event')
 // =============== AUTH ===============
 router.post('/signin', authController.validators.signIn, authController.signIn)
 router.post('/signup', authController.validators.signUp, authController.signUp)
-router.get('/privateRoute', verifyToken, authController.privateRoute)
+
+// =============== USER ===============
+router.get('/user', verifyToken, userController.user)
+router.post('/user', verifyToken, userController.changeUserInfo)
+
+router.get(
+  '/user/eventsCreated',
+  verifyToken,
+  eventController.eventsCreatedByUser
+)
+router.get(
+  '/user/eventsJoined',
+  verifyToken,
+  eventController.eventsJoinedByUser
+)
 
 // =============== TRAIL ==============
 router.get('/trails', trailController.validators.trails, trailController.trails)
@@ -20,20 +35,35 @@ router.get(
   trailController.validators.trailById,
   trailController.trailById
 )
-router.get('/trailsfix', trailController.trailsFix)
+// router.get('/trailsfix', trailController.trailsFix)
 
 // =============== EVENT ==============
-router.get('/trails/:trailId/events', eventController.events)
-router.post('/trails/:trailId/events', verifyToken, eventController.createEvent)
+router.get(
+  '/trails/:trailId/events',
+  eventController.validators.events,
+  eventController.events
+)
+router.post(
+  '/trails/:trailId/events',
+  verifyToken,
+  eventController.validators.createEvent,
+  eventController.createEvent
+)
 router.put(
   '/trails/:trailId/events/:eventId',
   verifyToken,
+  eventController.validators.updateEvent,
   eventController.updateEvent
 )
 router.delete(
   '/trails/:trailId/events/:eventId',
   verifyToken,
   eventController.deleteEvent
+)
+router.post(
+  '/trails/:trailId/events/:eventId/join',
+  verifyToken,
+  eventController.joinEvent
 )
 
 module.exports = router

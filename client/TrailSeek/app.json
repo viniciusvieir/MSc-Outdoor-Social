@@ -6,9 +6,9 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
-      "image": "./src/images/tslogo.png",
+      "image": "./src/images/tslogov2.3.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#007060"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -18,7 +18,12 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.neels198.trailseek"
+      "bundleIdentifier": "com.neels198.trailseek",
+      "splash": {
+        "image": "./src/images/tslogov2.3.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#007060"
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
