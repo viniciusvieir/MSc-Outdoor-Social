@@ -49,6 +49,11 @@ router.post(
   eventController.validators.createEvent,
   eventController.createEvent
 )
+router.get(
+  '/trails/:trailId/events/:eventId',
+  eventController.validators.events,
+  eventController.events
+)
 router.put(
   '/trails/:trailId/events/:eventId',
   verifyToken,
