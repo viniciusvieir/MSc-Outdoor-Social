@@ -37,8 +37,7 @@ export const signIn = createAsyncThunk(
         console.log(e.message);
       }
       return response.data;
-    } catch (e) {
-      // console.log(e.response.data.errors);
+    } catch (error) {
       return rejectWithValue(
         error.response.data?.errors
           ? error.response.data.errors
@@ -63,7 +62,7 @@ export const signUp = createAsyncThunk(
         console.log(e.message);
       }
       return response.data;
-    } catch (e) {
+    } catch (error) {
       return rejectWithValue(
         error.response.data?.errors
           ? error.response.data.errors
@@ -115,7 +114,6 @@ export const saveToken = createAsyncThunk(
 export const logOut = createAsyncThunk("user/delToken", async () => {
   try {
     const response = await AsyncStorage.clear();
-    // const response = await AsyncStorage.multiRemove(["@token", "@name"]);
     return response;
   } catch (error) {
     console.log(error.response);
@@ -158,10 +156,6 @@ export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    logOut1(state, action) {
-      state.isAuth = false;
-      state.profile = initialState.profile;
-    },
     toggleCovid(state, action) {
       state.covidToggle = !state.covidToggle;
     },
@@ -187,9 +181,6 @@ export const userSlice = createSlice({
     },
     [signUp.fulfilled]: (state, action) => {
       state.profile.status = CONSTANTS.SUCCESS;
-      // state.isAuth = true;
-      // state.profile.name = action.payload.email;
-      // state.profile.token = action.payload.token;
     },
     [signUp.rejected]: (state, action) => {
       state.profile.status = CONSTANTS.FAILED;
@@ -219,7 +210,6 @@ export const userSlice = createSlice({
     },
     [saveToken.fulfilled]: (state, action) => {
       state.profile.status = CONSTANTS.SUCCESS;
-      // state.profile.token = action.payload;
     },
     [saveToken.rejected]: (state, action) => {
       state.profile.status = CONSTANTS.FAILED;
@@ -267,7 +257,6 @@ export const userSlice = createSlice({
       state.profile.gender = action.payload.gender;
       state.profile.email = action.payload.email;
       state.profile.status = CONSTANTS.SUCCESS;
-      // state.profile.data = action.payload;
     },
     [fetchUserData.rejected]: (state, action) => {
       state.profile.status = CONSTANTS.FAILED;
@@ -278,7 +267,7 @@ export const userSlice = createSlice({
   },
 });
 
-export const { logOut1, toggleCovid } = userSlice.actions;
+export const { toggleCovid } = userSlice.actions;
 
 export default userSlice.reducer;
 

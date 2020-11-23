@@ -23,6 +23,7 @@ import SearchTrailScreen from "./src/screens/SearchTrailScreen";
 import SigninScreen from "./src/screens/SigninScreen";
 import SignupScreen from "./src/screens/SignupScreen";
 import ViewProfileScreen from "./src/screens/ViewProfileScreen";
+import { unwrapResult } from "@reduxjs/toolkit";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -291,14 +292,16 @@ const AppNav = () => {
         Roboto_medium: require("./node_modules/native-base/Fonts/Roboto_medium.ttf"),
       });
       const results = await dispatch(getToken());
+      unwrapResult(results);
       const results1 = await dispatch(fetchUserData());
+      unwrapResult(results1);
       return results1;
     } catch (e) {
       dispatch(logOut());
       console.log(e.message);
     }
   };
-  
+
   if (isLoading) {
     return (
       <AppLoading
