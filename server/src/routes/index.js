@@ -52,7 +52,7 @@ router.post(
 router.get(
   '/trails/:trailId/events/:eventId',
   eventController.validators.events,
-  eventController.events
+  eventController.event
 )
 router.put(
   '/trails/:trailId/events/:eventId',
