@@ -101,16 +101,40 @@ class EventController {
     const { id: userId, name } = req.context
     const { eventId } = req.params
 
-    const imageUrl = faker.internet.avatar()
+    const joined = await Event.find({
+      _id: eventId,
+      participants: { userId },
+    }).count()
+
+    if (!joined) {
+      const imageUrl = faker.internet.avatar()
+      await Event.update(
+        { _id: eventId },
+        {
+          $push: {
+            participants: {
+              userId,
+              name,
+              imageUrl,
+            },
+          },
+        }
+      )
+    }
+
+    res.json({ success: true })
+  }
+
+  async disjoinEvent(req, res) {
+    const { id: userId } = req.context
+    const { eventId } = req.params
 
     await Event.update(
       { _id: eventId },
       {
-        $push: {
+        $pull: {
           participants: {
             userId,
-            name,
-            imageUrl,
           },
         },
       }
