@@ -106,16 +106,14 @@ def get_recommendation(user_id):
         
         ITcoll = itemCollaborative(int(user_id))
     except IndexError:
-        print("Error Occured: Cause 'No Input'")
-        raise
-        return('check mongodb url')
+        raise Exception("Error Occured: Cause 'No Input'")
         
     user_review_df = ITcoll.fetchMongoDBData()
 
     user_spec_data = user_review_df[user_review_df['userID']==ITcoll.user_id]
     #print('data for selected user ', len(user_spec_data))
     if len(user_spec_data) == 0:
-        recommendations = ['5fa17e268f4d258042edf4be','5fa17e268f4d258042edf4bb','5fa17e268f4d258042edf4bc','5fa17e268f4d258042edf4b6','5fa17e268f4d258042edf4b9','5fa17e268f4d258042edf4c3','5fa17e268f4d258042edf4b8', '5fa17e268f4d258042edf4b7', '5fa17e268f4d258042edf4bf', '5fa17e268f4d258042edf4bd']
+        recommendations = []
     else:
         
         user_spec_data = ITcoll.getUserSpecDetails(user_spec_data)
@@ -135,7 +133,7 @@ def get_recommendation(user_id):
         trailObjID_df = trailObjID_df['_id'].values
         recommendations = []
         count = 1
-        for idx, id in enumerate(trailObjID_df):
+        for idx, _ in enumerate(trailObjID_df):
             if count > 10:
                 break
             recommendations.append(str(trailObjID_df[idx]))
