@@ -6,6 +6,7 @@ const authController = require('../controllers/auth')
 const userController = require('../controllers/user')
 const trailController = require('../controllers/trail')
 const eventController = require('../controllers/event')
+const { optionalToken } = require('../middlewares/verify-token')
 
 // Format router.post(<route>, <verifyToken>, <validation>, <callback>)
 
@@ -29,7 +30,12 @@ router.get(
 )
 
 // =============== TRAIL ==============
-router.get('/trails', trailController.validators.trails, trailController.trails)
+router.get(
+  '/trails',
+  optionalToken,
+  trailController.validators.trails,
+  trailController.trails
+)
 router.get(
   '/trails/:id',
   trailController.validators.trailById,
