@@ -15,3 +15,4 @@ APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 def upload(user_id):
     output = model.get_recommendation(int(user_id))
     return jsonify(output)
+

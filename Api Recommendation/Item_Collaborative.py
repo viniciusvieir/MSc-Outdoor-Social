@@ -143,3 +143,4 @@ def get_recommendation(user_id):
 
     print('Recommended for User: ',recommendations)
     return(json.dumps(recommendations))
+
