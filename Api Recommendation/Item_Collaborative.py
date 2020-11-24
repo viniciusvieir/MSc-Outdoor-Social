@@ -139,6 +139,6 @@ def get_recommendation(user_id):
             recommendations.append(str(trailObjID_df[idx]))
             count= count + 1
 
-    print('Recommended for User: ',recommendations)
-    return(json.dumps(recommendations))
+    print(recommendations)
+    return recommendations
 
