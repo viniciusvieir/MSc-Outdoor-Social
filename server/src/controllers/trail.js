@@ -58,7 +58,11 @@ class TrailController {
       )
 
       trails = await Trail.find({
-        _id: { $in: recommendedTrails },
+        _id: {
+          $in: recommendedTrails
+            .replace('Recommended for User: ', '')
+            .split(','),
+        },
       })
         .select((fields && fields.replace(/,|;/g, ' ')) || '-path')
         .lean()
