@@ -50,18 +50,19 @@ class TrailController {
         .limit(limit || 20)
         .skip(skip || 0)
     } else if (query && query.recommendation) {
+      console.log(query, query.recommendation)
+      console.log(req.context)
       const { id: userId } = req.context
       if (!userId) return res.json(errorHandler('Token not provided'))
 
       const recommendedTrails = await axios.get(
-        `http://localhost:3030/${userId}`
+        `https://api.trailseek.eu/recommendation/${userId}`
       )
+      console.log(recommendedTrails)
 
       trails = await Trail.find({
         _id: {
-          $in: recommendedTrails
-            .replace('Recommended for User: ', '')
-            .split(','),
+          $in: recommendedTrails,
         },
       })
         .select((fields && fields.replace(/,|;/g, ' ')) || '-path')
