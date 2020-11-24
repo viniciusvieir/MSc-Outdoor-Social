@@ -1,12 +1,11 @@
 const router = require('express').Router()
 
-const verifyToken = require('../middlewares/verify-token').verifyToken
+const { verifyToken, optionalToken } = require('../middlewares/verify-token')
 
 const authController = require('../controllers/auth')
 const userController = require('../controllers/user')
 const trailController = require('../controllers/trail')
 const eventController = require('../controllers/event')
-const { optionalToken } = require('../middlewares/verify-token')
 
 // Format router.post(<route>, <verifyToken>, <validation>, <callback>)
 

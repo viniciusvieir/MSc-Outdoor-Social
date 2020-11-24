@@ -25,10 +25,7 @@ const verifyToken = async (req, res, next) => {
 
 const optionalToken = async (req, res, next) => {
   const bearerHeader = req.headers.authorization
-  if (!bearerHeader)
-    return res
-      .status(401)
-      .json(errorHandler(['Authorization token not provided']))
+  if (!bearerHeader) return next()
 
   const token = bearerHeader.split(' ')[1]
 
