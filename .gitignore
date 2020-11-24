@@ -17,3 +17,6 @@ database.sqlite
 client/TrailSeek/trail.http
 client/TrailSeek/.vscode/settings.json
 client/trailseek/yarn.lock
+
+#ignore local cache files
+__pycache__
