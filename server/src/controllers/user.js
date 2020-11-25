@@ -19,7 +19,6 @@ class UserController {
     const { id } = req.context
 
     const user = await User.findByPk(id)
-
     await user.update(req.body)
     res.json({ success: true })
   }

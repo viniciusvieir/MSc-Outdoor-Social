@@ -23,11 +23,16 @@ const TrailSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  county: {
+    type: String,
+    required: true,
+    index: true,
+  },
   difficulty: {
     type: String,
     required: true,
     index: true,
-    default: 'Unknown',
+    default: 'unknown',
   },
   length_km: {
     type: Number,
@@ -50,6 +55,16 @@ const TrailSchema = new mongoose.Schema({
     type: Number,
     required: true,
     default: 0,
+  },
+  ratings: {
+    type: [Object],
+    required: true,
+    default: [],
+  },
+  comments: {
+    type: [Object],
+    required: true,
+    default: [],
   },
   img_url: {
     type: String,
@@ -102,4 +117,4 @@ const TrailSchema = new mongoose.Schema({
 TrailSchema.index({ start: '2dsphere' })
 TrailSchema.index({ end: '2dsphere' })
 
-module.exports = mongoose.model('Trail_dev', TrailSchema)
+module.exports = mongoose.model('Trail', TrailSchema)

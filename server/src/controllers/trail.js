@@ -1,6 +1,7 @@
 const { query, param, validationResult } = require('express-validator')
 const { errorHandler } = require('../utils/error-handling')
 const { PythonShell } = require('python-shell')
+const axios = require('axios').default
 
 const Trail = require('../models/trail')
 const Event = require('../models/event')
@@ -12,6 +13,8 @@ class TrailController {
       return res.status(400).json({ errors: errors.array() })
 
     const { q: query, fields, limit, skip } = req.query
+
+    let trails = []
 
     // search for nearest places to a point
     if (query && query.near && query.near.lat && query.near.lon) {
@@ -28,7 +31,7 @@ class TrailController {
       const latLon = query.near
       delete query.near
 
-      const trails = await Trail.aggregate([
+      trails = await Trail.aggregate([
         {
           $geoNear: {
             near: {
@@ -46,14 +49,31 @@ class TrailController {
       ])
         .limit(limit || 20)
         .skip(skip || 0)
-      return res.json(trails)
-    }
+    } else if (query && query.recommendation) {
+      console.log(query, query.recommendation)
+      console.log(req.context)
+      const { id: userId } = req.context
+      if (!userId) return res.json(errorHandler('Token not provided'))
 
-    const trails = await Trail.find(query || {})
-      .limit(limit || 20)
-      .skip(skip || 0)
-      .select((fields && fields.replace(/,|;/g, ' ')) || '-path')
-      .lean()
+      const recommendedTrails = await axios.get(
+        `https://api.trailseek.eu/recommendation/${userId}`
+      )
+      console.log(recommendedTrails)
+
+      trails = await Trail.find({
+        _id: {
+          $in: recommendedTrails,
+        },
+      })
+        .select((fields && fields.replace(/,|;/g, ' ')) || '-path')
+        .lean()
+    } else {
+      trails = await Trail.find(query || {})
+        .limit(limit || 20)
+        .skip(skip || 0)
+        .select((fields && fields.replace(/,|;/g, ' ')) || '-path')
+        .lean()
+    }
 
     if (fields && fields.includes('outing_count')) {
       const date = new Date()
@@ -110,6 +130,76 @@ class TrailController {
     } else {
       res.json(trail)
     }
+  }
+
+  async rateTrail(req, res) {
+    const errors = validationResult(req)
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() })
+
+    const { id: userId } = req.context
+    const { id: trailId } = req.params
+    const { rating } = req.body
+
+    const trail = await Trail.findById(trailId).select('ratings')
+  }
+
+  // FIX
+  async trailsFix(req, res) {
+    const trails = require('../../../trails.json')
+
+    const trailsValidated = trails.map((trail) => {
+      const currentPath = trail.geoLoc.coordinates[0]
+
+      const path = currentPath.map((coordinates) => {
+        return {
+          type: 'Point',
+          coordinates: [coordinates[1], coordinates[0]],
+          elevation: coordinates[2],
+        }
+      })
+
+      let estimate_time_min = null
+      if (trail.estimateTime.includes(' h ')) {
+        const items = trail.estimateTime.split(' h ')
+        const hours = isNaN(parseInt(items[0])) ? 0 : parseInt(items[0])
+        const min = isNaN(parseInt(items[1].replace(' m')))
+          ? 0
+          : parseInt(items[1].replace(' m'))
+        estimate_time_min = hours * 60 + min
+      } else if (trail.estimateTime.includes(' m')) {
+        const min = parseInt(trail.estimateTime.replace(' m'))
+        estimate_time_min = min
+      }
+
+      if (isNaN(estimate_time_min)) {
+        console.log(trail)
+      }
+
+      return {
+        path,
+        id: trail.id,
+        name: trail.name,
+        location: trail.location,
+        county: trail.county,
+        difficulty: trail.difficulty.toLowerCase() || 'unknown',
+        length_km: trail.length_km,
+        description: trail.description,
+        activity_type: trail.activityType,
+        estimate_time_min: estimate_time_min || -1,
+        elevation_gain_ft: trail.elevationGain_ft,
+        no_of_ratings: trail.no_of_ratings,
+        avg_rating: trail.avgRating,
+        img_url: trail.img_url,
+        start: path[0],
+        end: path[path.length - 1],
+        bbox: trail.geoLoc.bbox,
+      }
+    })
+
+    await Trail.insertMany(trailsValidated)
+
+    res.json({ success: 123 })
   }
 
   // VALIDATION

@@ -23,4 +23,18 @@ const verifyToken = async (req, res, next) => {
   }
 }
 
-module.exports = { verifyToken }
+const optionalToken = async (req, res, next) => {
+  const bearerHeader = req.headers.authorization
+  if (!bearerHeader) return next()
+
+  const token = bearerHeader.split(' ')[1]
+
+  try {
+    const decoded = await promisify(JWT.verify)(token, JWT_SECRET)
+    req.context = decoded
+  } catch (err) {}
+
+  next()
+}
+
+module.exports = { verifyToken, optionalToken }

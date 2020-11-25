@@ -28,6 +28,14 @@ class EventController {
     res.json(events)
   }
 
+  async event(req, res) {
+    const { eventId } = req.params
+    const { fields } = req.query
+
+    const event = await Event.findById(eventId).lean()
+    res.json(event)
+  }
+
   async createEvent(req, res) {
     const errors = validationResult(req)
     if (!errors.isEmpty())
@@ -80,12 +88,11 @@ class EventController {
       return res.status(403).json(errorHandler('Nothing to update'))
 
     await Event.updateOne(
-      { eventId },
+      { _id: eventId },
       { title, description, date, duration_min, max_participants }
     )
 
     const event = await Event.findById(eventId)
-
     res.json(event)
   }
 
@@ -101,22 +108,45 @@ class EventController {
     const { id: userId, name } = req.context
     const { eventId } = req.params
 
-    const imageUrl = faker.internet.avatar()
+    const joined = await Event.find({
+      _id: eventId,
+      participants: { userId },
+    }).countDocuments()
 
-    await Event.update(
+    if (!joined) {
+      const imageUrl = faker.internet.avatar()
+      await Event.updateOne(
+        { _id: eventId },
+        {
+          $push: {
+            participants: {
+              userId,
+              name,
+              imageUrl,
+            },
+          },
+        }
+      )
+    }
+
+    res.json({ success: true })
+  }
+
+  async leaveEvent(req, res) {
+    const { id: userId } = req.context
+    const { eventId } = req.params
+
+    await Event.updateOne(
       { _id: eventId },
       {
-        $push: {
+        $pull: {
           participants: {
             userId,
-            name,
-            imageUrl,
           },
         },
       }
     )
-      .then(() => res.json({ success: true }))
-      .catch((error) => res.json(errorHandler(error)))
+    res.json({ success: true })
   }
 
   async eventsCreatedByUser(req, res) {

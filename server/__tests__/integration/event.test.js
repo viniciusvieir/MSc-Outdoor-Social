@@ -50,6 +50,7 @@ describe('Trails', () => {
       password: faker.internet.password(),
       name: faker.name.findName(),
       gender: 'M',
+      dob: '2000-10-01',
     })
     const response = await supertest(app)
       .post(`/trails/${trailId}/events`)
@@ -74,6 +75,7 @@ describe('Trails', () => {
       password: faker.internet.password(),
       name: faker.name.findName(),
       gender: 'M',
+      dob: '2000-10-01',
     })
     const response = await supertest(app)
       .post(`/trails/${trailId}/events`)
@@ -90,6 +92,7 @@ describe('Trails', () => {
       password: faker.internet.password(),
       name: faker.name.findName(),
       gender: 'M',
+      dob: '2000-10-01',
     })
     const response = await supertest(app)
       .post('/trails/5fa17e26bf8d258042edf4be/events')
@@ -110,6 +113,7 @@ describe('Trails', () => {
       password: faker.internet.password(),
       name: faker.name.findName(),
       gender: 'M',
+      dob: '2000-10-01',
     })
     const trailResponse = await supertest(app)
       .post(`/trails/${trailId}/events`)
@@ -134,6 +138,7 @@ describe('Trails', () => {
       password: faker.internet.password(),
       name: faker.name.findName(),
       gender: 'M',
+      dob: '2000-10-01',
     })
     const trailResponse = await supertest(app)
       .post(`/trails/${trailId}/events`)
@@ -155,12 +160,68 @@ describe('Trails', () => {
     expect(updateResponse.body).toHaveProperty('_id')
   })
 
+  it('should not be able to update event if event information is wrong', async () => {
+    const signUpResponse = await supertest(app).post('/signup').send({
+      email: faker.internet.email(),
+      password: faker.internet.password(),
+      name: faker.name.findName(),
+      gender: 'M',
+      dob: '2000-10-01',
+    })
+    const trailResponse = await supertest(app)
+      .post(`/trails/${trailId}/events`)
+      .set('Authorization', `Bearer ${signUpResponse.body.token}`)
+      .send({
+        title: faker.lorem.words(2),
+        description: faker.lorem.sentences(2),
+        date: faker.date.future(),
+        duration_min: 60,
+        max_participants: 10,
+      })
+    const updateResponse = await supertest(app)
+      .put(`/trails/${trailId}/events/${trailResponse.body.eventId}`)
+      .set('Authorization', `Bearer ${signUpResponse.body.token}`)
+      .send({
+        title: faker.lorem.words(2),
+        duration_min: 'wrong_field',
+        max_participants: 'wrong_field',
+      })
+
+    expect(updateResponse.body).toHaveProperty('errors')
+  })
+
+  it('should not be able to update event if nothing is sent', async () => {
+    const signUpResponse = await supertest(app).post('/signup').send({
+      email: faker.internet.email(),
+      password: faker.internet.password(),
+      name: faker.name.findName(),
+      gender: 'M',
+      dob: '2000-10-01',
+    })
+    const trailResponse = await supertest(app)
+      .post(`/trails/${trailId}/events`)
+      .set('Authorization', `Bearer ${signUpResponse.body.token}`)
+      .send({
+        title: faker.lorem.words(2),
+        description: faker.lorem.sentences(2),
+        date: faker.date.future(),
+        duration_min: 60,
+        max_participants: 10,
+      })
+    const updateResponse = await supertest(app)
+      .put(`/trails/${trailId}/events/${trailResponse.body.eventId}`)
+      .set('Authorization', `Bearer ${signUpResponse.body.token}`)
+
+    expect(updateResponse.body).toHaveProperty('errors')
+  })
+
   it('should not be able to update event if event if no information is sent', async () => {
     const signUpResponse = await supertest(app).post('/signup').send({
       email: faker.internet.email(),
       password: faker.internet.password(),
       name: faker.name.findName(),
       gender: 'M',
+      dob: '2000-10-01',
     })
 
     const trailResponse = await supertest(app)
@@ -173,12 +234,70 @@ describe('Trails', () => {
         duration_min: 60,
         max_participants: 10,
       })
-    console.log('*******', trailResponse.body)
 
     const updateResponse = await supertest(app)
       .put(`/trails/${trailId}/events/${trailResponse.body.eventId}`)
       .set('Authorization', `Bearer ${signUpResponse.body.token}`)
 
     expect(updateResponse.body.success).toBe(false)
+  })
+
+  it('should be able to see events created by user', async () => {
+    const signUpResponse = await supertest(app).post('/signup').send({
+      email: faker.internet.email(),
+      password: faker.internet.password(),
+      name: faker.name.findName(),
+      gender: 'M',
+      dob: '2000-10-01',
+    })
+
+    const eventResponse = await supertest(app)
+      .get(`/user/eventsCreated`)
+      .set('Authorization', `Bearer ${signUpResponse.body.token}`)
+
+    expect(eventResponse.body.length).toBeGreaterThan(-1)
+  })
+
+  it('should be able to see events joined by user', async () => {
+    const signUpResponse = await supertest(app).post('/signup').send({
+      email: faker.internet.email(),
+      password: faker.internet.password(),
+      name: faker.name.findName(),
+      gender: 'M',
+      dob: '2000-10-01',
+    })
+
+    const eventResponse = await supertest(app)
+      .get(`/user/eventsJoined`)
+      .set('Authorization', `Bearer ${signUpResponse.body.token}`)
+
+    expect(eventResponse.body.length).toBeGreaterThan(-1)
+  })
+
+  it('should be able to join events', async () => {
+    const signUpResponse = await supertest(app).post('/signup').send({
+      email: faker.internet.email(),
+      password: faker.internet.password(),
+      name: faker.name.findName(),
+      gender: 'M',
+      dob: '2000-10-01',
+    })
+
+    const eventResponse = await supertest(app)
+      .post(`/trails/${trailId}/events`)
+      .set('Authorization', `Bearer ${signUpResponse.body.token}`)
+      .send({
+        title: faker.lorem.words(2),
+        description: faker.lorem.sentences(2),
+        date: faker.date.future(),
+        // duration_min: 60,
+        max_participants: 10,
+      })
+
+    const joinResponse = await supertest(app)
+      .put(`/trails/${trailId}/events/${eventResponse.body.eventId}/join`)
+      .set('Authorization', `Bearer ${signUpResponse.body.token}`)
+
+    expect(joinResponse.body.success).toBe(true)
   })
 })
