@@ -30,11 +30,59 @@ export const fetchEvents = createAsyncThunk(
   }
 );
 
+// export const fetchSingleEvent = createAsyncThunk(
+//   "event/fetchSingleEvent",
+//   async ({ trailID, eventID }, { rejectWithValue }) => {
+//     try {
+//       const response = await trailSeek.get(
+//         `/trails/${trailID}/events/${eventID}`
+//       );
+//       return response.data;
+//     } catch (e) {
+//       return rejectWithValue(
+//         e.response.data?.errors
+//           ? e.response.data.errors
+//               .map((item) => {
+//                 return item.msg;
+//               })
+//               .join(" ")
+//           : e.status
+//       );
+//     }
+//   }
+// );
+
+export const fetchSingleEvent = createAsyncThunk(
+  "event/fetchSingleEvent",
+  async ({ trailID, eventID }, { rejectWithValue }) => {
+    // console.log("Here as well");
+    // console.log(trailID);
+    // console.log(eventID);
+    try {
+      const response = await trailSeek.get(
+        `/trails/${trailID}/events/${eventID}`
+      );
+      return response.data;
+    } catch (e) {
+      console.log(e.response);
+      return rejectWithValue(
+        e.response.data?.errors
+          ? e.response.data.errors
+              .map((item) => {
+                return item.msg;
+              })
+              .join(" ")
+          : e.status
+      );
+    }
+  }
+);
+
 export const joinEvent = createAsyncThunk(
   "event/joinEvent",
   async ({ trailID, eventID }, { dispatch, rejectWithValue }) => {
     try {
-      const response = await trailSeek.post(
+      const response = await trailSeek.put(
         `/trails/${trailID}/events/${eventID}/join`
       );
       return response.data;
@@ -81,11 +129,13 @@ export const postEvents = createAsyncThunk(
 export const putEvents = createAsyncThunk(
   "event/putEvents",
   async ({ trailID, inputs, eventID }, { rejectWithValue }) => {
+    console.log(inputs);
     try {
       const response = await trailSeek.put(
         `/trails/${trailID}/events/${eventID}`,
         inputs
       );
+      console.log(response.data);
       return { eventData: response.data };
     } catch (e) {
       console.log(e);
@@ -169,6 +219,17 @@ export const eventSlice = createSlice({
       state.status = CONSTANTS.SUCCESS;
     },
     [joinEvent.rejected]: (state, action) => {
+      state.status = CONSTANTS.FAILED;
+      state.error = action.payload;
+    },
+    //////////////////////////////////////////////////////////////
+    [fetchSingleEvent.pending]: (state, action) => {
+      state.status = CONSTANTS.LOADING;
+    },
+    [fetchSingleEvent.fulfilled]: (state, action) => {
+      state.status = CONSTANTS.SUCCESS;
+    },
+    [fetchSingleEvent.rejected]: (state, action) => {
       state.status = CONSTANTS.FAILED;
       state.error = action.payload;
     },

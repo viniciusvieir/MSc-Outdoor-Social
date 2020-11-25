@@ -21,55 +21,67 @@ import {
 } from "native-base";
 import { Grid, Col, Row } from "react-native-easy-grid";
 import { useDispatch, useSelector } from "react-redux";
+import { unwrapResult } from "@reduxjs/toolkit";
 
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 
 import ColorConstants from "../util/ColorConstants";
-import { updateCurrentEvent, joinEvent } from "../app/eventSlice";
+import {
+  updateCurrentEvent,
+  joinEvent,
+  fetchSingleEvent,
+} from "../app/eventSlice";
 import { addJoinedEvent } from "../app/userSlice";
 import Constants from "../util/Constants";
 import ToastAlert from "../components/ToastAlert";
-import { unwrapResult } from "@reduxjs/toolkit";
 
 const ViewEventScreen = ({ route, navigation }) => {
   const dispatch = useDispatch();
   const userId = useSelector((state) => state.user.profile.id);
   const isAuth = useSelector((state) => state.user.isAuth);
   const name = useSelector((state) => state.user.profile.name);
-  const joinedEventList = useSelector((state) => state.user.joinedEvents); //Need to be changed temp fix
-  const [jEvents, setJEvents] = useState([]);
   const [joinFlag, setJoinFlag] = useState(false);
   const [participants, setParticipants] = useState([]);
-  const { trailData, eventData } = route.params || {};
+  const { trailData, eventID } = route.params || {};
+  const [eventData, setEventData] = useState({});
 
-  useEffect(() => {
-    if (userId !== eventData.userId) {
-      if (eventData.participants.length < eventData.max_participants) {
-        if (
-          eventData.participants.findIndex((item) => {
-            return item.userId === userId;
-          }) === -1
-        ) {
-          setJoinFlag(true);
-        } else if (jEvents.length > 0) {
+  const getSingleEvent = async () => {
+    try {
+      const response = await dispatch(
+        fetchSingleEvent({ trailID: trailData._id, eventID })
+      );
+      const uResult = unwrapResult(response);
+      setEventData(uResult);
+      dispatch(
+        updateCurrentEvent({ eventData: uResult, trailName: trailData.name })
+      );
+
+      // console.log(eventData);
+      if (userId !== uResult.userId) {
+        if (uResult.participants.length < uResult.max_participants) {
           if (
-            jEvents.findIndex((item) => {
-              return item === eventData._id;
+            uResult.participants.findIndex((item) => {
+              return item.userId === userId;
             }) === -1
           ) {
             setJoinFlag(true);
           }
         }
       }
+    } catch (e) {
+      Toast.show({ text: e.message, type: "danger", duration: 2000 });
     }
-    setParticipants(eventData.participants);
-    const unsubscribe = navigation.addListener("focus", () => {
-      dispatch(updateCurrentEvent({ eventData, trailName: trailData.name }));
-      setJEvents(joinedEventList);
+  };
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", async () => {
+      getSingleEvent();
     });
+    getSingleEvent();
+    setParticipants(eventData.participants);
     return unsubscribe;
-  }, [navigation, dispatch]);
+  }, [navigation]);
 
   let eventWeather;
   if (trailData && eventData) {
@@ -189,6 +201,15 @@ const ViewEventScreen = ({ route, navigation }) => {
                     </Text>
                   </Row>
                 </Col>
+
+                <Col>
+                  <Row>
+                    <FontAwesome5 name="male" size={24} color="black" />
+                    <Text style={styles.textInfo}>
+                      {eventData.max_participants}
+                    </Text>
+                  </Row>
+                </Col>
                 {/* <Col>
                   <Text style={styles.textInfoLabel}>Duration</Text>
                   <Text style={styles.textInfo}>
@@ -200,15 +221,6 @@ const ViewEventScreen = ({ route, navigation }) => {
                     hr
                   </Text>
                 </Col> */}
-                <Col>
-                  <Row>
-                    <FontAwesome5 name="male" size={24} color="black" />
-
-                    <Text style={styles.textInfo}>
-                      {eventData.max_participants}
-                    </Text>
-                  </Row>
-                </Col>
               </Row>
 
               <Row style={{ marginTop: 16 }}>
@@ -282,29 +294,33 @@ const ViewEventScreen = ({ route, navigation }) => {
 
             <View
               style={{
-                backgroundColor: ColorConstants.Black + 40,
-                alignItems: "center",
-                justifyContent: "center",
+                // backgroundColor: ColorConstants.Black + 40,
+                // alignItems: "center",
+                // justifyContent: "center",
                 height: 50,
               }}
             >
               <Text
                 style={{
-                  color: ColorConstants.DWhite,
+                  color: ColorConstants.Black,
                   fontSize: 22,
+                  marginLeft: 20,
                 }}
               >
-                Other Participants
+                Other Participants :
               </Text>
             </View>
             <FlatList
-              data={participants}
+              data={eventData.participants}
               keyExtractor={(item) => {
                 return item.userId.toString();
               }}
               style={{
                 marginVertical: 10,
               }}
+              ListEmptyComponent={
+                <Text style={{ marginLeft: 20 }}>No participants</Text>
+              }
               horizontal
               renderItem={({ item }) => {
                 return (
@@ -313,15 +329,15 @@ const ViewEventScreen = ({ route, navigation }) => {
                       style={{
                         borderColor: ColorConstants.DGreen,
                         borderWidth: 3,
-                        height: 100,
-                        width: 100,
+                        height: 40,
+                        width: 40,
                       }}
                       large
                       source={{
                         uri: `https://eu.ui-avatars.com/api/?name=${item.name}`,
                       }}
                     />
-                    <Text style={{ color: ColorConstants.Black, fontSize: 18 }}>
+                    <Text style={{ color: ColorConstants.Black, fontSize: 10 }}>
                       {item.name}
                     </Text>
                   </View>
@@ -337,56 +353,68 @@ const ViewEventScreen = ({ route, navigation }) => {
           height: 60,
         }}
       >
-        {joinFlag ? (
-          <View style={{ justifyContent: "center" }}>
-            <Button
-              style={{
-                backgroundColor: ColorConstants.Yellow,
-              }}
-              onPress={async () => {
-                try {
-                  const response = await dispatch(
-                    joinEvent({
-                      trailID: eventData.trailId,
-                      eventID: eventData._id,
-                    })
-                  );
-                  const h = unwrapResult(response);
-                  dispatch(addJoinedEvent(eventData._id));
+        <View style={{ flex: 1 }}>
+          {joinFlag ? (
+            <View style={styles.joinShareButtonView}>
+              <Button
+                style={{
+                  backgroundColor: ColorConstants.Yellow,
+                }}
+                onPress={async () => {
+                  try {
+                    const response = await dispatch(
+                      joinEvent({
+                        trailID: trailData._id,
+                        eventID,
+                      })
+                    );
+                    const h = unwrapResult(response);
+                    getSingleEvent();
 
-                  //Add Modal
-                  Toast.show({
-                    text: "Event Joined",
-                    buttonText: "Okay",
-                    type: "success",
-                  });
-                  setParticipants((oldList) => [...oldList, { name, userId }]);
-                  setJoinFlag(false);
+                    //Add Modal
+                    Toast.show({
+                      text: "Event Joined",
+                      buttonText: "Okay",
+                      type: "success",
+                    });
+                    setJoinFlag(false);
 
-                  // navigation.goBack(); // Comment this
-                } catch (e) {
-                  ToastAlert(e.message);
-                }
-              }}
-            >
-              <Text style={{ color: ColorConstants.Black }}>Join</Text>
-            </Button>
-          </View>
-        ) : (
-          <View style={{ justifyContent: "center" }}>
-            <Button
-              style={{
-                backgroundColor: ColorConstants.Yellow,
-                // paddingHorizontal: 5,
-                paddingStart: 10,
-              }}
-              onPress={() => {}}
-            >
-              <FontAwesome5 name="share-alt" size={20} color="black" />
-              <Text style={{ color: ColorConstants.Black }}>Share</Text>
-            </Button>
-          </View>
-        )}
+                    // navigation.goBack(); // Comment this
+                  } catch (e) {
+                    ToastAlert(e.message);
+                  }
+                }}
+              >
+                <Text style={{ color: ColorConstants.Black }}>Join</Text>
+              </Button>
+            </View>
+          ) : (
+            <>
+              <View style={styles.joinShareButtonView}>
+                <View
+                  style={{
+                    marginRight: 50,
+                  }}
+                >
+                  {userId !== eventData.userId ? (
+                    <Text style={{ fontSize: 25 }}>You are going!</Text>
+                  ) : null}
+                </View>
+                <Button
+                  style={{
+                    backgroundColor: ColorConstants.Yellow,
+                    // paddingHorizontal: 5,
+                    paddingStart: 10,
+                  }}
+                  onPress={() => {}}
+                >
+                  <FontAwesome5 name="share-alt" size={20} color="black" />
+                  <Text style={{ color: ColorConstants.Black }}>Share</Text>
+                </Button>
+              </View>
+            </>
+          )}
+        </View>
       </Footer>
     </Container>
   );
@@ -410,6 +438,12 @@ const styles = StyleSheet.create({
   textInfoDescription: {
     color: ColorConstants.darkGray,
     fontSize: 15,
+  },
+  joinShareButtonView: {
+    alignSelf: "flex-end",
+    marginRight: 20,
+    flexDirection: "row",
+    marginTop: 10,
   },
 });
 

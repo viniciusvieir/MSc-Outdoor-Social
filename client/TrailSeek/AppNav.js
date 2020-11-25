@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialIcons } from "@expo/vector-icons";
+import { Octicons } from "@expo/vector-icons";
 import { createStackNavigator } from "@react-navigation/stack";
 import { StyleSheet, Linking, TouchableOpacity } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
@@ -315,6 +316,11 @@ const AppNav = () => {
       ? state.event.currentEvent[0].eventData.userId
       : null
   );
+  const currentEventParticipants = useSelector((state) =>
+    state.event.currentEvent.length
+      ? state.event.currentEvent[0].eventData.participants
+      : null
+  );
 
   const getAsyncTokenAndUserData = async () => {
     try {
@@ -378,20 +384,42 @@ const AppNav = () => {
                   style={styles.shadow}
                 />
               ),
-              headerRight: () =>
-                userId === currentEventUserID ? (
-                  <TouchableOpacity
-                    onPress={() => {
-                      navigation.navigate("EditEvent");
-                    }}
-                  >
-                    <MaterialIcons
-                      name="edit"
-                      size={24}
-                      style={{ color: "#000000", marginRight: 20 }}
-                    />
-                  </TouchableOpacity>
-                ) : null,
+              headerRight: () => {
+                if (userId === currentEventUserID) {
+                  return (
+                    <TouchableOpacity
+                      onPress={() => {
+                        navigation.navigate("EditEvent");
+                      }}
+                    >
+                      <MaterialIcons
+                        name="edit"
+                        size={24}
+                        style={{ color: "#000000", marginRight: 20 }}
+                      />
+                    </TouchableOpacity>
+                  );
+                } else if (
+                  currentEventParticipants?.findIndex((item) => {
+                    return item.userId === userId;
+                  }) !== -1
+                ) {
+                  return (
+                    <TouchableOpacity
+                      onPress={() => {
+                        navigation.navigate("EditEvent");
+                      }}
+                    >
+                      <Octicons
+                        name="kebab-vertical"
+                        size={24}
+                        color="#000000"
+                        style={{ marginRight: 20 }}
+                      />
+                    </TouchableOpacity>
+                  );
+                } else return null;
+              },
             })}
           />
           <Stack.Screen

@@ -67,7 +67,7 @@ const EventsTab = ({ trailData }) => {
                   onPress={() => {
                     navigation.navigate("ViewEvent", {
                       trailData,
-                      eventData: item,
+                      eventID: item._id,
                     });
                   }}
                   noIndent

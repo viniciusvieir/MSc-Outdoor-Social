@@ -43,13 +43,9 @@ const UserForm = ({ onSubmitFunc, userData }) => {
           confirmPassword: Yup.string()
             .required()
             .label("Confirm password")
-            .test(
-              "passwords-match",
-              "Passwords must match ya fool",
-              function (value) {
-                return this.parent.password === value;
-              }
-            ),
+            .test("passwords-match", "Passwords must match", function (value) {
+              return this.parent.password === value;
+            }),
         })}
         onSubmit={async (values, formikActions) => {
           formikActions.setSubmitting(false);

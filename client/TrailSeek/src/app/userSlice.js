@@ -24,7 +24,6 @@ const initialState = {
   },
   isAuth: false,
   covidToggle: true,
-  joinedEvents: [],
 };
 
 export const signIn = createAsyncThunk(
@@ -79,9 +78,30 @@ export const signUp = createAsyncThunk(
 
 export const fetchUserData = createAsyncThunk(
   "user/fetchUserData",
-  async (_, { rejectWithValue, getState }) => {
+  async (_, { rejectWithValue }) => {
     try {
       const response = await trailSeek.get("/user");
+      return response.data;
+    } catch (error) {
+      console.log(error.response);
+      return rejectWithValue(
+        error.response.data?.errors
+          ? error.response.data.errors
+              .map((item) => {
+                return item.msg;
+              })
+              .join(" ")
+          : error.status
+      );
+    }
+  }
+);
+
+export const editUserData = createAsyncThunk(
+  "user/editUserData",
+  async ({ inputs }, { rejectWithValue }) => {
+    try {
+      const response = await trailSeek.put("/user", inputs);
       return response.data;
     } catch (error) {
       console.log(error.response);
@@ -159,9 +179,6 @@ export const userSlice = createSlice({
   reducers: {
     toggleCovid(state, action) {
       state.covidToggle = !state.covidToggle;
-    },
-    addJoinedEvent(state, action) {
-      state.joinedEvents.push(action.payload);
     },
   },
   extraReducers: {
@@ -269,10 +286,21 @@ export const userSlice = createSlice({
       state.profile.error = action.payload;
     },
     //////////////////////////////////////////////////////////////
+    [editUserData.pending]: (state, action) => {
+      state.profile.status = CONSTANTS.LOADING;
+    },
+    [editUserData.fulfilled]: (state, action) => {
+      state.profile.status = CONSTANTS.SUCCESS;
+    },
+    [editUserData.rejected]: (state, action) => {
+      state.profile.status = CONSTANTS.FAILED;
+      state.profile.error = action.payload;
+    },
+    //////////////////////////////////////////////////////////////
   },
 });
 
-export const { toggleCovid, addJoinedEvent } = userSlice.actions;
+export const { toggleCovid } = userSlice.actions;
 
 export default userSlice.reducer;
 

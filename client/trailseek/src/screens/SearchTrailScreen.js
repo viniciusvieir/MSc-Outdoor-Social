@@ -81,7 +81,7 @@ const SearchTrailScreen = ({ navigation }) => {
       setFilter(easyParams);
       getTrailsByQuery({
         query: {
-          difficulty: "Easy",
+          difficulty: "easy",
           length_km: { $lt: 5 },
         },
       });
@@ -182,7 +182,7 @@ const SearchTrailScreen = ({ navigation }) => {
             setTrails([]);
             await getTrailsByQuery({
               query: {
-                difficulty: "Easy",
+                difficulty: "easy",
                 length_km: { $lt: 5 },
               },
             });

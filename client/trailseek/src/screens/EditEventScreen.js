@@ -23,7 +23,12 @@ const EditEventScreen = ({ navigation }) => {
         })
       );
       unwrapResult(response);
-      Toast.show({ text: "Event edited", type: "success", buttonText: "Ok" });
+      Toast.show({
+        text: "Event edited",
+        type: "success",
+        buttonText: "Ok",
+        duration: 2000,
+      });
       navigation.goBack();
     } catch (e) {
       ToastAlert(e.message);
