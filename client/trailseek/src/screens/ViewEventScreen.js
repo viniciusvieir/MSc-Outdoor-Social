@@ -75,6 +75,7 @@ const ViewEventScreen = ({ route, navigation }) => {
   };
 
   useEffect(() => {
+    navigation.setParams({ refresh: () => getSingleEvent() });
     const unsubscribe = navigation.addListener("focus", async () => {
       getSingleEvent();
     });
@@ -370,7 +371,7 @@ const ViewEventScreen = ({ route, navigation }) => {
                     );
                     const h = unwrapResult(response);
                     getSingleEvent();
-
+                    navigation.s;
                     //Add Modal
                     Toast.show({
                       text: "Event Joined",
@@ -403,7 +404,6 @@ const ViewEventScreen = ({ route, navigation }) => {
                 <Button
                   style={{
                     backgroundColor: ColorConstants.Yellow,
-                    // paddingHorizontal: 5,
                     paddingStart: 10,
                   }}
                   onPress={() => {}}

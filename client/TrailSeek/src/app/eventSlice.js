@@ -80,7 +80,7 @@ export const fetchSingleEvent = createAsyncThunk(
 
 export const joinEvent = createAsyncThunk(
   "event/joinEvent",
-  async ({ trailID, eventID }, { dispatch, rejectWithValue }) => {
+  async ({ trailID, eventID }, { rejectWithValue }) => {
     try {
       const response = await trailSeek.put(
         `/trails/${trailID}/events/${eventID}/join`
@@ -101,9 +101,32 @@ export const joinEvent = createAsyncThunk(
   }
 );
 
+export const leaveEvent = createAsyncThunk(
+  "event/leaveEvent",
+  async ({ trailID, eventID }, { rejectWithValue }) => {
+    try {
+      const response = await trailSeek.put(
+        `/trails/${trailID}/events/${eventID}/leave`
+      );
+      return response.data;
+    } catch (e) {
+      console.log(e.response);
+      return rejectWithValue(
+        e.response.data?.errors
+          ? e.response.data.errors
+              .map((item) => {
+                return item.msg;
+              })
+              .join(" ")
+          : e.status
+      );
+    }
+  }
+);
+
 export const postEvents = createAsyncThunk(
   "event/postEvents",
-  async ({ trailID, inputs }, { dispatch, rejectWithValue }) => {
+  async ({ trailID, inputs }, { rejectWithValue }) => {
     try {
       const response = await trailSeek.post(
         `/trails/${trailID}/events`,
@@ -234,6 +257,16 @@ export const eventSlice = createSlice({
       state.error = action.payload;
     },
     //////////////////////////////////////////////////////////////
+    [leaveEvent.pending]: (state, action) => {
+      state.status = CONSTANTS.LOADING;
+    },
+    [leaveEvent.fulfilled]: (state, action) => {
+      state.status = CONSTANTS.SUCCESS;
+    },
+    [leaveEvent.rejected]: (state, action) => {
+      state.status = CONSTANTS.FAILED;
+      state.error = action.payload;
+    },
   },
 });
 

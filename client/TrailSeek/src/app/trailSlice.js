@@ -100,7 +100,6 @@ export const fetchTrailsByID = createAsyncThunk(
       //   (item) => item._id === id
       // );
       // if (existTrail) return existTrail;
-      console.log(id);
       const response = await trailSeek.get(`/trails/${id}?fields=${fields}`);
       try {
         weatherResponse = await weather.get("/onecall", {
