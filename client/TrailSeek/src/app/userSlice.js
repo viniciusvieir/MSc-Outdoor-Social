@@ -78,9 +78,30 @@ export const signUp = createAsyncThunk(
 
 export const fetchUserData = createAsyncThunk(
   "user/fetchUserData",
-  async (_, { rejectWithValue, getState }) => {
+  async (_, { rejectWithValue }) => {
     try {
       const response = await trailSeek.get("/user");
+      return response.data;
+    } catch (error) {
+      console.log(error.response);
+      return rejectWithValue(
+        error.response.data?.errors
+          ? error.response.data.errors
+              .map((item) => {
+                return item.msg;
+              })
+              .join(" ")
+          : error.status
+      );
+    }
+  }
+);
+
+export const editUserData = createAsyncThunk(
+  "user/editUserData",
+  async ({ inputs }, { rejectWithValue }) => {
+    try {
+      const response = await trailSeek.put("/user", inputs);
       return response.data;
     } catch (error) {
       console.log(error.response);
@@ -241,6 +262,7 @@ export const userSlice = createSlice({
       state.profile.gender = "";
       state.profile.email = "";
       state.isAuth = false;
+      state.joinedEvents = [];
     },
     [logOut.rejected]: (state, action) => {
       state.profile.status = CONSTANTS.FAILED;
@@ -261,6 +283,17 @@ export const userSlice = createSlice({
     [fetchUserData.rejected]: (state, action) => {
       state.profile.status = CONSTANTS.FAILED;
       state.isAuth = false;
+      state.profile.error = action.payload;
+    },
+    //////////////////////////////////////////////////////////////
+    [editUserData.pending]: (state, action) => {
+      state.profile.status = CONSTANTS.LOADING;
+    },
+    [editUserData.fulfilled]: (state, action) => {
+      state.profile.status = CONSTANTS.SUCCESS;
+    },
+    [editUserData.rejected]: (state, action) => {
+      state.profile.status = CONSTANTS.FAILED;
       state.profile.error = action.payload;
     },
     //////////////////////////////////////////////////////////////

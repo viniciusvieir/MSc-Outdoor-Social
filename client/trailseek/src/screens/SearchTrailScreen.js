@@ -15,20 +15,12 @@ import { getLocation } from "../app/userSlice";
 import Constants from "../util/Constants";
 import TrailFilter from "../components/TrailFilter";
 
-function useConstructor(callBack = () => {}) {
-  const [hasBeenCalled, setHasBeenCalled] = useState(false);
-  if (hasBeenCalled) return;
-  callBack();
-  setHasBeenCalled(true);
-}
-
 const SearchTrailScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const [searchTerm, setSearchTerm] = useState("");
   const trailStatus = useSelector((state) => state.trails.status);
   const error = useSelector((state) => state.trails.error);
   const user = useSelector((state) => state.user.profile.name);
-  const isAuth = useSelector((state) => state.user.isAuth);
   const locationStatus = useSelector((state) => state.user.userLocation.status);
 
   const [trails, setTrails] = useState([]);
@@ -36,22 +28,14 @@ const SearchTrailScreen = ({ navigation }) => {
 
   const easyParams = {
     title: "Easy Trails",
-    query: {
-      difficulty: "Easy",
-      length_km: { $lt: 5 },
-    },
   };
 
   const bestParams = {
     title: "Best Rated",
-    query: {
-      avg_rating: { $gt: 4 },
-    },
   };
 
   const nearMe = {
     title: "Near You",
-    location: true,
   };
 
   let searchParam = {
@@ -62,9 +46,6 @@ const SearchTrailScreen = ({ navigation }) => {
       },
     },
   };
-  useConstructor(() => {
-    setFilter(easyParams);
-  });
 
   let content,
     spinner = true;
@@ -87,7 +68,7 @@ const SearchTrailScreen = ({ navigation }) => {
       }
 
       const uResult = unwrapResult(results);
-      setTrails(uResult.response);
+      setTrails(uResult);
     } catch (e) {
       ToastAlert(e.message);
       ToastAlert(error);
@@ -96,10 +77,17 @@ const SearchTrailScreen = ({ navigation }) => {
 
   //Initial Trail Fetch
   useEffect(() => {
-    getTrailsByQuery({
-      query: filter?.query,
-      location: filter?.location,
-    });
+    if (JSON.stringify(filter) === "{}") {
+      setFilter(easyParams);
+      getTrailsByQuery({
+        query: {
+          difficulty: "easy",
+          length_km: { $lt: 5 },
+        },
+      });
+    }
+  }, []);
+  useEffect(() => {
     setSearchTerm("");
   }, [filter]);
 
@@ -176,34 +164,39 @@ const SearchTrailScreen = ({ navigation }) => {
         <TrailFilter
           title={bestParams.title}
           active={filter.title === bestParams.title}
-          action={() => {
+          action={async () => {
             setFilter(bestParams);
             setTrails([]);
-            getTrailsByQuery({
-              query: filter?.query,
+            await getTrailsByQuery({
+              query: {
+                avg_rating: { $gt: 4 },
+              },
             });
           }}
         />
         <TrailFilter
           title={easyParams.title}
           active={filter.title === easyParams.title}
-          action={() => {
+          action={async () => {
             setFilter(easyParams);
             setTrails([]);
-            getTrailsByQuery({
-              query: filter?.query,
+            await getTrailsByQuery({
+              query: {
+                difficulty: "easy",
+                length_km: { $lt: 5 },
+              },
             });
           }}
         />
         <TrailFilter
           title={nearMe.title}
           active={filter.title === nearMe.title}
-          action={() => {
+          action={async () => {
             setFilter(nearMe);
             setTrails([]);
-            getTrailsByQuery({
-              query: filter?.query,
-              location: filter?.location,
+            await getTrailsByQuery({
+              query: {},
+              location: true,
             });
           }}
         />

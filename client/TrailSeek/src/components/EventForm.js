@@ -1,31 +1,20 @@
 import React, { useState } from "react";
 import { TextInput, View, StyleSheet, TouchableOpacity } from "react-native";
-import {
-  Text,
-  Button,
-  Container,
-  Content,
-  Left,
-  Right,
-  Body,
-} from "native-base";
+import { Text, Button, Container, Content, Toast } from "native-base";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment";
 import { useSelector } from "react-redux";
 import { Formik, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { useNavigation } from "@react-navigation/native";
 import { Grid, Col, Row } from "react-native-easy-grid";
 import { FontAwesome5 } from "@expo/vector-icons";
 
-import ToastAlert from "../components/ToastAlert";
 import ColorConstants from "../util/ColorConstants";
+
 
 const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
   const username = useSelector((state) => state.user.profile.name);
   const [show, setShow] = useState(false);
-  const navigation = useNavigation();
-  //   const dispatch = useDispatch();
 
   return (
     <Container>
@@ -51,8 +40,8 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
                     title: "",
                     description: "",
                     date: moment().format("YYYY-MM-DD"),
-                    duration_min: "",
-                    max_participants: "",
+                    duration_min: 0,
+                    max_participants: 0,
                   }
             }
             validationSchema={Yup.object({
@@ -66,16 +55,8 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
               ),
             })}
             onSubmit={async (values, formikActions) => {
-              try {
-                const res = await onSubmitFunc(values);
-                // const response = await dispatch(
-                //   postEvents({ inputs: values, trailID })
-                // );
-                formikActions.setSubmitting(false);
-                navigation.goBack();
-              } catch (e) {
-                ToastAlert(e.message);
-              }
+              formikActions.setSubmitting(false);
+              onSubmitFunc(values);
             }}
           >
             {(props) => (
@@ -191,7 +172,7 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
                   <TextInput
                     onChangeText={props.handleChange("duration_min")}
                     onBlur={props.handleBlur("duration_min")}
-                    value={props.values.duration_min}
+                    value={props.values.duration_min.toString()}
                     style={styles.input}
                     onSubmitEditing={() => {}}
                     keyboardType="number-pad"
@@ -214,7 +195,7 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
                   <TextInput
                     onChangeText={props.handleChange("max_participants")}
                     onBlur={props.handleBlur("max_participants")}
-                    value={props.values.max_participants}
+                    value={props.values.max_participants.toString()}
                     style={styles.input}
                     onSubmitEditing={() => {}}
                     keyboardType="number-pad"

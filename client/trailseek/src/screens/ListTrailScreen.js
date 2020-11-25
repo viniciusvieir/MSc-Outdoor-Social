@@ -39,10 +39,6 @@ const ListTrailScreen = ({ route }) => {
     getTrailsByQuery();
   }, []);
 
-  useEffect(() => {
-    dispatch(fetchTrailsByQuery({ query, limit }));
-  }, []);
-
   if (trailStatus === CONSTANTS.LOADING) {
     spinner = true;
   } else if (trailStatus === CONSTANTS.FAILED) {
