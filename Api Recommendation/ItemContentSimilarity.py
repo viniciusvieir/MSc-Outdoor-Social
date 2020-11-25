@@ -14,11 +14,10 @@ from sklearn.metrics.pairwise import cosine_similarity
 from dotenv import load_dotenv
 from pathlib import Path
 
-load_dotenv(dotenv_path = Path('../server/.env'))
-
+load_dotenv(dotenv_path = Path('.env'))
 MONGO_URL = os.getenv('MONGO_URL')
 
-class itemContentSimilarity:
+class ItemContentSimilarity:
     
     client = pymongo.MongoClient(MONGO_URL)
     db = client['trailseek']
@@ -60,30 +59,28 @@ class itemContentSimilarity:
         
         return df
 
-if __name__ == '__main__':
-    try:
-        args = sys.argv
-    #print(type(args[1]))
+    def get_similar(self, trail_id):
         
-        ITCont = itemContentSimilarity(args[1])
-    except IndexError:
-        raise Exception("Error Occured: Cause 'No Input'")
-    
-    df = ITCont.fetchDB(ITCont.trails_col)
-    
-    try:
-        for idx, id in enumerate(ITCont.hike_ids):
-            #print(idx," ",id)
-            
-            if str(id) == ITCont.user_clicked_id:
-                #print('Match')
-                hike_idx = idx
-                break   
-        recommendations = ITCont.cosSimilarity(hike_idx, df, ITCont.hike_ids, n=10)
-    except NameError: 
-        raise Exception("Error Occured: Cause 'Trail Object ID not found'")
-    
-    print(','.join(recommendations))
+        ITCont = ItemContentSimilarity(trail_id)
+        df = ITCont.fetchDB(ITCont.trails_col)
+        
+        try:
+            for idx, id in enumerate(ITCont.hike_ids):
+                #print(idx," ",id)
+                
+                if str(id) == ITCont.user_clicked_id:
+                    #print('Match')
+                    hike_idx = idx
+                    break   
+            recommendations = ITCont.cosSimilarity(hike_idx, df, ITCont.hike_ids, n=10)
+        except NameError: 
+            raise Exception("Error Occured: Cause 'Trail Object ID not found'")
+        
+        print(','.join(recommendations))
+        return recommendations
 
-    
+def get_similar(user_id, trail_id):
+    similar = ItemContentSimilarity(user_id)
+    output = similar.get_similar(trail_id)
+    return output
     
