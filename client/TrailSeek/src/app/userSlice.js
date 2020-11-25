@@ -97,6 +97,48 @@ export const fetchUserData = createAsyncThunk(
   }
 );
 
+export const getUserCreatedEvents = createAsyncThunk(
+  "user/getUserCreatedEvents",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await trailSeek.get("/user/eventsCreated");
+      return response.data;
+    } catch (error) {
+      console.log(error.response);
+      return rejectWithValue(
+        error.response.data?.errors
+          ? error.response.data.errors
+              .map((item) => {
+                return item.msg;
+              })
+              .join(" ")
+          : error.status
+      );
+    }
+  }
+);
+
+export const getUserJoinedEvents = createAsyncThunk(
+  "user/getUserJoinedEvents",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await trailSeek.get("/user/eventsJoined");
+      return response.data;
+    } catch (error) {
+      console.log(error.response);
+      return rejectWithValue(
+        error.response.data?.errors
+          ? error.response.data.errors
+              .map((item) => {
+                return item.msg;
+              })
+              .join(" ")
+          : error.status
+      );
+    }
+  }
+);
+
 export const editUserData = createAsyncThunk(
   "user/editUserData",
   async ({ inputs }, { rejectWithValue }) => {
@@ -295,6 +337,28 @@ export const userSlice = createSlice({
     [editUserData.rejected]: (state, action) => {
       state.profile.status = CONSTANTS.FAILED;
       state.profile.error = action.payload;
+    },
+    //////////////////////////////////////////////////////////////
+    [getUserCreatedEvents.pending]: (state, action) => {
+      state.profile.status = CONSTANTS.LOADING;
+    },
+    [getUserCreatedEvents.fulfilled]: (state, action) => {
+      state.profile.status = CONSTANTS.SUCCESS;
+    },
+    [getUserCreatedEvents.rejected]: (state, action) => {
+      state.profile.status = CONSTANTS.FAILED;
+      state.profile.error = action.error.message;
+    },
+    //////////////////////////////////////////////////////////////
+    [getUserJoinedEvents.pending]: (state, action) => {
+      state.profile.status = CONSTANTS.LOADING;
+    },
+    [getUserJoinedEvents.fulfilled]: (state, action) => {
+      state.profile.status = CONSTANTS.SUCCESS;
+    },
+    [getUserJoinedEvents.rejected]: (state, action) => {
+      state.profile.status = CONSTANTS.FAILED;
+      state.profile.error = action.error.message;
     },
     //////////////////////////////////////////////////////////////
   },

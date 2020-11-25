@@ -21,6 +21,7 @@ const SearchTrailScreen = ({ navigation }) => {
   const trailStatus = useSelector((state) => state.trails.status);
   const error = useSelector((state) => state.trails.error);
   const user = useSelector((state) => state.user.profile.name);
+  const isAuth = useSelector((state) => state.user.isAuth);
   const locationStatus = useSelector((state) => state.user.userLocation.status);
 
   const [trails, setTrails] = useState([]);
@@ -36,6 +37,10 @@ const SearchTrailScreen = ({ navigation }) => {
 
   const nearMe = {
     title: "Near You",
+  };
+
+  const recomended = {
+    title: "Recommended",
   };
 
   let searchParam = {
@@ -161,19 +166,54 @@ const SearchTrailScreen = ({ navigation }) => {
           marginBottom: 10,
         }}
       >
-        <TrailFilter
-          title={bestParams.title}
-          active={filter.title === bestParams.title}
-          action={async () => {
-            setFilter(bestParams);
-            setTrails([]);
-            await getTrailsByQuery({
-              query: {
-                avg_rating: { $gt: 4 },
-              },
-            });
-          }}
-        />
+        {/* <ScrollView
+        style={{ maxHeight: 65 }}
+        horizontal
+        contentContainerStyle={{
+          flexDirection: "row",
+          // justifyContent: "space-between",
+          alignItems: "center",
+          marginTop: 10,
+          maxHeight: 44,
+          height: 50,
+          marginLeft: 10,
+          // marginHorizontal: 40,
+          // marginBottom: 10,
+          // flex: 1,
+          borderColor: "red",
+          borderWidth: 2,
+        }}
+      > */}
+        {isAuth ? (
+          <TrailFilter
+            title={recomended.title}
+            active={filter.title === recomended.title}
+            action={async () => {
+              setFilter(recomended);
+              setTrails([]);
+              await getTrailsByQuery({
+                query: {
+                  recommendation: true,
+                },
+              });
+            }}
+          />
+        ) : (
+          <TrailFilter
+            title={bestParams.title}
+            active={filter.title === bestParams.title}
+            action={async () => {
+              setFilter(bestParams);
+              setTrails([]);
+              await getTrailsByQuery({
+                query: {
+                  avg_rating: { $gt: 4 },
+                },
+              });
+            }}
+          />
+        )}
+
         <TrailFilter
           title={easyParams.title}
           active={filter.title === easyParams.title}
@@ -188,6 +228,7 @@ const SearchTrailScreen = ({ navigation }) => {
             });
           }}
         />
+
         <TrailFilter
           title={nearMe.title}
           active={filter.title === nearMe.title}
@@ -200,6 +241,7 @@ const SearchTrailScreen = ({ navigation }) => {
             });
           }}
         />
+        {/* </ScrollView> */}
       </View>
 
       <View
