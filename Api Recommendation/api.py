@@ -1,5 +1,6 @@
 import os, glob, json
-import Item_Collaborative as model
+import ItemCollaborative as model
+import ItemContentSimilarity as similar
 from pathlib import Path
 from dotenv import load_dotenv
 from flask import Flask, render_template, session, request, jsonify
