@@ -36,7 +36,7 @@ router.get(
   trailController.trails
 )
 router.get(
-  '/trails/:trailId',
+  '/trails/:id',
   trailController.validators.trailById,
   trailController.trailById
 )
