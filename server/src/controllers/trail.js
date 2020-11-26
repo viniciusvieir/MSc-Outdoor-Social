@@ -280,10 +280,14 @@ class TrailController {
         param('id').isString().isLength(24),
         query('fields').optional().isString(),
       ],
+<<<<<<< HEAD
       rating: [
         param('trailId').isString().isLength(24),
         body('rating').isFloat({ min: 0, max: 5 }),
       ],
+=======
+      rating: [body('rating').isFloat({ min: 0, max: 5 })],
+>>>>>>> fda076b047026449a14eca48c4eb217b1036a7a6
     }
   }
 }
