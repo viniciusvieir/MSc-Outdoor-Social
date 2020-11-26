@@ -61,6 +61,11 @@ router.post(
   eventController.createEvent
 )
 router.get(
+  '/events/:eventId',
+  eventController.validators.events,
+  eventController.event
+)
+router.get(
   '/trails/:trailId/events/:eventId',
   eventController.validators.events,
   eventController.event
