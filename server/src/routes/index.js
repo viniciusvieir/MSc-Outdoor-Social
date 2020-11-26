@@ -36,11 +36,17 @@ router.get(
   trailController.trails
 )
 router.get(
-  '/trails/:id',
+  '/trails/:trailId',
   trailController.validators.trailById,
   trailController.trailById
 )
 // router.get('/trailsfix', trailController.trailsFix)
+router.post(
+  '/trails/:trailId/rate',
+  verifyToken,
+  trailController.validators.rating,
+  trailController.rateTrail
+)
 
 // =============== EVENT ==============
 router.get(
