@@ -170,7 +170,7 @@ class TrailController {
       if (users[rating.userId]) {
         users[rating.userId].push(rating.rating)
       } else {
-        users[rating.userId] = []
+        users[rating.userId] = [rating.rating]
       }
     })
 
@@ -280,7 +280,10 @@ class TrailController {
         param('id').isString().isLength(24),
         query('fields').optional().isString(),
       ],
-      rating: [body('rating').isFloat({ min: 0, max: 5 })],
+      rating: [
+        param('trailId').isString().isLength(24),
+        body('rating').isFloat({ min: 0, max: 5 }),
+      ],
     }
   }
 }

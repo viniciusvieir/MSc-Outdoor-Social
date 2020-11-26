@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from 'react'
 import {
   StyleSheet,
   View,
@@ -7,33 +7,34 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
-} from "react-native";
-import { Text, CardItem, Card } from "native-base";
-import StarRating from "react-native-star-rating";
-import { Col, Row, Grid } from "react-native-easy-grid";
-import { useNavigation } from "@react-navigation/native";
-import moment from "moment";
-import { useSelector } from "react-redux";
+} from 'react-native'
+import { Text, CardItem, Card } from 'native-base'
+import StarRating from 'react-native-star-rating'
+import { Col, Row, Grid } from 'react-native-easy-grid'
+import { useNavigation } from '@react-navigation/native'
+import moment from 'moment'
+import { useSelector } from 'react-redux'
 
-import { FontAwesome5 } from "@expo/vector-icons";
-import { Entypo } from "@expo/vector-icons";
+import { FontAwesome5 } from '@expo/vector-icons'
+import { Entypo } from '@expo/vector-icons'
 
-import WeatherWidget from "./WeatherWidget";
-import CovidWidget from "./CovidWidget";
-import ColorConstants from "../util/ColorConstants";
-import NoData from "./NoData";
-import Constants from "../util/Constants";
+import WeatherWidget from './WeatherWidget'
+import CovidWidget from './CovidWidget'
+import ColorConstants from '../util/ColorConstants'
+import NoData from './NoData'
+import Constants from '../util/Constants'
+import RatingModal from './RatingModal'
 
 const DetaiTabs = ({ trailData, covData }) => {
-  const navigation = useNavigation();
-  const covidToggle = useSelector((state) => state.user.covidToggle);
-  let covContent;
+  const navigation = useNavigation()
+  const covidToggle = useSelector((state) => state.user.covidToggle)
+  let covContent
   covContent = covidToggle ? (
     <>
       <View
         style={{
           marginVertical: 10,
-          borderBottomColor: ColorConstants.White,
+          borderBottomColor: ColorConstants.darkGray,
           borderBottomWidth: 1,
         }}
       />
@@ -41,7 +42,7 @@ const DetaiTabs = ({ trailData, covData }) => {
         <CovidWidget data={covData} />
       </Row>
     </>
-  ) : null;
+  ) : null
 
   return (
     <ScrollView
@@ -59,40 +60,19 @@ const DetaiTabs = ({ trailData, covData }) => {
               style={{
                 color: ColorConstants.primary,
                 fontSize: 26,
-                fontWeight: "bold",
+                fontWeight: 'bold',
               }}
             >
               {trailData.name}
             </Text>
           </Col>
-          <Col size={1} style={{ flex: 1, flexDirection: "row" }}>
-            <StarRating
-              disabled={true}
-              emptyStar={"ios-star-outline"}
-              fullStar={"ios-star"}
-              halfStar={"ios-star-half"}
-              iconSet={"Ionicons"}
-              maxStars={1}
-              rating={1}
-              fullStarColor={ColorConstants.secondary}
-              starSize={30}
-            />
-            <Text
-              style={{
-                marginLeft: 12,
-                marginTop: 4,
-                color: ColorConstants.secondary,
-                fontSize: 22,
-                fontWeight: "bold",
-              }}
-            >
-              {trailData.avg_rating}
-            </Text>
+          <Col size={1}>
+            <RatingModal trailData={trailData} />
           </Col>
         </Row>
 
         <Row>
-          <Entypo name="location-pin" size={16} color="gray" />
+          <Entypo name='location-pin' size={16} color='gray' />
           <Text style={{ fontSize: 14 }}>{trailData.location}</Text>
         </Row>
 
@@ -100,7 +80,7 @@ const DetaiTabs = ({ trailData, covData }) => {
           <Col size={1}>
             <Row>
               <FontAwesome5
-                name="hiking"
+                name='hiking'
                 size={20}
                 color={ColorConstants.Black2}
               />
@@ -110,7 +90,7 @@ const DetaiTabs = ({ trailData, covData }) => {
           <Col size={1}>
             <Row>
               <FontAwesome5
-                name="mountain"
+                name='mountain'
                 size={16}
                 color={ColorConstants.Black2}
               />
@@ -120,7 +100,7 @@ const DetaiTabs = ({ trailData, covData }) => {
           <Col size={1}>
             <Row>
               <FontAwesome5
-                name="route"
+                name='route'
                 size={20}
                 color={ColorConstants.Black2}
               />
@@ -130,16 +110,16 @@ const DetaiTabs = ({ trailData, covData }) => {
           <Col size={1}>
             <Row>
               <FontAwesome5
-                name="clock"
+                name='clock'
                 size={20}
                 color={ColorConstants.Black2}
               />
               <Text style={styles.textInfo}>
                 {moment
                   .utc()
-                  .startOf("day")
+                  .startOf('day')
                   .add({ minutes: trailData.estimate_time_min })
-                  .format("H[h]mm")}
+                  .format('H[h]mm')}
               </Text>
             </Row>
           </Col>
@@ -162,7 +142,7 @@ const DetaiTabs = ({ trailData, covData }) => {
         <View
           style={{
             marginVertical: 10,
-            borderBottomColor: ColorConstants.White,
+            borderBottomColor: ColorConstants.darkGray,
             borderBottomWidth: 1,
           }}
         />
@@ -173,7 +153,7 @@ const DetaiTabs = ({ trailData, covData }) => {
       <View
         style={{
           margin: 10,
-          borderBottomColor: ColorConstants.White,
+          borderBottomColor: ColorConstants.darkGray,
           borderBottomWidth: 1,
         }}
       />
@@ -184,7 +164,7 @@ const DetaiTabs = ({ trailData, covData }) => {
         horizontal
         data={trailData.recommended}
         keyExtractor={(trails) => {
-          return trails._id;
+          return trails._id
         }}
         renderItem={({ item }) => {
           return (
@@ -198,10 +178,10 @@ const DetaiTabs = ({ trailData, covData }) => {
               >
                 <TouchableOpacity
                   onPress={() => {
-                    navigation.push("ViewTrail", {
+                    navigation.push('ViewTrail', {
                       id: item._id,
                       name: item.name,
-                    });
+                    })
                   }}
                 >
                   <CardItem cardBody>
@@ -209,8 +189,8 @@ const DetaiTabs = ({ trailData, covData }) => {
                       source={{ uri: item.img_url }}
                       style={styles.imageStyle}
                       PlaceholderContent={<ActivityIndicator />}
-                      resizeMethod="auto"
-                      resizeMode="cover"
+                      resizeMethod='auto'
+                      resizeMode='cover'
                     />
                   </CardItem>
                   <CardItem style={{ backgroundColor: ColorConstants.DWhite }}>
@@ -221,13 +201,13 @@ const DetaiTabs = ({ trailData, covData }) => {
                       <Col size={2}>
                         <StarRating
                           disabled={true}
-                          emptyStar={"ios-star-outline"}
-                          fullStar={"ios-star"}
-                          halfStar={"ios-star-half"}
-                          iconSet={"Ionicons"}
+                          emptyStar={'ios-star-outline'}
+                          fullStar={'ios-star'}
+                          halfStar={'ios-star-half'}
+                          iconSet={'Ionicons'}
                           maxStars={5}
                           rating={item.avg_rating}
-                          fullStarColor={"gold"}
+                          fullStarColor={'gold'}
                           starSize={16}
                         />
                       </Col>
@@ -236,12 +216,12 @@ const DetaiTabs = ({ trailData, covData }) => {
                 </TouchableOpacity>
               </Card>
             </View>
-          );
+          )
         }}
       />
     </ScrollView>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   textInfo: {
@@ -266,9 +246,9 @@ const styles = StyleSheet.create({
   similarTrails: {
     marginLeft: 10,
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     color: ColorConstants.darkGray,
   },
-});
+})
 
-export default DetaiTabs;
+export default DetaiTabs
