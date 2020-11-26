@@ -56,6 +56,11 @@ const TrailSchema = new mongoose.Schema({
     required: true,
     default: 0,
   },
+  weighted_rating: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
   ratings: {
     type: [Object],
     required: true,
