@@ -1,10 +1,12 @@
-const { query, param, validationResult } = require('express-validator')
+const { query, param, body, validationResult } = require('express-validator')
 const { errorHandler } = require('../utils/error-handling')
 const { PythonShell } = require('python-shell')
 const axios = require('axios').default
+const moment = require('moment')
 
 const Trail = require('../models/trail')
 const Event = require('../models/event')
+const UserRating = require('../models/user_rating')
 
 class TrailController {
   async trails(req, res) {
@@ -56,7 +58,6 @@ class TrailController {
       const recommendedTrails = await axios.get(
         `http://localhost:3030/${userId}`
       )
-      console.log(recommendedTrails.data)
 
       trails = await Trail.find({
         _id: {
@@ -136,10 +137,62 @@ class TrailController {
       return res.status(400).json({ errors: errors.array() })
 
     const { id: userId } = req.context
-    const { id: trailId } = req.params
+    const { trailId } = req.params
     const { rating } = req.body
 
-    const trail = await Trail.findById(trailId).select('ratings')
+    const date = new Date()
+
+    await Trail.updateOne(
+      { _id: trailId },
+      {
+        $push: {
+          ratings: {
+            userId,
+            rating,
+            date,
+          },
+        },
+      }
+    )
+
+    const trail = await Trail.findOne({
+      _id: trailId,
+      ratings: { $elemMatch: { userId } },
+    }).select('ratings')
+
+    let users = {}
+    trail.ratings.forEach((rating) => {
+      if (users[rating.userId]) {
+        users[rating.userId].push(rating.rating)
+      } else {
+        users[rating.userId] = []
+      }
+    })
+
+    let ratings = []
+    Object.keys(users).forEach((userId) => {
+      const item = users[userId]
+      const avg_user = item.reduce((a, b) => a + b, 0) / item.length
+      ratings.push(avg_user)
+    })
+
+    const weighted_rating = ratings.reduce((a, b) => a + b, 0) / ratings.length
+
+    await Trail.updateOne({ _id: trailId }, { weighted_rating })
+    await UserRating.updateOne(
+      { userID: userId },
+      {
+        $push: {
+          reviews: {
+            trailID: trailId,
+            rating,
+            timestamp: moment(date).format('DD-MM-YYYY HH:mm'),
+          },
+        },
+      }
+    )
+
+    res.json({ weighted_rating })
   }
 
   // FIX
@@ -222,6 +275,7 @@ class TrailController {
         param('id').isString().isLength(24),
         query('fields').optional().isString(),
       ],
+      rating: [body('rating').isFloat({ min: 0, max: 5 })],
     }
   }
 }
