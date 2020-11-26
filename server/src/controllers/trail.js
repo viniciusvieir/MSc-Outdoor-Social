@@ -95,10 +95,10 @@ class TrailController {
     if (!errors.isEmpty())
       return res.status(400).json({ errors: errors.array() })
 
-    const { trailId } = req.params
+    const { id } = req.params
     const { fields } = req.query
 
-    const trail = await Trail.findById(trailId)
+    const trail = await Trail.findById(id)
       .select((fields && fields.replace(/,|;/g, ' ')) || '-path')
       .lean()
 
@@ -113,7 +113,7 @@ class TrailController {
     // Finds recommended trails if fields include `recommended` attribute
     if (trail && fields && fields.includes('recommended')) {
       const script = new PythonShell('../Recommendation/similar-trails.py', {
-        args: [trailId],
+        args: [id],
       })
       script.on('message', async (message) => {
         const items = message.split(',')
