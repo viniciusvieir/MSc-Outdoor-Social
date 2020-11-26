@@ -140,6 +140,7 @@ const TrailFlow = () => {
         options={() => ({
           title: '',
           headerTransparent: true,
+          headerTintColor: ColorConstants.White,
           headerBackImage: () => (
             <MaterialIcons
               name='arrow-back'
