@@ -1,6 +1,6 @@
 const sequelize = require('../../src/databases/postgres')
 
-const User = require('../../src/models/user')
+const User = require('../../src/models/user.psql')
 
 describe('User Model', () => {
   beforeAll(async () => {

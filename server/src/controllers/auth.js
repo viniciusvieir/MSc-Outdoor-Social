@@ -1,7 +1,8 @@
 const { body, validationResult } = require('express-validator')
 const { errorHandler } = require('../utils/error-handling')
 
-const User = require('../models/user')
+const UserPsql = require('../models/user.psql')
+const UserMongo = require('../models/user.mongo')
 
 class AuthController {
   async signIn(req, res) {
@@ -11,7 +12,7 @@ class AuthController {
 
     const { email, password } = req.body
 
-    const user = await User.findOne({
+    const user = await UserPsql.findOne({
       where: { email: email.toLowerCase() },
       attributes: ['id', 'email', 'name', 'password'],
     })
@@ -35,7 +36,7 @@ class AuthController {
 
     const { email, password, name, dob, gender } = req.body
 
-    const checkIfExists = await User.findOne({
+    const checkIfExists = await UserPsql.findOne({
       where: { email: email.toLowerCase() },
       attributes: ['id'],
     })
@@ -44,12 +45,20 @@ class AuthController {
     if (checkIfExists)
       return res.status(401).json(errorHandler(['User already exists']))
 
-    const user = await User.create({
+    const user = await UserPsql.create({
       name,
       dob,
       gender,
       email: email.toLowerCase(),
       password,
+    })
+
+    await UserMongo.create({
+      dob,
+      userId: user.id,
+      name: user.name,
+      gender: user.gender,
+      email: user.email,
     })
 
     return res.json(user.generateTokenPayload())

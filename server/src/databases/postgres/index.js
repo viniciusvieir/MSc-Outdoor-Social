@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize')
 const dbConfig = require('../../config/postgres.config')
 
-const User = require('../../models/user')
+const User = require('../../models/user.psql')
 
 const sequelize = new Sequelize(dbConfig)
 

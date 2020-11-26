@@ -1,7 +1,7 @@
 const { body, validationResult } = require('express-validator')
 const { errorHandler } = require('../utils/error-handling')
 
-const User = require('../models/user')
+const User = require('../models/user.psql')
 
 class UserController {
   async user(req, res) {

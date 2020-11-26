@@ -3,7 +3,7 @@ const app = require('../../src/app')
 const supertest = require('supertest')
 const faker = require('faker')
 
-const User = require('../../src/models/user')
+const User = require('../../src/models/user.psql')
 
 describe('Authentication', () => {
   beforeAll(async () => {
