@@ -1,13 +1,13 @@
-import { Alert } from "react-native";
+import { Alert } from 'react-native'
 
 const ToastAlert = (msg) => {
-  return Alert.alert("", msg, [
+  return Alert.alert('', msg, [
     {
-      text: "Cancel",
+      text: 'Cancel',
       // onPress: () => console.log("Cancel Pressed"),
-      style: "cancel",
+      style: 'cancel',
     },
-  ]);
-};
+  ])
+}
 
-export default ToastAlert;
+export default ToastAlert

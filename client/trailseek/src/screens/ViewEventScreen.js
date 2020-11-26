@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react'
 import {
   View,
   StyleSheet,
@@ -7,9 +7,9 @@ import {
   Linking,
   ScrollView,
   FlatList,
-} from "react-native";
-import moment from "moment";
-import MapView, { Marker, Polyline } from "react-native-maps";
+} from 'react-native'
+import moment from 'moment'
+import MapView, { Marker, Polyline } from 'react-native-maps'
 import {
   Button,
   Text,
@@ -18,80 +18,80 @@ import {
   Container,
   Content,
   Footer,
-} from "native-base";
-import { Grid, Col, Row } from "react-native-easy-grid";
-import { useDispatch, useSelector } from "react-redux";
-import { unwrapResult } from "@reduxjs/toolkit";
+} from 'native-base'
+import { Grid, Col, Row } from 'react-native-easy-grid'
+import { useDispatch, useSelector } from 'react-redux'
+import { unwrapResult } from '@reduxjs/toolkit'
 
-import { FontAwesome5 } from "@expo/vector-icons";
-import { Entypo } from "@expo/vector-icons";
+import { FontAwesome5 } from '@expo/vector-icons'
+import { Entypo } from '@expo/vector-icons'
 
-import ColorConstants from "../util/ColorConstants";
+import ColorConstants from '../util/ColorConstants'
 import {
   updateCurrentEvent,
   joinEvent,
   fetchSingleEvent,
-} from "../app/eventSlice";
-import { addJoinedEvent } from "../app/userSlice";
-import Constants from "../util/Constants";
-import ToastAlert from "../components/ToastAlert";
+} from '../app/eventSlice'
+import { addJoinedEvent } from '../app/userSlice'
+import Constants from '../util/Constants'
+import ToastAlert from '../components/ToastAlert'
 
 const ViewEventScreen = ({ route, navigation }) => {
-  const dispatch = useDispatch();
-  const userId = useSelector((state) => state.user.profile.id);
-  const isAuth = useSelector((state) => state.user.isAuth);
-  const name = useSelector((state) => state.user.profile.name);
-  const [joinFlag, setJoinFlag] = useState(false);
-  const [participants, setParticipants] = useState([]);
-  const { trailData, eventID } = route.params || {};
-  const [eventData, setEventData] = useState({});
+  const dispatch = useDispatch()
+  const userId = useSelector((state) => state.user.profile.id)
+  const isAuth = useSelector((state) => state.user.isAuth)
+  const name = useSelector((state) => state.user.profile.name)
+  const [joinFlag, setJoinFlag] = useState(false)
+  const [participants, setParticipants] = useState([])
+  const { trailData, eventID } = route.params || {}
+  const [eventData, setEventData] = useState({})
 
   const getSingleEvent = async () => {
     try {
       const response = await dispatch(
         fetchSingleEvent({ trailID: trailData._id, eventID })
-      );
-      const uResult = unwrapResult(response);
-      setEventData(uResult);
+      )
+      const uResult = unwrapResult(response)
+      setEventData(uResult)
       dispatch(
         updateCurrentEvent({ eventData: uResult, trailName: trailData.name })
-      );
+      )
 
       // console.log(eventData);
       if (userId !== uResult.userId) {
         if (uResult.participants.length < uResult.max_participants) {
           if (
             uResult.participants.findIndex((item) => {
-              return item.userId === userId;
+              return item.userId === userId
             }) === -1
           ) {
-            setJoinFlag(true);
+            setJoinFlag(true)
           }
         }
       }
     } catch (e) {
-      Toast.show({ text: e.message, type: "danger", duration: 2000 });
+      Toast.show({ text: e.message, type: 'danger', duration: 2000 })
     }
-  };
+  }
 
   useEffect(() => {
-    navigation.setParams({ refresh: () => getSingleEvent() });
-    const unsubscribe = navigation.addListener("focus", async () => {
-      getSingleEvent();
-    });
-    getSingleEvent();
-    setParticipants(eventData.participants);
-    return unsubscribe;
-  }, [navigation]);
+    navigation.setParams({ refresh: () => getSingleEvent() })
+    const unsubscribe = navigation.addListener('focus', async () => {
+      getSingleEvent()
+    })
+    getSingleEvent()
+    setParticipants(eventData.participants)
+    return unsubscribe
+  }, [navigation])
 
-  let eventWeather;
+  let eventWeather
   if (trailData && eventData) {
     eventWeather = trailData.weatherData.daily.find(
       (item) =>
         moment(item * 1000)
-          .format("DD/MM/YYYY")
-          .toString() === moment(eventData.date).format("DD/MM/YYYY").toString()
-    );
+          .format('DD/MM/YYYY')
+          .toString() === moment(eventData.date).format('DD/MM/YYYY').toString()
+    )
   }
 
   // console.log(eventWeather);
@@ -139,16 +139,16 @@ const ViewEventScreen = ({ route, navigation }) => {
                     latitude: trailData.start.coordinates[0],
                     longitude: trailData.start.coordinates[1],
                   }}
-                  title={"You Meet Here"}
+                  title={'You Meet Here'}
                   // description={marker.description}
                 />
               </MapView>
               <View
                 style={{
-                  position: "absolute", //use absolute position to show button on top of the map
-                  top: "95%", //for center align
+                  position: 'absolute', //use absolute position to show button on top of the map
+                  top: '95%', //for center align
                   right: 10,
-                  alignSelf: "flex-end", //for align to right
+                  alignSelf: 'flex-end', //for align to right
                 }}
               >
                 <Button
@@ -158,17 +158,17 @@ const ViewEventScreen = ({ route, navigation }) => {
                   }}
                   onPress={() => {
                     const scheme = Platform.select({
-                      ios: "maps:0,0?q=",
-                      android: "geo:0,0?q=",
-                    });
-                    const latLng = `${trailData.start.coordinates[0]},${trailData.start.coordinates[1]}`;
-                    const label = `${trailData.name}`;
+                      ios: 'maps:0,0?q=',
+                      android: 'geo:0,0?q=',
+                    })
+                    const latLng = `${trailData.start.coordinates[0]},${trailData.start.coordinates[1]}`
+                    const label = `${trailData.name}`
                     const url = Platform.select({
                       ios: `${scheme}${label}@${latLng}`,
                       android: `${scheme}${latLng}(${label})`,
-                    });
+                    })
 
-                    Linking.openURL(url);
+                    Linking.openURL(url)
                   }}
                 >
                   <Text>Navigate</Text>
@@ -182,7 +182,7 @@ const ViewEventScreen = ({ route, navigation }) => {
                     style={{
                       color: ColorConstants.primary,
                       fontSize: 26,
-                      fontWeight: "bold",
+                      fontWeight: 'bold',
                     }}
                   >
                     {eventData.title}
@@ -198,7 +198,7 @@ const ViewEventScreen = ({ route, navigation }) => {
                   <Row>
                     <FontAwesome5 name="calendar-alt" size={24} color="black" />
                     <Text style={styles.textInfo}>
-                      {moment(eventData.date).format("DD/MM/YYYY")}
+                      {moment(eventData.date).format('DD/MM/YYYY')}
                     </Text>
                   </Row>
                 </Col>
@@ -269,9 +269,9 @@ const ViewEventScreen = ({ route, navigation }) => {
                     <Text style={styles.textInfo}>
                       {moment
                         .utc()
-                        .startOf("day")
+                        .startOf('day')
                         .add({ minutes: trailData.estimate_time_min })
-                        .format("H[h]mm")}
+                        .format('H[h]mm')}
                     </Text>
                   </Row>
                 </Col>
@@ -314,7 +314,7 @@ const ViewEventScreen = ({ route, navigation }) => {
             <FlatList
               data={eventData.participants}
               keyExtractor={(item) => {
-                return item.userId.toString();
+                return item.userId.toString()
               }}
               style={{
                 marginVertical: 10,
@@ -325,7 +325,7 @@ const ViewEventScreen = ({ route, navigation }) => {
               horizontal
               renderItem={({ item }) => {
                 return (
-                  <View style={{ marginLeft: 10, alignItems: "center" }}>
+                  <View style={{ marginLeft: 10, alignItems: 'center' }}>
                     <Thumbnail
                       style={{
                         borderColor: ColorConstants.DGreen,
@@ -342,7 +342,7 @@ const ViewEventScreen = ({ route, navigation }) => {
                       {item.name}
                     </Text>
                   </View>
-                );
+                )
               }}
             />
           </>
@@ -350,7 +350,7 @@ const ViewEventScreen = ({ route, navigation }) => {
       </Content>
       <Footer
         style={{
-          backgroundColor: "#ffffff",
+          backgroundColor: '#ffffff',
           height: 60,
         }}
       >
@@ -368,21 +368,21 @@ const ViewEventScreen = ({ route, navigation }) => {
                         trailID: trailData._id,
                         eventID,
                       })
-                    );
-                    const h = unwrapResult(response);
-                    getSingleEvent();
-                    navigation.s;
+                    )
+                    const h = unwrapResult(response)
+                    getSingleEvent()
+                    navigation.s
                     //Add Modal
                     Toast.show({
-                      text: "Event Joined",
-                      buttonText: "Okay",
-                      type: "success",
-                    });
-                    setJoinFlag(false);
+                      text: 'Event Joined',
+                      buttonText: 'Okay',
+                      type: 'success',
+                    })
+                    setJoinFlag(false)
 
                     // navigation.goBack(); // Comment this
                   } catch (e) {
-                    ToastAlert(e.message);
+                    ToastAlert(e.message)
                   }
                 }}
               >
@@ -417,13 +417,13 @@ const ViewEventScreen = ({ route, navigation }) => {
         </View>
       </Footer>
     </Container>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   mapStyle: {
     // margin: 10,
-    width: Dimensions.get("window").width,
+    width: Dimensions.get('window').width,
     height: 400,
   },
   textInfo: {
@@ -440,11 +440,11 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   joinShareButtonView: {
-    alignSelf: "flex-end",
+    alignSelf: 'flex-end',
     marginRight: 20,
-    flexDirection: "row",
+    flexDirection: 'row',
     marginTop: 10,
   },
-});
+})
 
-export default ViewEventScreen;
+export default ViewEventScreen

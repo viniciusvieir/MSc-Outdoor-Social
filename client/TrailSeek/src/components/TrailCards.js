@@ -30,7 +30,7 @@ import ColorConstants from '../util/ColorConstants'
 import NoData from './NoData'
 import Constants from '../util/Constants'
 
-const TrailCards = ({ trails, fetchMoreData, filter }) => {
+const TrailCards = ({ trails, filter }) => {
   const navigation = useNavigation()
 
   let content = trails ? (
@@ -53,7 +53,7 @@ const TrailCards = ({ trails, fetchMoreData, filter }) => {
             <Button
               block
               onPress={() => {
-                navigation.navigate('ListTrail', { filter })
+                navigation.navigate('ListTrail', { query: filter })
               }}
               style={{
                 margin: 5,
@@ -83,8 +83,8 @@ const TrailCards = ({ trails, fetchMoreData, filter }) => {
                     source={{ uri: item.img_url }}
                     style={styles.imageStyle}
                     PlaceholderContent={<ActivityIndicator />}
-                    resizeMethod='auto'
-                    resizeMode='cover'
+                    resizeMethod="auto"
+                    resizeMode="cover"
                   />
                 </CardItem>
                 <CardItem>
@@ -93,7 +93,7 @@ const TrailCards = ({ trails, fetchMoreData, filter }) => {
                       <Text style={styles.nameStyle}>{item.name}</Text>
                     </Row>
                     <Row>
-                      <Entypo name='location-pin' size={16} color='gray' />
+                      <Entypo name="location-pin" size={16} color="gray" />
                       <Text style={{ fontSize: 14 }}>{item.location}</Text>
                     </Row>
                   </Grid>
@@ -140,7 +140,7 @@ const TrailCards = ({ trails, fetchMoreData, filter }) => {
                         {item.outing_count > 1 ? 's' : ''}
                       </Text>
                       <FontAwesome5
-                        name='arrow-right'
+                        name="arrow-right"
                         size={16}
                         color={ColorConstants.primary}
                       />
