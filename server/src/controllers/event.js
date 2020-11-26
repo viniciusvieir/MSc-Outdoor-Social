@@ -4,7 +4,7 @@ const faker = require('faker')
 
 const Trail = require('../models/trail')
 const Event = require('../models/event')
-const User = require('../models/user')
+const User = require('../models/user.psql')
 
 class EventController {
   async events(req, res) {

@@ -1,6 +1,7 @@
 const { query, param, body, validationResult } = require('express-validator')
 const { errorHandler } = require('../utils/error-handling')
 const { PythonShell } = require('python-shell')
+
 const axios = require('axios').default
 const moment = require('moment')
 
@@ -59,14 +60,18 @@ class TrailController {
         `http://localhost:3030/${userId}`
       )
 
-      trails = await Trail.find({
-        _id: {
-          $in: recommendedTrails.data,
-        },
-      })
-        .select((fields && fields.replace(/,|;/g, ' ')) || '-path')
-        .lean()
-    } else {
+      if (recommendedTrails.data.length > 0) {
+        trails = await Trail.find({
+          _id: {
+            $in: recommendedTrails.data,
+          },
+        })
+          .select((fields && fields.replace(/,|;/g, ' ')) || '-path')
+          .lean()
+      }
+    }
+
+    if (trails.length === 0) {
       trails = await Trail.find(query || {})
         .limit(limit || 20)
         .skip(skip || 0)
@@ -165,7 +170,7 @@ class TrailController {
       if (users[rating.userId]) {
         users[rating.userId].push(rating.rating)
       } else {
-        users[rating.userId] = []
+        users[rating.userId] = [rating.rating]
       }
     })
 
@@ -275,7 +280,10 @@ class TrailController {
         param('id').isString().isLength(24),
         query('fields').optional().isString(),
       ],
-      rating: [body('rating').isFloat({ min: 0, max: 5 })],
+      rating: [
+        param('trailId').isString().isLength(24),
+        body('rating').isFloat({ min: 0, max: 5 }),
+      ],
     }
   }
 }
