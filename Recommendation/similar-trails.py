@@ -23,7 +23,7 @@ class itemContentSimilarity:
     def __init__(self, user_clicked_id):
         self.user_clicked_id = user_clicked_id
         
-        load_dotenv(dotenv_path = Path('/.env'))
+        load_dotenv(dotenv_path = Path('../server/.env'))
         
         mongo_url = os.getenv('MONGO_URL')
         client = pymongo.MongoClient(mongo_url)
