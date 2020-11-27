@@ -66,7 +66,6 @@ const EventsTab = ({ trailData }) => {
                 <ListItem
                   onPress={() => {
                     navigation.navigate('ViewEvent', {
-                      // trailData,
                       eventID: item._id,
                     })
                   }}
