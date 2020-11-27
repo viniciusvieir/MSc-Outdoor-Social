@@ -100,7 +100,7 @@ class EventController {
     const { id: userId } = req.context
     // TODO: check if user owns the event
     const { eventId } = req.params
-    await Event.deleteOne({ eventId })
+    await Event.deleteOne({ _id: eventId })
     res.json({ success: true })
   }
 
