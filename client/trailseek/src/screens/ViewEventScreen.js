@@ -32,7 +32,8 @@ import {
   joinEvent,
   fetchSingleEvent,
 } from '../app/eventSlice'
-import { addJoinedEvent } from '../app/userSlice'
+import { fetchTrailsByID } from '../app/trailSlice'
+// import { addJoinedEvent } from '../app/userSlice'
 import Constants from '../util/Constants'
 import ToastAlert from '../components/ToastAlert'
 
@@ -40,19 +41,34 @@ const ViewEventScreen = ({ route, navigation }) => {
   const dispatch = useDispatch()
   const userId = useSelector((state) => state.user.profile.id)
   const isAuth = useSelector((state) => state.user.isAuth)
-  const name = useSelector((state) => state.user.profile.name)
+  // const name = useSelector((state) => state.user.profile.name)
   const [joinFlag, setJoinFlag] = useState(false)
-  const [participants, setParticipants] = useState([])
-  const { trailData, eventID } = route.params || {}
+  const { eventID } = route.params || {}
   const [eventData, setEventData] = useState({})
-
+  const [trailData, setTrailData] = useState({})
+  // console.log(trailData)
   const getSingleEvent = async () => {
     try {
-      const response = await dispatch(
-        fetchSingleEvent({ trailID: trailData._id, eventID })
-      )
+      const response = await dispatch(fetchSingleEvent(eventID))
       const uResult = unwrapResult(response)
       setEventData(uResult)
+      // console.log('In')
+      const covFlag = false
+      const weathFlag = false
+      const fields =
+        'name,location,path,bbox,difficulty,length_km,activity_type,estimate_time_min,start'
+      const id = uResult.trailId
+      const responseTrails = await dispatch(
+        fetchTrailsByID({
+          covFlag,
+          weathFlag,
+          fields,
+          id,
+        })
+      )
+      const uResultTrails = unwrapResult(responseTrails)
+      console.log(uResultTrails)
+      setTrailData(uResultTrails)
       dispatch(
         updateCurrentEvent({ eventData: uResult, trailName: trailData.name })
       )
@@ -80,19 +96,19 @@ const ViewEventScreen = ({ route, navigation }) => {
       getSingleEvent()
     })
     getSingleEvent()
-    setParticipants(eventData.participants)
+    // setParticipants(eventData.participants)
     return unsubscribe
   }, [navigation])
 
-  let eventWeather
-  if (trailData && eventData) {
-    eventWeather = trailData.weatherData.daily.find(
-      (item) =>
-        moment(item * 1000)
-          .format('DD/MM/YYYY')
-          .toString() === moment(eventData.date).format('DD/MM/YYYY').toString()
-    )
-  }
+  // let eventWeather
+  // if (trailData && eventData) {
+  //   // eventWeather = trailData.weatherData.daily.find(
+  //   //   (item) =>
+  //   //     moment(item * 1000)
+  //   //       .format('DD/MM/YYYY')
+  //   //       .toString() === moment(eventData.date).format('DD/MM/YYYY').toString()
+  //   // )
+  // }
 
   // console.log(eventWeather);
   return (
@@ -103,7 +119,8 @@ const ViewEventScreen = ({ route, navigation }) => {
           flex: 1,
         }}
       >
-        {trailData && eventData ? (
+        {JSON.stringify(trailData) !== '{}' &&
+        JSON.stringify(eventData) !== '{}' ? (
           <>
             <View
               style={{
