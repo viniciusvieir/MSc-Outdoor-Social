@@ -109,9 +109,9 @@ class EventController {
     const { id: userId, name } = req.context
     const { eventId } = req.params
 
-    const joined = await Event.find({
+    const joined = await Event.findOne({
       _id: eventId,
-      participants: { userId },
+      participants: { $elemMatch: { userId } },
     }).countDocuments()
 
     if (!joined) {
