@@ -132,17 +132,12 @@ class TrailController {
       }))
     }
 
-    if (fields && fields.includes('comment_count')) {
-      const ids = trails.map((trail) => trail._id)
+    if (trail && fields && fields.includes('comment_count')) {
       const comment_count = await Trail.aggregate([
-        { $match: { _id: { $in: ids } } },
+        { $match: { _id: trail._id } },
         { $project: { count: { $size: '$comments' } } },
       ])
-      trails.forEach((trail) => {
-        trail.comment_count = comment_count.find(
-          (item) => `${item._id}` === `${trail._id}`
-        ).count
-      })
+      trail.comment_count = comment_count[0].count
     }
 
     // Finds recommended trails if fields include `recommended` attribute

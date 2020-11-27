@@ -1,10 +1,8 @@
 const { query, body, validationResult } = require('express-validator')
 const { errorHandler } = require('../utils/error-handling')
-const faker = require('faker')
 
 const Trail = require('../models/trail')
 const Event = require('../models/event')
-const UserPsql = require('../models/user.psql')
 const UserMongo = require('../models/user.mongo')
 
 class EventController {
@@ -14,7 +12,9 @@ class EventController {
 
     const events = await Event.find({
       trailId,
-    }).lean()
+    })
+      .select((fields && fields.replace(/,|;/g, ' ')) || '-chat')
+      .lean()
 
     // for (let i = 0; i < events.length; i++) {
     //   console.log(events[i].userId)
