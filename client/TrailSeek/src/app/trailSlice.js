@@ -1,10 +1,10 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
-import trailSeek from "../api/trailSeek";
-import weather from "../api/weather";
-import covid from "../api/covid";
+import trailSeek from '../api/trailSeek'
+import weather from '../api/weather'
+import covid from '../api/covid'
 // import { Intersect } from "../util/Intersect";
-import CONSTANTS from "../util/Constants";
+import CONSTANTS from '../util/Constants'
 
 const initialState = {
   trails: [],
@@ -21,10 +21,10 @@ const initialState = {
     error: null,
     data: {},
   },
-};
+}
 
 export const fetchTrailsByQuery = createAsyncThunk(
-  "trails/fetchTrailsByQuery",
+  'trails/fetchTrailsByQuery',
   async (
     {
       query = {},
@@ -33,7 +33,7 @@ export const fetchTrailsByQuery = createAsyncThunk(
       location = false,
       maxDist = 10000,
       minDist = 0,
-      fields = "name,avg_rating,location,img_url,outing_count",
+      fields = 'name,weighted_rating,location,img_url,outing_count,comment_count',
     },
     { rejectWithValue, getState }
   ) => {
@@ -47,7 +47,7 @@ export const fetchTrailsByQuery = createAsyncThunk(
             start: {
               $near: {
                 $geometry: {
-                  type: "Point",
+                  type: 'Point',
                   coordinates: [
                     getState().user.userLocation.latitude,
                     getState().user.userLocation.longitude,
@@ -57,144 +57,144 @@ export const fetchTrailsByQuery = createAsyncThunk(
                 $maxDistance: maxDist,
               },
             },
-          };
+          }
         } else {
-          return [];
+          return []
         }
       }
-      const response = await trailSeek.get("/trails", {
+      const response = await trailSeek.get('/trails', {
         params: {
           q: query,
           limit,
           skip,
           fields,
         },
-      });
-      return response.data;
+      })
+      return response.data
     } catch (error) {
-      console.log(error.response);
+      console.log(error.response)
       return rejectWithValue(
         error.response.data?.errors
           ? error.response.data.errors
               .map((item) => {
-                return item.msg;
+                return item.msg
               })
-              .join(" ")
+              .join(' ')
           : error.message
-      );
+      )
     }
   }
-);
+)
 
 export const fetchTrailsByID = createAsyncThunk(
-  "trails/fetchTrailsByID",
+  'trails/fetchTrailsByID',
   async (
-    { fields, id, excludeWeather = "hourly,current,minutely,alerts" },
+    { fields, id, excludeWeather = 'hourly,current,minutely,alerts' },
     { rejectWithValue, getState }
   ) => {
-    let weatherResponse;
-    let covidResponse;
-    const covFlag = getState().user.covidToggle;
+    let weatherResponse
+    let covidResponse
+    const covFlag = getState().user.covidToggle
     try {
       // const existTrail = getState().trails.trailDetails.find(
       //   (item) => item._id === id
       // );
       // if (existTrail) return existTrail;
-      const response = await trailSeek.get(`/trails/${id}?fields=${fields}`);
+      const response = await trailSeek.get(`/trails/${id}?fields=${fields}`)
       try {
-        weatherResponse = await weather.get("/onecall", {
+        weatherResponse = await weather.get('/onecall', {
           params: {
             // appid:trailData.weatherApiToken,
             lat: response.data.start.coordinates[0],
             lon: response.data.start.coordinates[1],
             exclude: excludeWeather,
           },
-        });
+        })
       } catch (e) {
-        console.log("Weather API Error");
-        console.log(e.response.data.message);
+        console.log('Weather API Error')
+        console.log(e.response.data.message)
       }
       if (covFlag) {
         try {
-          covidResponse = await covid.get("", {
+          covidResponse = await covid.get('', {
             params: {
               geometry: `${response.data.start.coordinates[1]},${response.data.start.coordinates[0]}`,
             },
-          });
+          })
         } catch (e) {
-          console.log("Covid API Error");
-          console.log(e.response.data.message);
+          console.log('Covid API Error')
+          console.log(e.response.data.message)
         }
       }
-      response.data.weatherData = weatherResponse.data;
-      response.data.covidData = covFlag ? covidResponse.data.features : [];
-      return response.data;
+      response.data.weatherData = weatherResponse.data
+      response.data.covidData = covFlag ? covidResponse.data.features : []
+      return response.data
     } catch (error) {
-      console.log(error);
+      console.log(error)
       return rejectWithValue(
         error.response.data?.errors
           ? error.response.data.errors
               .map((item) => {
-                return item.msg;
+                return item.msg
               })
-              .join(" ")
+              .join(' ')
           : error.status
-      );
+      )
     }
   }
-);
+)
 
 export const trailSlice = createSlice({
-  name: "trails",
+  name: 'trails',
   initialState,
   reducers: {
     ratingAdded(state, action) {
-      const { trailId, rating } = action.payload;
+      const { trailId, rating } = action.payload
       const existingTrail = state.trails.find((trail) => {
-        trail._id === trailId;
-      });
+        trail._id === trailId
+      })
       if (existingTrail) {
-        existingTrail.rating[rating]++;
+        existingTrail.rating[rating]++
       }
     },
   },
   extraReducers: {
     [fetchTrailsByID.pending]: (state, action) => {
-      state.status = CONSTANTS.LOADING;
+      state.status = CONSTANTS.LOADING
     },
     [fetchTrailsByID.fulfilled]: (state, action) => {
       const idx = state.trailDetails.findIndex(
         (item) => item._id === action.payload._id
-      );
+      )
       if (idx === -1) {
-        state.trailDetails.push(action.payload);
+        state.trailDetails.push(action.payload)
       } else {
-        state.trailDetails[idx] = action.payload;
+        state.trailDetails[idx] = action.payload
       }
-      state.status = CONSTANTS.SUCCESS;
+      state.status = CONSTANTS.SUCCESS
     },
     [fetchTrailsByID.rejected]: (state, action) => {
-      state.status = CONSTANTS.FAILED;
-      state.error = action.error.message;
+      state.status = CONSTANTS.FAILED
+      state.error = action.error.message
     },
     //////////////////////////////////////////////////////////////
     [fetchTrailsByQuery.pending]: (state, action) => {
-      state.status = CONSTANTS.LOADING;
+      state.status = CONSTANTS.LOADING
     },
     [fetchTrailsByQuery.fulfilled]: (state, action) => {
-      state.status = CONSTANTS.SUCCESS;
+      state.status = CONSTANTS.SUCCESS
       // state.filteredTrails.query = action.payload.query;
-      state.filteredTrails.data = action.payload;
+      state.filteredTrails.data = action.payload
     },
     [fetchTrailsByQuery.rejected]: (state, action) => {
-      state.status = CONSTANTS.FAILED;
-      state.error = action.payload;
+      state.status = CONSTANTS.FAILED
+      state.error = action.payload
     },
   },
-});
+})
 
-export const { ratingAdded } = trailSlice.actions;
+export const { ratingAdded } = trailSlice.actions
 
-export default trailSlice.reducer;
+export default trailSlice.reducer
 
 // export const selectAllTrails = (state) => state.trails.trails; // remember to return
