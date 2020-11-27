@@ -2,8 +2,8 @@ import axios from 'axios'
 import AsyncStorage from '@react-native-community/async-storage'
 
 const trailSeek = axios.create({
-  // baseURL: 'https://api.trailseek.eu/v1',
-  baseURL: 'http://localhost:4040',
+  baseURL: 'https://api.trailseek.eu/v1',
+  // baseURL: 'http://localhost:4040',
 })
 
 trailSeek.interceptors.request.use(async (config) => {
