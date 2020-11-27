@@ -1,5 +1,29 @@
 const mongoose = require('mongoose')
 
+const ChatSchema = new mongoose.Schema({
+  userId: {
+    type: Number,
+    required: true,
+  },
+  name: {
+    type: String,
+    required: true,
+  },
+  profileImage: {
+    type: String,
+    required: false,
+  },
+  content: {
+    type: String,
+    required: true,
+  },
+  createdAt: {
+    type: Date,
+    required: true,
+    default: new Date(),
+  },
+})
+
 const EventSchema = new mongoose.Schema({
   userId: {
     type: Number,
@@ -15,6 +39,11 @@ const EventSchema = new mongoose.Schema({
     default: [],
     required: true,
   }, // [{ type: Schema.Types.ObjectId, ref: 'User' }]
+  chat: {
+    type: [ChatSchema],
+    required: true,
+    default: [],
+  },
   title: {
     type: String,
     required: true,

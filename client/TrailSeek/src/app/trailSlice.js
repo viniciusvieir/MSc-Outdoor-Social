@@ -33,7 +33,7 @@ export const fetchTrailsByQuery = createAsyncThunk(
       location = false,
       maxDist = 10000,
       minDist = 0,
-      fields = 'name,avg_rating,location,img_url,outing_count',
+      fields = 'name,weighted_rating,location,img_url,outing_count,comment_count',
     },
     { rejectWithValue, getState }
   ) => {
@@ -107,7 +107,6 @@ export const fetchTrailsByID = createAsyncThunk(
       // );
       // if (existTrail) return existTrail;
       const response = await trailSeek.get(`/trails/${id}?fields=${fields}`)
-
       if (weathFlag) {
         try {
           weatherResponse = await weather.get('/onecall', {

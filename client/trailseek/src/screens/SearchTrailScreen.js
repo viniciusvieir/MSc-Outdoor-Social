@@ -87,7 +87,6 @@ const SearchTrailScreen = ({ navigation }) => {
   useEffect(() => {
     if (JSON.stringify(filter) === '{}') {
       setFilter(easyParams)
-      setSearchTerm('')
       getTrailsByQuery({
         query: {
           difficulty: 'easy',
@@ -96,6 +95,9 @@ const SearchTrailScreen = ({ navigation }) => {
       })
     }
   }, [])
+  useEffect(() => {
+    setSearchTerm('')
+  }, [filter])
 
   if (
     trailStatus === CONSTANTS.LOADING ||
@@ -113,22 +115,32 @@ const SearchTrailScreen = ({ navigation }) => {
     spinner = false
   }
 
+  const hour = new Date().getHours()
+  let welcomePhrase = ''
+  if (hour > 5 && hour < 12) {
+    welcomePhrase = 'Good Morning'
+  } else if (hour < 17) {
+    welcomePhrase = 'Good Afternoon'
+  } else {
+    welcomePhrase = 'Good Evening'
+  }
+
   return (
     <Container
       style={{ backgroundColor: ColorConstants.primary, flex: 1 }}
       contentContainerStyle={{ flex: 1 }}
     >
-      <Header transparent androidStatusBarColor="#ffffff00">
+      <Header transparent androidStatusBarColor='#ffffff00'>
         <Body>
           <Title
             style={{
               color: ColorConstants.White,
               fontWeight: 'bold',
-              fontSize: 40,
+              fontSize: 28,
             }}
           >
             {' '}
-            Hey, {user ? user : ''}
+            {user ? `Hey, ${user}` : welcomePhrase}
           </Title>
         </Body>
       </Header>
@@ -141,15 +153,15 @@ const SearchTrailScreen = ({ navigation }) => {
           marginHorizontal: Constants.POINTS.marginHorizontal,
           height: 44,
         }}
-        placeholder="Search"
+        placeholder='Search'
         value={searchTerm}
         onChangeText={(text) => {
           setSearchTerm(text)
         }}
         inputContainerStyle={{ height: 29, marginLeft: 2 }}
-        autoCapitalize="none"
-        platform="android"
-        autoCompleteType="name"
+        autoCapitalize='none'
+        platform='android'
+        autoCompleteType='name'
         enablesReturnKeyAutomatically
         onSubmitEditing={() => {
           navigation.navigate('ListTrail', { query: searchParam.query })

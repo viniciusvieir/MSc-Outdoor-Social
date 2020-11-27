@@ -40,12 +40,22 @@ router.get(
   trailController.validators.trailById,
   trailController.trailById
 )
-// router.get('/trailsfix', trailController.trailsFix)
 router.post(
   '/trails/:trailId/rate',
   verifyToken,
   trailController.validators.rating,
   trailController.rateTrail
+)
+router.get(
+  '/trails/:trailId/comments',
+  trailController.validators.getComments,
+  trailController.comments
+)
+router.post(
+  '/trails/:trailId/comments',
+  verifyToken,
+  trailController.validators.postComment,
+  trailController.commentTrail
 )
 
 // =============== EVENT ==============
