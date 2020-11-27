@@ -9,6 +9,9 @@ const Trail = require('../models/trail')
 const Event = require('../models/event')
 const UserRating = require('../models/user_rating')
 
+const UserPsql = require('../models/user.psql')
+const UserMongo = require('../models/user.mongo')
+
 class TrailController {
   async trails(req, res) {
     const errors = validationResult(req)
@@ -200,6 +203,70 @@ class TrailController {
     res.json({ weighted_rating })
   }
 
+  async comments(req, res) {
+    const errors = validationResult(req)
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() })
+
+    const { trailId } = req.params
+    const trail = await Trail.findById(trailId).select('comments')
+    res.json(trail.comments)
+  }
+
+  async commentTrail(req, res) {
+    const errors = validationResult(req)
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() })
+
+    const { id: userId } = req.context
+    const { trailId } = req.params
+    const { content } = req.body
+
+    const date = new Date()
+
+    let user = await UserMongo.findOne({ userId }).select('name profileImage')
+
+    if (!user) {
+      const userPsql = await UserPsql.findByPk(userId, {
+        attributes: ['name', 'dob', 'gender', 'email'],
+      })
+
+      const randomId = Math.floor(Math.random() * Math.floor(1000)) + 1
+      const profileImage = `https://picsum.photos/id/${randomId}/200/200`
+      await UserMongo.create({
+        userId,
+        profileImage,
+        name: userPsql.name,
+        dob: new Date(userPsql.dob),
+        gender: userPsql.gender,
+        email: userPsql.email,
+      })
+      user = {
+        name: userPsql.name,
+        profileImage,
+      }
+    }
+
+    const comment = {
+      userId,
+      content,
+      date,
+      name: user.name,
+      profileImage: user.profileImage,
+    }
+
+    await Trail.updateOne(
+      { _id: trailId },
+      {
+        $push: {
+          comments: comment,
+        },
+      }
+    )
+
+    res.json(comment)
+  }
+
   // FIX
   async trailsFix(req, res) {
     const trails = require('../../../trails.json')
@@ -283,6 +350,11 @@ class TrailController {
       rating: [
         param('trailId').isString().isLength(24),
         body('rating').isFloat({ min: 0, max: 5 }),
+      ],
+      getComments: [param('trailId').isString().isLength(24)],
+      postComment: [
+        param('trailId').isString().isLength(24),
+        body('content').isString(),
       ],
     }
   }

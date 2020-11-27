@@ -81,8 +81,6 @@ const RatingModal = ({ trailData }) => {
             style={{
               flex: 1,
               alignItems: 'center',
-              //   justifyContent: 'center',
-              //   backgroundColor: ColorConstants.LGreen + '90',
               marginTop: 20,
             }}
           >
@@ -91,7 +89,6 @@ const RatingModal = ({ trailData }) => {
                 color: ColorConstants.darkGray,
                 fontSize: 14,
                 marginBottom: 20,
-                // fontWeight: 'bold',
               }}
             >
               {starRating > 0
