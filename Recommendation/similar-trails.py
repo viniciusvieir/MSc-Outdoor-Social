@@ -72,8 +72,7 @@ if __name__ == '__main__':
         
         ITCont = itemContentSimilarity(args[1])
     except IndexError:
-        print("Error Occured: Cause 'No Input'")
-        raise
+        raise Exception("Error Occured: Cause 'No Input'")
     
     df = ITCont.fetchDB()
     
@@ -87,10 +86,9 @@ if __name__ == '__main__':
                 break   
         recommendations = ITCont.cosSimilarity(hike_idx, df, ITCont.hike_ids, n=10)
     except NameError: 
-        print("Error Occured: Cause 'Trail Object ID not found'")
-        raise
+        raise Exception("Error Occured: Cause 'Trail Object ID not found'")
     
-    print('Similar Trails: ', recommendations)
+    print(','.join(recommendations))
 
     
     
