@@ -10,6 +10,10 @@ import trailSeek from '../api/trailSeek'
 
 const RatingModal = ({ trailData }) => {
   const modelizeRef = useRef(null)
+
+  const [weightedAverage, setWeightedAverage] = useState(
+    trailData.weighted_rating
+  )
   const [starRating, setStarRating] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
   const [hasRated, setHasRated] = useState(false)
@@ -24,14 +28,18 @@ const RatingModal = ({ trailData }) => {
       .post(`/trails/${trailData._id}/rate`, { rating: starRating })
       .then((response) => {
         const weighted_rating = response.data.weighted_rating
-        console.log(weighted_rating)
+        setWeightedAverage(weighted_rating)
         setHasRated(true)
         setIsLoading(false)
         modelizeRef.current?.close()
       })
       .catch((err) => {
         setIsLoading(false)
-        Toast.show({ text: err.response.data.errors[0].msg || err.message })
+        if (err.response.data) {
+          Toast.show({ text: err.response.data.errors[0].msg || err.message })
+        } else {
+          Toast.show({ text: err.message })
+        }
       })
   }
 
@@ -57,7 +65,7 @@ const RatingModal = ({ trailData }) => {
           fullStar={'ios-star'}
           halfStar={'ios-star-half'}
           iconSet={'Ionicons'}
-          maxStars={1}
+          maxStars={weightedAverage > 0 ? 1 : 0}
           rating={1}
           fullStarColor={ColorConstants.secondary}
           starSize={30}
@@ -67,11 +75,11 @@ const RatingModal = ({ trailData }) => {
             marginLeft: 12,
             marginTop: 4,
             color: ColorConstants.secondary,
-            fontSize: 24,
+            fontSize: weightedAverage > 0 ? 24 : 16,
             fontWeight: 'bold',
           }}
         >
-          {trailData.avg_rating}
+          {weightedAverage > 0 ? weightedAverage.toFixed(1) : 'No Rating'}
         </Text>
       </TouchableOpacity>
 
@@ -81,8 +89,6 @@ const RatingModal = ({ trailData }) => {
             style={{
               flex: 1,
               alignItems: 'center',
-              //   justifyContent: 'center',
-              //   backgroundColor: ColorConstants.LGreen + '90',
               marginTop: 20,
             }}
           >
@@ -91,7 +97,6 @@ const RatingModal = ({ trailData }) => {
                 color: ColorConstants.darkGray,
                 fontSize: 14,
                 marginBottom: 20,
-                // fontWeight: 'bold',
               }}
             >
               {starRating > 0

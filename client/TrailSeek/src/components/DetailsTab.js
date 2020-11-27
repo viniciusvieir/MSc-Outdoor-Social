@@ -33,7 +33,7 @@ const DetaiTabs = ({ trailData, covData }) => {
     <>
       <View
         style={{
-          marginVertical: 10,
+          marginVertical: 16,
           borderBottomColor: ColorConstants.darkGray,
           borderBottomWidth: 1,
         }}
@@ -141,7 +141,7 @@ const DetaiTabs = ({ trailData, covData }) => {
         {covContent}
         <View
           style={{
-            marginVertical: 10,
+            marginVertical: 16,
             borderBottomColor: ColorConstants.darkGray,
             borderBottomWidth: 1,
           }}
@@ -152,12 +152,12 @@ const DetaiTabs = ({ trailData, covData }) => {
       </Grid>
       <View
         style={{
-          margin: 10,
+          marginVertical: 16,
           borderBottomColor: ColorConstants.darkGray,
           borderBottomWidth: 1,
         }}
       />
-      <Text style={styles.similarTrails}>Similar Trails : </Text>
+      <Text style={styles.similarTrails}>Similar Trails: </Text>
       <FlatList
         ListEmptyComponent={<NoData />}
         nestedScrollEnabled
