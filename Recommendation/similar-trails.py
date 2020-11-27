@@ -13,6 +13,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 import os
 import sys
+from sklearn import preprocessing
 
 class itemContentSimilarity:
     
@@ -46,21 +47,22 @@ class itemContentSimilarity:
 
     def fetchDB(self):
         trails_col = self.db['trails']
-        trails_data = trails_col.find({},{"_id":1, "difficulty": 1, "activity_type": 1, "no_of_ratings": 1, "avg_rating": 1, "estimate_time_min": 1, "length_km": 1, "county":1})
+        trails_data = trails_col.find({},{"_id":1,"difficulty": 1, "activity_type": 1, "no_of_ratings": 1, "avg_rating": 1, "estimate_time_min": 1, "length_km": 1, "county":1})
         df = pd.DataFrame(list(trails_data))
                       
         df['estimate_time_min'] = df['estimate_time_min'].fillna(0)
         df = pd.get_dummies(df, columns=["difficulty", "activity_type", "county"])      
-        
-        df['ratings_score'] = round((df['avg_rating']*df['no_of_ratings'])/(df['avg_rating']+df['no_of_ratings']),2)
-        df['ratings_score'] = df['ratings_score'].fillna(0)
-        
+
+        df['no_of_ratings'] = df['no_of_ratings'].fillna(0)
+        df['avg_rating'] = df['avg_rating'].fillna(0)
         self.hike_ids = df['_id'].values
         
         df.drop('_id', axis=1, inplace=True)
-        df.drop('no_of_ratings', axis=1, inplace=True)
-        df.drop('avg_rating', axis=1, inplace=True)
         
+        x = df.values #returns a numpy array
+        min_max_scaler = preprocessing.MinMaxScaler()
+        x_scaled = min_max_scaler.fit_transform(x)
+        df = pd.DataFrame(x_scaled)
         return df
 
 if __name__ == '__main__':
