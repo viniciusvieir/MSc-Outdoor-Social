@@ -1,3 +1,4 @@
+const mongoose = require('mongoose')
 const { query, param, body, validationResult } = require('express-validator')
 const { errorHandler } = require('../utils/error-handling')
 const { PythonShell } = require('python-shell')
@@ -95,6 +96,19 @@ class TrailController {
       }
     }
 
+    if (fields && fields.includes('comment_count')) {
+      const ids = trails.map((trail) => trail._id)
+      const comment_count = await Trail.aggregate([
+        { $match: { _id: { $in: ids } } },
+        { $project: { count: { $size: '$comments' } } },
+      ])
+      trails.forEach((trail) => {
+        trail.comment_count = comment_count.find(
+          (item) => `${item._id}` === `${trail._id}`
+        ).count
+      })
+    }
+
     res.json(trails)
   }
 
@@ -116,6 +130,19 @@ class TrailController {
         latitude: loc.coordinates[0],
         longitude: loc.coordinates[1],
       }))
+    }
+
+    if (fields && fields.includes('comment_count')) {
+      const ids = trails.map((trail) => trail._id)
+      const comment_count = await Trail.aggregate([
+        { $match: { _id: { $in: ids } } },
+        { $project: { count: { $size: '$comments' } } },
+      ])
+      trails.forEach((trail) => {
+        trail.comment_count = comment_count.find(
+          (item) => `${item._id}` === `${trail._id}`
+        ).count
+      })
     }
 
     // Finds recommended trails if fields include `recommended` attribute
