@@ -106,8 +106,6 @@ export const fetchTrailsByID = createAsyncThunk(
       //   (item) => item._id === id
       // );
       // if (existTrail) return existTrail;
-      console.log(id)
-      console.log(fields)
       const response = await trailSeek.get(`/trails/${id}?fields=${fields}`)
       console.log(response.data)
       if (weathFlag) {
@@ -142,7 +140,6 @@ export const fetchTrailsByID = createAsyncThunk(
       // response.data.weatherData = weathFlag ? weatherResponse.data : []
       // response.data.covidData =
       //   covToggleFlag && covFlag ? covidResponse.data.features : []
-      console.log(response.data)
       return response.data
     } catch (error) {
       console.log(error)

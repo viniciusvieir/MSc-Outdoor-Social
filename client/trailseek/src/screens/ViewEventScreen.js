@@ -53,22 +53,7 @@ const ViewEventScreen = ({ route, navigation }) => {
       const uResult = unwrapResult(response)
       setEventData(uResult)
       // console.log('In')
-      const covFlag = false
-      const weathFlag = false
-      const fields =
-        'name,location,path,bbox,difficulty,length_km,activity_type,estimate_time_min,start'
-      const id = uResult.trailId
-      const responseTrails = await dispatch(
-        fetchTrailsByID({
-          covFlag,
-          weathFlag,
-          fields,
-          id,
-        })
-      )
-      const uResultTrails = unwrapResult(responseTrails)
-      console.log(uResultTrails)
-      setTrailData(uResultTrails)
+     
       dispatch(
         updateCurrentEvent({ eventData: uResult, trailName: trailData.name })
       )
@@ -99,6 +84,24 @@ const ViewEventScreen = ({ route, navigation }) => {
     // setParticipants(eventData.participants)
     return unsubscribe
   }, [navigation])
+  
+  useEffect(() => {
+    const covFlag = false
+    const weathFlag = false
+    const fields =
+      'name,location,path,bbox,difficulty,length_km,activity_type,estimate_time_min,start'
+    const id = eventData.trailId
+    const responseTrails = await dispatch(
+      fetchTrailsByID({
+        covFlag,
+        weathFlag,
+        fields,
+        id,
+      })
+    )
+    const uResultTrails = unwrapResult(responseTrails)
+    setTrailData(uResultTrails)
+  },[])
 
   // let eventWeather
   // if (trailData && eventData) {

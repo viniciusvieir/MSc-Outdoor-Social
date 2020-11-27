@@ -96,6 +96,29 @@ export const joinEvent = createAsyncThunk(
   }
 )
 
+export const deleteEvent = createAsyncThunk(
+  'event/deleteEvent',
+  async ({ trailID, eventID }, { rejectWithValue }) => {
+    try {
+      const response = await trailSeek.delete(
+        `/trails/${trailID}/events/${eventID}`
+      )
+      return response.data
+    } catch (e) {
+      console.log(e.response)
+      return rejectWithValue(
+        e.response.data?.errors
+          ? e.response.data.errors
+              .map((item) => {
+                return item.msg
+              })
+              .join(' ')
+          : e.status
+      )
+    }
+  }
+)
+
 export const leaveEvent = createAsyncThunk(
   'event/leaveEvent',
   async ({ trailID, eventID }, { rejectWithValue }) => {
@@ -256,6 +279,17 @@ export const eventSlice = createSlice({
       state.status = CONSTANTS.SUCCESS
     },
     [leaveEvent.rejected]: (state, action) => {
+      state.status = CONSTANTS.FAILED
+      state.error = action.payload
+    },
+    //////////////////////////////////////////////////////////////
+    [deleteEvent.pending]: (state, action) => {
+      state.status = CONSTANTS.LOADING
+    },
+    [deleteEvent.fulfilled]: (state, action) => {
+      state.status = CONSTANTS.SUCCESS
+    },
+    [deleteEvent.rejected]: (state, action) => {
       state.status = CONSTANTS.FAILED
       state.error = action.payload
     },
