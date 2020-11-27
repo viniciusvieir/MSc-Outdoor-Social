@@ -4,6 +4,8 @@ const UserRatingSchema = new mongoose.Schema({
   userID: {
     type: Number,
     required: true,
+    unique: true,
+    index: true,
   },
   reviews: {
     type: [Object],

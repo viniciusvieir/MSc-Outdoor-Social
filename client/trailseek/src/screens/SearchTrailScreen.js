@@ -87,7 +87,6 @@ const SearchTrailScreen = ({ navigation }) => {
   useEffect(() => {
     if (JSON.stringify(filter) === '{}') {
       setFilter(easyParams)
-      setSearchTerm('')
       getTrailsByQuery({
         query: {
           difficulty: 'easy',
@@ -113,6 +112,16 @@ const SearchTrailScreen = ({ navigation }) => {
     spinner = false
   }
 
+  const hour = new Date().getHours()
+  let welcomePhrase = ''
+  if (hour > 5 && hour < 12) {
+    welcomePhrase = 'Good Morning'
+  } else if (hour < 17) {
+    welcomePhrase = 'Good Afternoon'
+  } else {
+    welcomePhrase = 'Good Evening'
+  }
+
   return (
     <Container
       style={{ backgroundColor: ColorConstants.primary, flex: 1 }}
@@ -124,11 +133,11 @@ const SearchTrailScreen = ({ navigation }) => {
             style={{
               color: ColorConstants.White,
               fontWeight: 'bold',
-              fontSize: 40,
+              fontSize: 28,
             }}
           >
             {' '}
-            Hey, {user ? user : ''}
+            {user ? `Hey, ${user}` : welcomePhrase}
           </Title>
         </Body>
       </Header>

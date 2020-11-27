@@ -1,10 +1,9 @@
 const { query, body, validationResult } = require('express-validator')
 const { errorHandler } = require('../utils/error-handling')
-const faker = require('faker')
 
 const Trail = require('../models/trail')
 const Event = require('../models/event')
-const User = require('../models/user.psql')
+const UserMongo = require('../models/user.mongo')
 
 class EventController {
   async events(req, res) {
@@ -13,7 +12,9 @@ class EventController {
 
     const events = await Event.find({
       trailId,
-    }).lean()
+    })
+      .select((fields && fields.replace(/,|;/g, ' ')) || '-chat')
+      .lean()
 
     // for (let i = 0; i < events.length; i++) {
     //   console.log(events[i].userId)
@@ -32,7 +33,9 @@ class EventController {
     const { eventId } = req.params
     const { fields } = req.query
 
-    const event = await Event.findById(eventId).lean()
+    const event = await Event.findById(eventId)
+      .select((fields && fields.replace(/,|;/g, ' ')) || '-chat')
+      .lean()
     res.json(event)
   }
 
@@ -73,7 +76,6 @@ class EventController {
       return res.status(400).json({ errors: errors.array() })
 
     const { id: userId } = req.context
-    // TODO: check if user owns the event
 
     const { eventId } = req.params
     const {
@@ -88,7 +90,7 @@ class EventController {
       return res.status(403).json(errorHandler('Nothing to update'))
 
     await Event.updateOne(
-      { _id: eventId },
+      { _id: eventId, userId },
       { title, description, date, duration_min, max_participants }
     )
 
@@ -98,9 +100,8 @@ class EventController {
 
   async deleteEvent(req, res) {
     const { id: userId } = req.context
-    // TODO: check if user owns the event
     const { eventId } = req.params
-    await Event.deleteOne({ eventId })
+    await Event.deleteOne({ _id: eventId, userId })
     res.json({ success: true })
   }
 
@@ -108,13 +109,15 @@ class EventController {
     const { id: userId, name } = req.context
     const { eventId } = req.params
 
-    const joined = await Event.find({
+    const joined = await Event.findOne({
       _id: eventId,
-      participants: { userId },
+      participants: { $elemMatch: { userId } },
     }).countDocuments()
 
     if (!joined) {
-      const imageUrl = faker.internet.avatar()
+      const user = await UserMongo.findOne({ _id: userId }).select(
+        'profileImage'
+      )
       await Event.updateOne(
         { _id: eventId },
         {
@@ -122,14 +125,14 @@ class EventController {
             participants: {
               userId,
               name,
-              imageUrl,
+              profileImage: user.profileImage,
             },
           },
         }
       )
     }
 
-    res.json({ success: true })
+    res.json({ success: !joined })
   }
 
   async leaveEvent(req, res) {
@@ -157,7 +160,9 @@ class EventController {
 
   async eventsJoinedByUser(req, res) {
     const { id: userId } = req.context
-    const events = await Event.find({ participants: userId })
+    const events = await Event.find({
+      participants: { $elemMatch: { userId } },
+    })
     res.json(events)
   }
 

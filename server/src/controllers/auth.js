@@ -3,6 +3,7 @@ const { errorHandler } = require('../utils/error-handling')
 
 const UserPsql = require('../models/user.psql')
 const UserMongo = require('../models/user.mongo')
+const UserRating = require('../models/user_rating')
 
 class AuthController {
   async signIn(req, res) {
@@ -59,6 +60,10 @@ class AuthController {
       name: user.name,
       gender: user.gender,
       email: user.email,
+    })
+
+    await UserRating.create({
+      userID: user.id,
     })
 
     return res.json(user.generateTokenPayload())

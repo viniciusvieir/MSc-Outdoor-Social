@@ -24,6 +24,7 @@ import {
   Left,
   Right,
   Icon,
+  Body,
 } from 'native-base'
 
 import ColorConstants from '../util/ColorConstants'
@@ -114,11 +115,40 @@ const TrailCards = ({ trails, filter }) => {
                       starStyle={styles.rating}
                     />
                     <Text
-                      style={{ marginTop: 3, color: ColorConstants.secondary }}
+                      style={{
+                        marginTop: 3,
+                        color: ColorConstants.secondary,
+                        fontSize: item.weighted_rating > 0 ? 16 : 14,
+                      }}
                     >
-                      {item.avg_rating}
+                      {item.weighted_rating > 0
+                        ? item.weighted_rating.toFixed(1)
+                        : 'No\nRating'}
                     </Text>
                   </Left>
+
+                  <Right>
+                    <Button transparent>
+                      <FontAwesome5
+                        name="comments"
+                        size={18}
+                        color={ColorConstants.darkGray}
+                      />
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          color: ColorConstants.darkGray,
+                        }}
+                      >
+                        {item.comment_count > 0
+                          ? `${item.comment_count}\ncomment${
+                              item.comment_count > 1 ? 's' : ''
+                            }`
+                          : 'No\ncomments'}
+                      </Text>
+                    </Button>
+                  </Right>
+
                   <Right>
                     <Button
                       transparent
@@ -130,20 +160,23 @@ const TrailCards = ({ trails, filter }) => {
                         })
                       }}
                     >
+                      <FontAwesome5
+                        name="hiking"
+                        size={18}
+                        color={ColorConstants.primary}
+                      />
                       <Text
                         style={{
-                          fontSize: 16,
+                          fontSize: 14,
                           color: ColorConstants.primary,
                         }}
                       >
-                        {item.outing_count} event
-                        {item.outing_count > 1 ? 's' : ''}
+                        {item.outing_count > 0
+                          ? `${item.outing_count}\nevent${
+                              item.outing_count > 1 ? 's' : ''
+                            }`
+                          : 'No\nevents'}
                       </Text>
-                      <FontAwesome5
-                        name="arrow-right"
-                        size={16}
-                        color={ColorConstants.primary}
-                      />
                     </Button>
                   </Right>
                 </CardItem>

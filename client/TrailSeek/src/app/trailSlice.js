@@ -33,7 +33,7 @@ export const fetchTrailsByQuery = createAsyncThunk(
       location = false,
       maxDist = 10000,
       minDist = 0,
-      fields = 'name,avg_rating,location,img_url,outing_count',
+      fields = 'name,weighted_rating,location,img_url,outing_count,comment_count',
     },
     { rejectWithValue, getState }
   ) => {

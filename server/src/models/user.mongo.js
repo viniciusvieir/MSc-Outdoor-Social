@@ -4,6 +4,8 @@ const UserSchema = new mongoose.Schema({
   userId: {
     type: Number,
     required: true,
+    index: true,
+    unique: true,
   },
   name: {
     type: String,
