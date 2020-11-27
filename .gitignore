@@ -1,4 +1,22 @@
-node_modules
-dist
+# ignore some folders
+node_modules/
+dist/
+**/coverage/
+
+# ignore system files
+Thumbs.db
 .DS_Store
 .env
+*.env
+
+# ignore temp database
+database.sqlite
+
+# ignore dev files
+*.http
+client/TrailSeek/trail.http
+client/TrailSeek/.vscode/settings.json
+client/trailseek/yarn.lock
+
+#ignore local cache files
+__pycache__

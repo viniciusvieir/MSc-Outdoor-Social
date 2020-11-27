@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "trailseek",
+    "slug": "trailseek",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./src/images/tslogov2.3.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#007060"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.neels198.trailseek"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "description": "",
+    "githubUrl": "https://github.com/viniciusvieir/MSc-Outdoor-Social"
+  }
+}
