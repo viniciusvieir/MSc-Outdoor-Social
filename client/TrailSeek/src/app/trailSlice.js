@@ -44,20 +44,27 @@ export const fetchTrailsByQuery = createAsyncThunk(
           getState().user.userLocation.latitude != undefined
         ) {
           query = {
-            start: {
-              $near: {
-                $geometry: {
-                  type: 'Point',
-                  coordinates: [
-                    getState().user.userLocation.latitude,
-                    getState().user.userLocation.longitude,
-                  ],
-                },
-                $minDistance: minDist,
-                $maxDistance: maxDist,
-              },
+            near: {
+              lat: getState().user.userLocation.latitude,
+              lon: getState().user.userLocation.longitude,
             },
           }
+          // query = {
+          //   start: {
+          //     $near: {
+          //       // {"near":{"lat":53.285268,"lon":-6.239517}}
+          //       $geometry: {
+          //         type: 'Point',
+          //         coordinates: [
+          //           getState().user.userLocation.latitude,
+          //           getState().user.userLocation.longitude,
+          //         ],
+          //       },
+          //       $minDistance: minDist,
+          //       $maxDistance: maxDist,
+          //     },
+          //   },
+          // }
         } else {
           return []
         }

@@ -56,10 +56,15 @@ const SearchTrailScreen = ({ navigation }) => {
     spinner = true
 
   const getTrailsByQuery = async ({ location = false, query, skip = 0 }) => {
-    setFilter((prevState) => ({
-      ...prevState,
-      query,
-    }))
+    if (JSON.stringify(query) === '{}') {
+      query = filter.query
+    } else {
+      setFilter((prevState) => ({
+        ...prevState,
+        query,
+      }))
+    }
+    console.log(query)
     try {
       let results
       let gpsLoc
@@ -95,6 +100,13 @@ const SearchTrailScreen = ({ navigation }) => {
       })
     }
   }, [])
+
+  // useEffect(() => {
+  //   const unsubscribe = navigation.addListener('focus', () => {
+  //     getTrailsByQuery({})
+  //   })
+  //   return unsubscribe
+  // }, [navigation])
 
   if (
     trailStatus === CONSTANTS.LOADING ||
