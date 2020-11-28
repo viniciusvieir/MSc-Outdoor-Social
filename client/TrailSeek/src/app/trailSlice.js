@@ -89,48 +89,59 @@ export const fetchTrailsByQuery = createAsyncThunk(
 export const fetchTrailsByID = createAsyncThunk(
   'trails/fetchTrailsByID',
   async (
-    { fields, id, excludeWeather = 'hourly,current,minutely,alerts' },
+    {
+      covFlag = true,
+      weathFlag = true,
+      fields,
+      id,
+      excludeWeather = 'hourly,current,minutely,alerts',
+    },
     { rejectWithValue, getState }
   ) => {
-    let weatherResponse
-    let covidResponse
-    const covFlag = getState().user.covidToggle
+    let weatherResponse = []
+    let covidResponse = []
+    const covToggleFlag = getState().user.covidToggle
     try {
       // const existTrail = getState().trails.trailDetails.find(
       //   (item) => item._id === id
       // );
       // if (existTrail) return existTrail;
       const response = await trailSeek.get(`/trails/${id}?fields=${fields}`)
-      try {
-        weatherResponse = await weather.get('/onecall', {
-          params: {
-            // appid:trailData.weatherApiToken,
-            lat: response.data.start.coordinates[0],
-            lon: response.data.start.coordinates[1],
-            exclude: excludeWeather,
-          },
-        })
-      } catch (e) {
-        console.log('Weather API Error')
-        console.log(e.response.data.message)
+      if (weathFlag) {
+        try {
+          weatherResponse = await weather.get('/onecall', {
+            params: {
+              // appid:trailData.weatherApiToken,
+              lat: response.data.start.coordinates[0],
+              lon: response.data.start.coordinates[1],
+              exclude: excludeWeather,
+            },
+          })
+          response.data.weatherData = weatherResponse.data
+        } catch (e) {
+          console.log('Weather API Error')
+          console.log(e.response.data.message)
+        }
       }
-      if (covFlag) {
+      if (covToggleFlag && covFlag) {
         try {
           covidResponse = await covid.get('', {
             params: {
               geometry: `${response.data.start.coordinates[1]},${response.data.start.coordinates[0]}`,
             },
           })
+          response.data.covidData = covidResponse.data.features
         } catch (e) {
           console.log('Covid API Error')
           console.log(e.response.data.message)
         }
       }
-      response.data.weatherData = weatherResponse.data
-      response.data.covidData = covFlag ? covidResponse.data.features : []
+      // response.data.weatherData = weathFlag ? weatherResponse.data : []
+      // response.data.covidData =
+      //   covToggleFlag && covFlag ? covidResponse.data.features : []
       return response.data
     } catch (error) {
-      console.log(error)
+      console.log(error.message)
       return rejectWithValue(
         error.response.data?.errors
           ? error.response.data.errors

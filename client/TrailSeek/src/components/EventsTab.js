@@ -1,38 +1,38 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet, View, FlatList } from "react-native";
-import { Text, Button, List, ListItem, Body } from "native-base";
-import { useNavigation } from "@react-navigation/native";
+import React, { useState, useEffect } from 'react'
+import { StyleSheet, View, FlatList } from 'react-native'
+import { Text, Button, List, ListItem, Body } from 'native-base'
+import { useNavigation } from '@react-navigation/native'
 
-import { useDispatch, useSelector } from "react-redux";
-import { unwrapResult } from "@reduxjs/toolkit";
+import { useDispatch, useSelector } from 'react-redux'
+import { unwrapResult } from '@reduxjs/toolkit'
 
-import ColorConstants from "../util/ColorConstants";
-import { fetchEvents } from "../app/eventSlice";
-import ToastAlert from "../components/ToastAlert";
-import moment from "moment";
+import ColorConstants from '../util/ColorConstants'
+import { fetchEvents } from '../app/eventSlice'
+import ToastAlert from '../components/ToastAlert'
+import moment from 'moment'
 
 const EventsTab = ({ trailData }) => {
-  const dispatch = useDispatch();
-  const [events, setEvents] = useState([]);
-  const navigation = useNavigation();
+  const dispatch = useDispatch()
+  const [events, setEvents] = useState([])
+  const navigation = useNavigation()
   const getEvents = async () => {
     try {
-      const results = await dispatch(fetchEvents(trailData._id));
-      const uResults = unwrapResult(results);
-      setEvents(uResults.data);
+      const results = await dispatch(fetchEvents(trailData._id))
+      const uResults = unwrapResult(results)
+      setEvents(uResults.data)
     } catch (e) {
-      console.log(e);
-      ToastAlert(e.message);
+      console.log(e)
+      ToastAlert(e.message)
     }
-  };
+  }
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      getEvents();
-    });
-    getEvents();
-    return unsubscribe;
-  }, [navigation]);
+    const unsubscribe = navigation.addListener('focus', () => {
+      getEvents()
+    })
+    getEvents()
+    return unsubscribe
+  }, [navigation])
 
   return (
     <View
@@ -43,10 +43,10 @@ const EventsTab = ({ trailData }) => {
     >
       <Button
         onPress={() => {
-          navigation.navigate("CreateEvent", {
+          navigation.navigate('CreateEvent', {
             trailID: trailData._id,
             trailName: trailData.name,
-          });
+          })
         }}
         full
         style={{ margin: 5, backgroundColor: ColorConstants.Yellow }}
@@ -58,17 +58,16 @@ const EventsTab = ({ trailData }) => {
           style={{ marginBottom: 60 }}
           data={events}
           keyExtractor={(item) => {
-            return item._id;
+            return item._id
           }}
           renderItem={({ item }) => {
-            if (!moment(item.date).isBefore(moment(), "day")) {
+            if (!moment(item.date).isBefore(moment(), 'day')) {
               return (
                 <ListItem
                   onPress={() => {
-                    navigation.navigate("ViewEvent", {
-                      trailData,
+                    navigation.navigate('ViewEvent', {
                       eventID: item._id,
-                    });
+                    })
                   }}
                   noIndent
                   style={{ backgroundColor: ColorConstants.DWhite }}
@@ -80,19 +79,19 @@ const EventsTab = ({ trailData }) => {
                     </Text>
                   </Body>
                 </ListItem>
-              );
+              )
             }
           }}
         />
       </List>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   listText: {
     color: ColorConstants.Black2,
   },
-});
+})
 
-export default EventsTab;
+export default EventsTab

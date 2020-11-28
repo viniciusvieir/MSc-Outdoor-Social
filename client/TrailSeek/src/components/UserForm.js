@@ -1,20 +1,20 @@
-import React, { useState } from "react";
-import { TextInput, View, StyleSheet, TouchableOpacity } from "react-native";
-import { Picker } from "@react-native-community/picker";
-import { Text, Button } from "native-base";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import moment from "moment";
-import { Formik, ErrorMessage } from "formik";
-import * as Yup from "yup";
-import { Grid, Col, Row } from "react-native-easy-grid";
-import { FontAwesome5 } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import React, { useState } from 'react'
+import { TextInput, View, StyleSheet, TouchableOpacity } from 'react-native'
+import { Picker } from '@react-native-community/picker'
+import { Text, Button } from 'native-base'
+import DateTimePicker from '@react-native-community/datetimepicker'
+import moment from 'moment'
+import { Formik, ErrorMessage } from 'formik'
+import * as Yup from 'yup'
+import { Grid, Col, Row } from 'react-native-easy-grid'
+import { FontAwesome5 } from '@expo/vector-icons'
+import { useNavigation } from '@react-navigation/native'
 
-import ColorConstants from "../util/ColorConstants";
+import ColorConstants from '../util/ColorConstants'
 
 const UserForm = ({ onSubmitFunc, userData }) => {
-  const navigation = useNavigation();
-  const [show, setShow] = useState(false);
+  const navigation = useNavigation()
+  const [show, setShow] = useState(false)
   return (
     <View style={{ flex: 1, padding: 30 }}>
       <Formik
@@ -22,34 +22,34 @@ const UserForm = ({ onSubmitFunc, userData }) => {
           userData
             ? userData
             : {
-                name: "",
-                gender: "M",
-                dob: moment().format("YYYY-MM-DD"),
-                email: "",
-                password: "",
-                confirmPassword: "",
+                name: '',
+                gender: 'M',
+                dob: moment().format('YYYY-MM-DD'),
+                email: '',
+                password: '',
+                confirmPassword: '',
               }
         }
         validationSchema={Yup.object({
-          name: Yup.string().required("Required"),
-          gender: Yup.string().required("Required"),
-          dob: Yup.date().required("Required"),
-          email: Yup.string().label("Email").email().required(),
+          name: Yup.string().required('Required'),
+          gender: Yup.string().required('Required'),
+          dob: Yup.date().required('Required'),
+          email: Yup.string().label('Email').email().required(),
           password: Yup.string()
-            .label("Password")
+            .label('Password')
             .required()
-            .min(2, "Seems a bit short...")
-            .max(10, "We prefer insecure system, try a shorter password."),
+            .min(2, 'Seems a bit short...')
+            .max(10, 'We prefer insecure system, try a shorter password.'),
           confirmPassword: Yup.string()
             .required()
-            .label("Confirm password")
-            .test("passwords-match", "Passwords must match", function (value) {
-              return this.parent.password === value;
+            .label('Confirm password')
+            .test('passwords-match', 'Passwords must match', function (value) {
+              return this.parent.password === value
             }),
         })}
         onSubmit={async (values, formikActions) => {
-          formikActions.setSubmitting(false);
-          onSubmitFunc(values);
+          formikActions.setSubmitting(false)
+          onSubmitFunc(values)
         }}
       >
         {(props) => (
@@ -59,8 +59,8 @@ const UserForm = ({ onSubmitFunc, userData }) => {
             </Row>
             <Row>
               <TextInput
-                onChangeText={props.handleChange("name")}
-                onBlur={props.handleBlur("name")}
+                onChangeText={props.handleChange('name')}
+                onBlur={props.handleBlur('name')}
                 value={props.values.title}
                 autoFocus
                 style={styles.input}
@@ -75,23 +75,23 @@ const UserForm = ({ onSubmitFunc, userData }) => {
             </Row>
             <Row>
               <Text style={{ color: ColorConstants.Black }}>
-                Date of Birth :{" "}
+                Date of Birth :{' '}
               </Text>
             </Row>
             <Row>
               <TouchableOpacity
                 onPress={() => {
-                  setShow(true);
+                  setShow(true)
                 }}
-                style={[styles.input, { flexDirection: "row" }]}
+                style={[styles.input, { flexDirection: 'row' }]}
               >
-                <Col style={{ justifyContent: "center" }}>
-                  <Text>{moment(props.values.dob).format("YYYY-MM-DD")}</Text>
+                <Col style={{ justifyContent: 'center' }}>
+                  <Text>{moment(props.values.dob).format('YYYY-MM-DD')}</Text>
                 </Col>
                 <Col
                   style={{
-                    justifyContent: "center",
-                    alignItems: "flex-end",
+                    justifyContent: 'center',
+                    alignItems: 'flex-end',
                   }}
                 >
                   <FontAwesome5
@@ -112,11 +112,11 @@ const UserForm = ({ onSubmitFunc, userData }) => {
                 display="default"
                 mode="date"
                 onChange={(event, selectedDate) => {
-                  setShow(Platform.OS === "ios");
+                  setShow(Platform.OS === 'ios')
                   props.setFieldValue(
-                    "dob",
-                    moment(selectedDate).format("YYYY-MM-DD")
-                  );
+                    'dob',
+                    moment(selectedDate).format('YYYY-MM-DD')
+                  )
                 }}
                 maximumDate={moment().toDate()}
                 value={moment(props.values.dob).toDate()}
@@ -130,7 +130,7 @@ const UserForm = ({ onSubmitFunc, userData }) => {
                 selectedValue={props.values.gender}
                 style={styles.input}
                 onValueChange={(itemValue, itemIndex) =>
-                  props.setFieldValue("gender", itemValue)
+                  props.setFieldValue('gender', itemValue)
                 }
               >
                 <Picker.Item label="Male" value="M" />
@@ -148,8 +148,8 @@ const UserForm = ({ onSubmitFunc, userData }) => {
             <Row>
               <TextInput
                 editable={userData ? false : true}
-                onChangeText={props.handleChange("email")}
-                onBlur={props.handleBlur("email")}
+                onChangeText={props.handleChange('email')}
+                onBlur={props.handleBlur('email')}
                 value={props.values.email}
                 autoCapitalize="none"
                 style={styles.input}
@@ -167,8 +167,8 @@ const UserForm = ({ onSubmitFunc, userData }) => {
             </Row>
             <Row>
               <TextInput
-                onChangeText={props.handleChange("password")}
-                onBlur={props.handleBlur("password")}
+                onChangeText={props.handleChange('password')}
+                onBlur={props.handleBlur('password')}
                 value={props.values.password}
                 autoCapitalize="none"
                 style={styles.input}
@@ -189,8 +189,8 @@ const UserForm = ({ onSubmitFunc, userData }) => {
             </Row>
             <Row>
               <TextInput
-                onChangeText={props.handleChange("confirmPassword")}
-                onBlur={props.handleBlur("confirmPassword")}
+                onChangeText={props.handleChange('confirmPassword')}
+                onBlur={props.handleBlur('confirmPassword')}
                 value={props.values.confirmPassword}
                 autoCapitalize="none"
                 style={styles.input}
@@ -219,7 +219,7 @@ const UserForm = ({ onSubmitFunc, userData }) => {
             {userData ? null : (
               <Button
                 block
-                onPress={() => navigation.navigate("Signin")}
+                onPress={() => navigation.navigate('Signin')}
                 style={{
                   backgroundColor: ColorConstants.DGreen,
                   marginBottom: 16,
@@ -243,14 +243,14 @@ const UserForm = ({ onSubmitFunc, userData }) => {
         )}
       </Formik>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   image: {
-    width: "100%",
+    width: '100%',
     height: 100,
-    alignSelf: "center",
+    alignSelf: 'center',
   },
 
   button: {
@@ -268,8 +268,8 @@ const styles = StyleSheet.create({
     backgroundColor: ColorConstants.DWhite,
   },
   error: {
-    color: "red",
-    shadowColor: "#000",
+    color: 'red',
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 6,
@@ -278,6 +278,6 @@ const styles = StyleSheet.create({
     shadowRadius: 7.49,
     elevation: 12,
   },
-});
+})
 
-export default UserForm;
+export default UserForm

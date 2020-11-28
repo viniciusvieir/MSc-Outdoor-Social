@@ -56,6 +56,10 @@ const SearchTrailScreen = ({ navigation }) => {
     spinner = true
 
   const getTrailsByQuery = async ({ location = false, query, skip = 0 }) => {
+    setFilter((prevState) => ({
+      ...prevState,
+      query,
+    }))
     try {
       let results
       let gpsLoc
@@ -71,7 +75,6 @@ const SearchTrailScreen = ({ navigation }) => {
       } else {
         results = await dispatch(fetchTrailsByQuery({ query, location, skip }))
       }
-
       const uResult = unwrapResult(results)
       setTrails(uResult)
     } catch (e) {
@@ -261,7 +264,7 @@ const SearchTrailScreen = ({ navigation }) => {
         }}
         contentContainerStyle={{ flex: 1 }}
       >
-        <TrailCard trails={trails} filter={filter} />
+        <TrailCard trails={trails} filter={filter.query} />
       </View>
     </Container>
   )

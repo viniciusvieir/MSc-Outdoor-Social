@@ -1,5 +1,5 @@
-import axios from 'axios'
-import AsyncStorage from '@react-native-community/async-storage'
+import axios from "axios";
+import AsyncStorage from "@react-native-community/async-storage";
 
 const trailSeek = axios.create({
   baseURL: 'https://api.trailseek.eu/v1',
@@ -7,17 +7,17 @@ const trailSeek = axios.create({
 })
 
 trailSeek.interceptors.request.use(async (config) => {
-  let token
+  let token;
   try {
-    const value = await AsyncStorage.getItem('@token')
+    const value = await AsyncStorage.getItem("@token");
     if (value) {
-      token = value
+      token = value;
     }
   } catch (error) {
-    console.log(error.response)
+    console.log(error.response);
   }
-  config.headers.Authorization = token ? `Bearer ${token}` : ''
-  return config
-})
+  config.headers.Authorization = token ? `Bearer ${token}` : "";
+  return config;
+});
 
-export default trailSeek
+export default trailSeek;
