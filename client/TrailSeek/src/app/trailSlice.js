@@ -114,7 +114,6 @@ export const fetchTrailsByID = createAsyncThunk(
       // );
       // if (existTrail) return existTrail;
       const response = await trailSeek.get(`/trails/${id}?fields=${fields}`)
-
       if (weathFlag) {
         try {
           weatherResponse = await weather.get('/onecall', {
