@@ -383,27 +383,31 @@ const ViewEventScreen = ({ route, navigation }) => {
                   backgroundColor: ColorConstants.Yellow,
                 }}
                 onPress={async () => {
-                  try {
-                    const response = await dispatch(
-                      joinEvent({
-                        trailID: trailData._id,
-                        eventID,
+                  if (isAuth) {
+                    try {
+                      const response = await dispatch(
+                        joinEvent({
+                          trailID: trailData._id,
+                          eventID,
+                        })
+                      )
+                      const h = unwrapResult(response)
+                      getSingleEvent()
+                      navigation.s
+                      //Add Modal
+                      Toast.show({
+                        text: 'Event Joined',
+                        buttonText: 'Okay',
+                        type: 'success',
                       })
-                    )
-                    const h = unwrapResult(response)
-                    getSingleEvent()
-                    navigation.s
-                    //Add Modal
-                    Toast.show({
-                      text: 'Event Joined',
-                      buttonText: 'Okay',
-                      type: 'success',
-                    })
-                    setJoinFlag(false)
+                      setJoinFlag(false)
 
-                    // navigation.goBack(); // Comment this
-                  } catch (e) {
-                    ToastAlert(e.message)
+                      // navigation.goBack(); // Comment this
+                    } catch (e) {
+                      ToastAlert(e.message)
+                    }
+                  } else {
+                    navigation.navigate('Authentication', { screen: 'Signin' })
                   }
                 }}
               >

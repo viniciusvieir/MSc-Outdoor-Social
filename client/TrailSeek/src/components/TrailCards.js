@@ -130,7 +130,7 @@ const TrailCards = ({ trails, filter }) => {
                   <Right>
                     <Button transparent>
                       <FontAwesome5
-                        name='comments'
+                        name="comments"
                         size={18}
                         color={ColorConstants.darkGray}
                       />
@@ -161,7 +161,7 @@ const TrailCards = ({ trails, filter }) => {
                       }}
                     >
                       <FontAwesome5
-                        name='hiking'
+                        name="hiking"
                         size={18}
                         color={ColorConstants.primary}
                       />
@@ -177,11 +177,6 @@ const TrailCards = ({ trails, filter }) => {
                             }`
                           : 'No\nevents'}
                       </Text>
-                      <FontAwesome5
-                        name="arrow-right"
-                        size={16}
-                        color={ColorConstants.primary}
-                      />
                     </Button>
                   </Right>
                 </CardItem>

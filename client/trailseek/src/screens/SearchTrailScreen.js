@@ -56,10 +56,15 @@ const SearchTrailScreen = ({ navigation }) => {
     spinner = true
 
   const getTrailsByQuery = async ({ location = false, query, skip = 0 }) => {
-    setFilter((prevState) => ({
-      ...prevState,
-      query,
-    }))
+    if (JSON.stringify(query) === '{}') {
+      query = filter.query
+    } else {
+      setFilter((prevState) => ({
+        ...prevState,
+        query,
+      }))
+    }
+    console.log(query)
     try {
       let results
       let gpsLoc
@@ -95,9 +100,13 @@ const SearchTrailScreen = ({ navigation }) => {
       })
     }
   }, [])
-  useEffect(() => {
-    setSearchTerm('')
-  }, [filter])
+
+  // useEffect(() => {
+  //   const unsubscribe = navigation.addListener('focus', () => {
+  //     getTrailsByQuery({})
+  //   })
+  //   return unsubscribe
+  // }, [navigation])
 
   if (
     trailStatus === CONSTANTS.LOADING ||
@@ -130,7 +139,7 @@ const SearchTrailScreen = ({ navigation }) => {
       style={{ backgroundColor: ColorConstants.primary, flex: 1 }}
       contentContainerStyle={{ flex: 1 }}
     >
-      <Header transparent androidStatusBarColor='#ffffff00'>
+      <Header transparent androidStatusBarColor="#ffffff00">
         <Body>
           <Title
             style={{
@@ -153,15 +162,15 @@ const SearchTrailScreen = ({ navigation }) => {
           marginHorizontal: Constants.POINTS.marginHorizontal,
           height: 44,
         }}
-        placeholder='Search'
+        placeholder="Search"
         value={searchTerm}
         onChangeText={(text) => {
           setSearchTerm(text)
         }}
         inputContainerStyle={{ height: 29, marginLeft: 2 }}
-        autoCapitalize='none'
-        platform='android'
-        autoCompleteType='name'
+        autoCapitalize="none"
+        platform="android"
+        autoCompleteType="name"
         enablesReturnKeyAutomatically
         onSubmitEditing={() => {
           navigation.navigate('ListTrail', { query: searchParam.query })

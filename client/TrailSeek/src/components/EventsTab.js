@@ -9,9 +9,9 @@ import { unwrapResult } from '@reduxjs/toolkit'
 import ColorConstants from '../util/ColorConstants'
 import { fetchEvents } from '../app/eventSlice'
 import ToastAlert from '../components/ToastAlert'
-import moment from 'moment'
 
 const EventsTab = ({ trailData }) => {
+  const isAuth = useSelector((state) => state.user.isAuth)
   const dispatch = useDispatch()
   const [events, setEvents] = useState([])
   const navigation = useNavigation()
@@ -43,10 +43,14 @@ const EventsTab = ({ trailData }) => {
     >
       <Button
         onPress={() => {
-          navigation.navigate('CreateEvent', {
-            trailID: trailData._id,
-            trailName: trailData.name,
-          })
+          if (isAuth) {
+            navigation.navigate('CreateEvent', {
+              trailID: trailData._id,
+              trailName: trailData.name,
+            })
+          } else {
+            navigation.navigate('Authentication', { screen: 'Signin' })
+          }
         }}
         full
         style={{ margin: 5, backgroundColor: ColorConstants.Yellow }}
@@ -60,8 +64,9 @@ const EventsTab = ({ trailData }) => {
           keyExtractor={(item) => {
             return item._id
           }}
-          renderItem={({ item }) => {
-            if (!moment(item.date).isBefore(moment(), 'day')) {
+          renderItem={
+            ({ item }) => {
+              // if (!moment(item.date).isBefore(moment(), 'day')) {
               return (
                 <ListItem
                   onPress={() => {
@@ -81,7 +86,8 @@ const EventsTab = ({ trailData }) => {
                 </ListItem>
               )
             }
-          }}
+            // }
+          }
         />
       </List>
     </View>

@@ -1,5 +1,8 @@
 import React, { useState } from 'react'
-import { NavigationContainer } from '@react-navigation/native'
+import {
+  NavigationContainer,
+  getFocusedRouteNameFromRoute,
+} from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { MaterialIcons } from '@expo/vector-icons'
 import { Octicons } from '@expo/vector-icons'
@@ -225,21 +228,26 @@ const MainTabFlow = () => {
       <Tab.Screen
         name="TrailFlow"
         component={TrailFlow}
-        options={{
+        options={({ route }) => ({
+          tabBarVisible:
+            getFocusedRouteNameFromRoute(route) === 'ViewTrail' ? false : true,
           tabBarLabel: 'Explore',
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="search" size={24} color={color} />
           ),
-        }}
+        })}
       />
       <Tab.Screen
         name="EventFlow"
         component={EventFlow}
         listeners={({ navigation }) => ({
           tabPress: (e) => {
-            autFlag
-              ? null
-              : navigation.navigate('Authentication', { screen: 'Signin' })
+            if (autFlag) {
+              return null
+            } else {
+              e.preventDefault()
+              navigation.navigate('Authentication', { screen: 'Signin' })
+            }
           },
         })}
         options={{
@@ -254,9 +262,12 @@ const MainTabFlow = () => {
         component={ProfileFlow}
         listeners={({ navigation }) => ({
           tabPress: (e) => {
-            autFlag
-              ? null
-              : navigation.navigate('Authentication', { screen: 'Signin' })
+            if (autFlag) {
+              return null
+            } else {
+              e.preventDefault()
+              navigation.navigate('Authentication', { screen: 'Signin' })
+            }
           },
         })}
         options={{
@@ -359,9 +370,9 @@ const AppNav = () => {
       <AppLoading
         startAsync={getAsyncTokenAndUserData}
         onFinish={() => {
-          autFlag
-            ? setInitRoutName('MainTab')
-            : setInitRoutName('Authentication')
+          // autFlag
+          //   ? setInitRoutName('MainTab')
+          //   : setInitRoutName('Authentication')
           setIsLoading(false)
         }}
         onError={console.warn}
@@ -373,12 +384,7 @@ const AppNav = () => {
     <Root>
       <NavigationContainer>
         <Host>
-          <Stack.Navigator initialRouteName={initRoutName}>
-            <Stack.Screen
-              name="Authentication"
-              component={AuthenticationFlow}
-              options={{ headerTransparent: true, title: '', headerLeft: null }}
-            />
+          <Stack.Navigator initialRouteName="MainTab">
             <Stack.Screen
               name="MainTab"
               component={MainTabFlow}
@@ -474,6 +480,11 @@ const AppNav = () => {
                 ),
                 // headerTintColor: ColorConstants.Black,
               }}
+            />
+            <Stack.Screen
+              name="Authentication"
+              component={AuthenticationFlow}
+              options={{ headerTransparent: true, title: '', headerLeft: null }}
             />
           </Stack.Navigator>
         </Host>
