@@ -1,29 +1,13 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval' http://platform.linkedin.com "
+    />
+
     <script src="/socket.io/socket.io.js"></script>
-    <script>
-      // https://api.trailseek.eu/socket/socket.io/comments
-      // http://localhost:5050/comments
-      const socket = io('http://localhost:5050', {
-        query: {
-          trailId: '5fbd4cbcc1dbd0485ee48f7d',
-        },
-      })
-
-      socket.on('connect', () => {
-        console.log('Connect', socket.id)
-      })
-
-      socket.on('comments:all-comments', (data) => {
-        console.log('All comments', data)
-        data.forEach((comment) => {
-          document.querySelector(
-            '#comments'
-          ).innerHTML += `<li>${comment.content}</li>`
-        })
-      })
-    </script>
+    <script src="socket.js"></script>
   </head>
 
   <body>
