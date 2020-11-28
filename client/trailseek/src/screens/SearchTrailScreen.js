@@ -3,9 +3,8 @@ import { StyleSheet, ScrollView, View } from 'react-native'
 import { SearchBar } from 'react-native-elements'
 import { useDispatch, useSelector } from 'react-redux'
 import { unwrapResult } from '@reduxjs/toolkit'
-import { Container, Text, Header, Title, Body } from 'native-base'
+import { Container, Text, Header, Title, Body, Spinner } from 'native-base'
 
-import LoadSpinner from '../components/LoadSpinner'
 import ToastAlert from '../components/ToastAlert'
 import TrailCard from '../components/TrailCards'
 import CONSTANTS from '../util/Constants'
@@ -142,8 +141,6 @@ const SearchTrailScreen = ({ navigation }) => {
         </Body>
       </Header>
 
-      <LoadSpinner visible={spinner} />
-
       <SearchBar
         containerStyle={{
           borderRadius: 22,
@@ -176,24 +173,6 @@ const SearchTrailScreen = ({ navigation }) => {
           marginBottom: 10,
         }}
       >
-        {/* <ScrollView
-        style={{ maxHeight: 65 }}
-        horizontal
-        contentContainerStyle={{
-          flexDirection: "row",
-          // justifyContent: "space-between",
-          alignItems: "center",
-          marginTop: 10,
-          maxHeight: 44,
-          height: 50,
-          marginLeft: 10,
-          // marginHorizontal: 40,
-          // marginBottom: 10,
-          // flex: 1,
-          borderColor: "red",
-          borderWidth: 2,
-        }}
-      > */}
         {isAuth ? (
           <TrailFilter
             title={recomended.title}
@@ -251,17 +230,21 @@ const SearchTrailScreen = ({ navigation }) => {
             })
           }}
         />
-        {/* </ScrollView> */}
       </View>
 
       <View
         style={{
           backgroundColor: ColorConstants.DWhite,
           flex: 1,
+          justifyContent: 'center',
         }}
         contentContainerStyle={{ flex: 1 }}
       >
-        <TrailCard trails={trails} filter={filter} />
+        {trails.length > 0 ? (
+          <TrailCard trails={trails} filter={filter} />
+        ) : (
+          <Spinner color={ColorConstants.primary} />
+        )}
       </View>
     </Container>
   )

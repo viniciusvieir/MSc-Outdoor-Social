@@ -1,20 +1,22 @@
+import { Spinner } from 'native-base'
 import React from 'react'
 import { StyleSheet } from 'react-native'
-import Spinner from 'react-native-loading-spinner-overlay'
+import ColorConstants from '../util/ColorConstants'
 
 const LoadSpinner = ({ visible }) => {
   return (
-    <Spinner
-      visible={visible}
-      textContent={'Loading'}
-      textStyle={styles.spinnerTextStyle}
-    />
+    <Spinner color={ColorConstants.primary} />
+    // <Spinner
+    //   visible={visible}
+    //   textContent={'Loading'}
+    //   textStyle={styles.spinnerTextStyle}
+    // />
   )
 }
 
 const styles = StyleSheet.create({
   spinnerTextStyle: {
-    color: '#FFF',
+    color: ColorConstants.Black,
     width: 80,
   },
 })

@@ -52,8 +52,7 @@ const AuthenticationFlow = () => {
 }
 
 const ProfileFlow = () => {
-
-  const isAuth = useSelector((state) => state.user.isAuth);
+  const isAuth = useSelector((state) => state.user.isAuth)
 
   return (
     <Stack.Navigator>
@@ -65,18 +64,18 @@ const ProfileFlow = () => {
           headerLeft: null,
           headerStyle: { backgroundColor: ColorConstants.primary },
           headerTitleStyle: { color: ColorConstants.DWhite },
-          title: "My Profile",
+          title: 'My Profile',
           headerRight: () =>
             isAuth ? (
               <TouchableOpacity
                 onPress={({}) => {
-                  navigation.navigate("EditProfile");
+                  navigation.navigate('EditProfile')
                 }}
               >
                 <MaterialIcons
-                  name="edit"
+                  name='edit'
                   size={24}
-                  style={{ color: "#ffffff", marginRight: 20 }}
+                  style={{ color: '#ffffff', marginRight: 20 }}
                 />
               </TouchableOpacity>
             ) : null,
@@ -84,17 +83,17 @@ const ProfileFlow = () => {
         })}
       />
       <Stack.Screen
-        name="EditProfile"
+        name='EditProfile'
         component={EditProfileScreen}
         options={{
           headerStyle: { backgroundColor: ColorConstants.primary },
           headerTitleStyle: { color: ColorConstants.DWhite },
-          title: "Edit Profile",
+          title: 'Edit Profile',
           headerBackImage: () => (
             <MaterialIcons
-              name="arrow-back"
+              name='arrow-back'
               size={24}
-              color="white"
+              color='white'
               style={styles.shadow}
             />
           ),
@@ -152,13 +151,6 @@ const TrailFlow = () => {
               style={styles.shadow}
             />
           ),
-          // headerTitleStyle: {
-          //     fontWeight: '600',
-          //     color:'white',
-          //     textShadowColor: 'rgba(0, 0, 0, 0.75)',
-          //     textShadowOffset: {width: -1, height: 1},
-          //     textShadowRadius: 10
-          //   },
         })}
       />
       <Stack.Screen
@@ -226,12 +218,13 @@ const MainTabFlow = () => {
       <Tab.Screen
         name='TrailFlow'
         component={TrailFlow}
-        options={{
+        options={({ route }) => ({
+          // tabBarVisible: this.getTabBarVisibility(route),
           tabBarLabel: 'Explore',
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name='search' size={24} color={color} />
           ),
-        }}
+        })}
       />
       <Tab.Screen
         name='EventFlow'
@@ -321,22 +314,22 @@ const AppNav = () => {
     state.event.currentEvent.length
       ? state.event.currentEvent[0].eventData.userId
       : null
-  );
+  )
   const currentEventParticipants = useSelector((state) =>
     state.event.currentEvent.length
       ? state.event.currentEvent[0].eventData.participants
       : null
-  );
+  )
   const trailID = useSelector((state) =>
     state.event.currentEvent.length
       ? state.event.currentEvent[0].eventData.trailId
       : null
-  );
+  )
   const eventID = useSelector((state) =>
     state.event.currentEvent.length
       ? state.event.currentEvent[0].eventData._id
       : null
-  );
+  )
 
   const getAsyncTokenAndUserData = async () => {
     try {

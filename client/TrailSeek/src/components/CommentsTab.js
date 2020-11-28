@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react'
+import { View } from 'react-native'
 import { GiftedChat } from 'react-native-gifted-chat'
-import moment from 'moment'
 import trailSeek from '../api/trailSeek'
-import { Toast } from 'native-base'
+import { Spinner, Toast } from 'native-base'
+import { isLoggedIn } from '../util/auth'
+import ColorConstants from '../util/ColorConstants'
 
 const CommentsTabs = ({ trailData }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [messages, setMessages] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
 
   const uuidv4 = () => {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(
@@ -18,7 +22,12 @@ const CommentsTabs = ({ trailData }) => {
     )
   }
 
-  useEffect(() => {
+  const checkAuthentication = async () => {
+    const authenticated = await isLoggedIn()
+    setIsAuthenticated(authenticated)
+  }
+
+  const getMessages = () => {
     trailSeek.get(`/trails/${trailData._id}/comments`).then((response) => {
       const comments = response.data.map((comment, index) => {
         return {
@@ -32,12 +41,17 @@ const CommentsTabs = ({ trailData }) => {
           },
         }
       })
-
       setMessages(comments.reverse())
+      setIsLoading(false)
     })
-  }, [])
+  }
 
   const onSend = (comments) => {
+    if (!isAuthenticated) {
+      Toast.show({ text: 'You need to be authenticated to comment' })
+      return
+    }
+
     comments.forEach((comment) => (comment.user._id = uuidv4()))
 
     const content = comments[0].text
@@ -55,21 +69,32 @@ const CommentsTabs = ({ trailData }) => {
       })
   }
 
+  useEffect(() => {
+    checkAuthentication()
+    getMessages()
+  }, [])
+
   return (
-    <GiftedChat
-      messages={messages}
-      onSend={(comments) => onSend(comments)}
-      showAvatarForEveryMessage={true}
-      renderUsernameOnMessage={true}
-      //   inverted={false}
-      renderDay={() => null}
-      renderTime={() => null}
-      user={{
-        _id: 1,
-        name: 'Me',
-        avatar: 'https://placeimg.com/140/140/any',
-      }}
-    />
+    <View style={{ flex: 1, justifyContent: 'center' }}>
+      {isLoading ? (
+        <Spinner color={ColorConstants.primary} />
+      ) : (
+        <GiftedChat
+          messages={messages}
+          onSend={(comments) => onSend(comments)}
+          showAvatarForEveryMessage={true}
+          renderUsernameOnMessage={true}
+          //   inverted={false}
+          renderDay={() => null}
+          renderTime={() => null}
+          user={{
+            _id: 1,
+            name: 'Me',
+            avatar: 'https://placeimg.com/140/140/any',
+          }}
+        />
+      )}
+    </View>
   )
 }
 
