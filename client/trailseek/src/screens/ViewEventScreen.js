@@ -356,7 +356,9 @@ const ViewEventScreen = ({ route, navigation }) => {
                       }}
                       large
                       source={{
-                        uri: `https://eu.ui-avatars.com/api/?name=${item.name}`,
+                        uri: item.profileImage
+                          ? item.profileImage
+                          : `https://eu.ui-avatars.com/api/?name=${item.name}`,
                       }}
                     />
                     <Text style={{ color: ColorConstants.Black, fontSize: 10 }}>
