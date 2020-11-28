@@ -12,7 +12,7 @@ const Trail = require('../src/models/trail')
 const Event = require('../src/models/event')
 
 const app = express()
-app.use(cors())
+// app.use(cors())
 app.use(express.static(__dirname + '/client'))
 
 const server = app.listen(process.env.SOCKET_PORT, () =>
