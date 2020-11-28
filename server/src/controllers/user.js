@@ -1,12 +1,13 @@
 const { body, validationResult } = require('express-validator')
 const { errorHandler } = require('../utils/error-handling')
 
-const User = require('../models/user.psql')
+const UserPsql = require('../models/user.psql')
+const UserMongo = require('../models/user.mongo')
 
 class UserController {
   async user(req, res) {
-    const user = await User.findByPk(req.context.id, {
-      attributes: ['id', 'name', 'dob', 'gender', 'email'],
+    const user = await UserMongo.findOne({
+      userId: req.context.id,
     })
     res.json(user)
   }
@@ -18,7 +19,7 @@ class UserController {
 
     const { id } = req.context
 
-    const user = await User.findByPk(id)
+    const user = await UserPsql.findByPk(id)
     await user.update(req.body)
     res.json({ success: true })
   }
