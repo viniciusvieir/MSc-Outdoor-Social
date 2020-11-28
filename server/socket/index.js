@@ -19,7 +19,13 @@ const server = app.listen(process.env.SOCKET_PORT, () =>
   console.log(`listening on *:${process.env.SOCKET_PORT}`)
 )
 
-const io = require('socket.io')(server)
+const io = require('socket.io')(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST'],
+    credentials: true,
+  },
+})
 
 // We have separation of concerns defined by different namespaces in our socket server
 
