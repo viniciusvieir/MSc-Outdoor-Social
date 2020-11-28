@@ -17,6 +17,10 @@ const User = require('../src/models/user.mongo')
 const Trail = require('../src/models/trail')
 const Event = require('../src/models/event')
 
+app.get('/', (req, res) => {
+  res.send('Hello from socket')
+})
+
 // We have separation of concerns defined by different namespaces in our socket server
 
 io.of('comments').on('connection', async (socket) => {
