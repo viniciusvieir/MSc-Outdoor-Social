@@ -115,9 +115,7 @@ class EventController {
     }).countDocuments()
 
     if (!joined) {
-      const user = await UserMongo.findOne({ _id: userId }).select(
-        'profileImage'
-      )
+      const user = await UserMongo.findOne({ userId }).select('profileImage')
       await Event.updateOne(
         { _id: eventId },
         {
