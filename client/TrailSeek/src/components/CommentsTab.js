@@ -189,7 +189,7 @@ const CommentsTabs = ({ trailData }) => {
   useEffect(() => {
     checkAuthentication()
 
-    socket.current = io('https://api.trailseek.eu/socket/comments', {
+    socket.current = io('https://api.trailseek.eu/socket/socket.io/comments', {
       query: {
         trailId: trailData._id,
       },
