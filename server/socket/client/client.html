@@ -5,7 +5,7 @@
     <script>
       // https://api.trailseek.eu/socket/comments
       // http://localhost:5050/comments
-      const socket = io('http://localhost:5050/comments', {
+      const socket = io('https://api.trailseek.eu/socket/comments', {
         query: {
           trailId: '5fbd4cbcc1dbd0485ee48f7d',
         },
@@ -16,8 +16,7 @@
       })
 
       socket.on('comments:all-comments', (data) => {
-        console.log('All comments')
-        console.log(data)
+        console.log('All comments', data)
         data.forEach((comment) => {
           document.querySelector(
             '#comments'

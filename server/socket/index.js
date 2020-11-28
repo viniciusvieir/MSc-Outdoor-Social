@@ -1,7 +1,6 @@
 require('dotenv').config({
   path: '../.env',
 })
-// require('../src/databases')
 
 const cors = require('cors')
 const express = require('express')
@@ -26,11 +25,9 @@ app.use(cors())
 
 app.use(express.static(__dirname + '/client'))
 
-app.get('/', (req, res) => {
-  res.send('Hello from socket')
-})
-
 // We have separation of concerns defined by different namespaces in our socket server
+
+io.of('/').on('connection', () => console.log('Connected to /'))
 
 io.of('comments').on('connection', async (socket) => {
   const { trailId } = socket.handshake.query
