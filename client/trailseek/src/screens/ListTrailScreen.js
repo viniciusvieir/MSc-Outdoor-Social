@@ -14,7 +14,7 @@ import ColorConstants from '../util/ColorConstants'
 
 const ListTrailScreen = ({ route }) => {
   const { query } = route.params
-  console.log(query)
+
   let content
   const limit = 100000
   let spinner = true
@@ -31,7 +31,7 @@ const ListTrailScreen = ({ route }) => {
       try {
         const results = await dispatch(fetchTrailsByQuery({ query, limit }))
         const uResults = unwrapResult(results)
-        setFilteredTrails(uResults)
+        setFilteredTrails(uResults.response)
       } catch (e) {
         ToastAlert(e.message)
         ToastAlert(error)

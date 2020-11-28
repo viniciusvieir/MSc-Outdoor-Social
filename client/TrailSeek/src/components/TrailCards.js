@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import {
   View,
   StyleSheet,
@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   FlatList,
   Image,
-  Dimensions,
 } from 'react-native'
 
 import { Entypo } from '@expo/vector-icons'
@@ -14,18 +13,8 @@ import { FontAwesome5 } from '@expo/vector-icons'
 
 import { useNavigation } from '@react-navigation/native'
 import StarRating from 'react-native-star-rating'
-import { Col, Row, Grid } from 'react-native-easy-grid'
-import {
-  Button,
-  Text,
-  H3,
-  Card,
-  CardItem,
-  Left,
-  Right,
-  Icon,
-  Body,
-} from 'native-base'
+import { Row, Grid } from 'react-native-easy-grid'
+import { Button, Text, Card, CardItem, Left, Right } from 'native-base'
 
 import ColorConstants from '../util/ColorConstants'
 import NoData from './NoData'
@@ -118,12 +107,12 @@ const TrailCards = ({ trails, filter }) => {
                       style={{
                         marginTop: 3,
                         color: ColorConstants.secondary,
-                        fontSize: item.weighted_rating > 0 ? 16 : 14,
+                        fontSize: item.weighted_rating > 0 ? 16 : 13,
                       }}
                     >
                       {item.weighted_rating > 0
                         ? item.weighted_rating.toFixed(1)
-                        : 'No\nRating'}
+                        : 'No\nrating'}
                     </Text>
                   </Left>
 

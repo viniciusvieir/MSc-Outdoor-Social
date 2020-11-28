@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react'
-import { StyleSheet, Modal, Dimensions } from 'react-native'
+import React, { useState, useRef, useEffect } from 'react'
+import { StyleSheet } from 'react-native'
 import { View, Text, Button, Spinner, Toast } from 'native-base'
 import { Modalize } from 'react-native-modalize'
 import ColorConstants from '../util/ColorConstants'
@@ -7,6 +7,7 @@ import StarRating from 'react-native-star-rating'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { Portal } from 'react-native-portalize'
 import trailSeek from '../api/trailSeek'
+import { isLoggedIn } from '../util/auth'
 
 const RatingModal = ({ trailData }) => {
   const modelizeRef = useRef(null)
@@ -14,9 +15,19 @@ const RatingModal = ({ trailData }) => {
   const [weightedAverage, setWeightedAverage] = useState(
     trailData.weighted_rating
   )
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [starRating, setStarRating] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
   const [hasRated, setHasRated] = useState(false)
+
+  const checkAuthentication = async () => {
+    const authenticated = await isLoggedIn()
+    setIsAuthenticated(authenticated)
+  }
+
+  useEffect(() => {
+    checkAuthentication()
+  }, [])
 
   const rateTrail = () => {
     if (starRating === 0) {
@@ -43,15 +54,20 @@ const RatingModal = ({ trailData }) => {
       })
   }
 
-  const buttonContent = !isLoading ? (
-    hasRated ? (
-      <Text>Thank You</Text>
-    ) : (
-      <Text>Submit</Text>
-    )
-  ) : (
-    <Spinner style={{ marginHorizontal: 25 }} />
-  )
+  let buttonContent
+  if (isAuthenticated) {
+    if (isLoading) {
+      buttonContent = <Spinner style={{ marginHorizontal: 25 }} />
+    } else {
+      if (hasRated) {
+        buttonContent = <Text>Thank You</Text>
+      } else {
+        buttonContent = <Text>Submit</Text>
+      }
+    }
+  } else {
+    buttonContent = <Text>Log in to rate</Text>
+  }
 
   return (
     <View>
@@ -124,7 +140,7 @@ const RatingModal = ({ trailData }) => {
                 marginTop: 20,
               }}
               onPress={() => rateTrail()}
-              disabled={isLoading || hasRated}
+              disabled={!isAuthenticated || isLoading || hasRated}
             >
               {buttonContent}
             </Button>

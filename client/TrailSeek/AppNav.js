@@ -41,12 +41,12 @@ const AuthenticationFlow = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="Signin"
+        name='Signin'
         component={SigninScreen}
         options={{ headerTransparent: true, title: '' }}
       />
       <Stack.Screen
-        name="Signup"
+        name='Signup'
         component={SignupScreen}
         options={{ headerTransparent: true, title: '', headerLeft: null }}
       />
@@ -60,7 +60,7 @@ const ProfileFlow = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="ViewProfile"
+        name='ViewProfile'
         component={ViewProfileScreen}
         options={({ navigation }) => ({
           headerStyle: { backgroundColor: ColorConstants.primary },
@@ -76,7 +76,7 @@ const ProfileFlow = () => {
                 }}
               >
                 <MaterialIcons
-                  name="edit"
+                  name='edit'
                   size={24}
                   style={{ color: '#ffffff', marginRight: 20 }}
                 />
@@ -86,7 +86,7 @@ const ProfileFlow = () => {
         })}
       />
       <Stack.Screen
-        name="EditProfile"
+        name='EditProfile'
         component={EditProfileScreen}
         options={{
           headerStyle: { backgroundColor: ColorConstants.primary },
@@ -94,9 +94,9 @@ const ProfileFlow = () => {
           title: 'Edit Profile',
           headerBackImage: () => (
             <MaterialIcons
-              name="arrow-back"
+              name='arrow-back'
               size={24}
-              color="white"
+              color='white'
               style={styles.shadow}
             />
           ),
@@ -111,7 +111,7 @@ const TrailFlow = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="SearchTrail"
+        name='SearchTrail'
         component={SearchTrailScreen}
         options={{
           headerLeft: null,
@@ -120,16 +120,16 @@ const TrailFlow = () => {
         }}
       />
       <Stack.Screen
-        name="ListTrail"
+        name='ListTrail'
         component={ListTrailScreen}
         options={({ route }) => ({
           headerStyle: { backgroundColor: ColorConstants.primary },
           headerTitleStyle: { color: ColorConstants.DWhite },
           headerBackImage: () => (
             <MaterialIcons
-              name="arrow-back"
+              name='arrow-back'
               size={24}
-              color="white"
+              color='white'
               style={styles.shadow}
             />
           ),
@@ -140,7 +140,7 @@ const TrailFlow = () => {
         })}
       />
       <Stack.Screen
-        name="ViewTrail"
+        name='ViewTrail'
         component={ViewTrailScreen}
         options={() => ({
           title: '',
@@ -148,23 +148,16 @@ const TrailFlow = () => {
           headerTintColor: ColorConstants.White,
           headerBackImage: () => (
             <MaterialIcons
-              name="arrow-back"
+              name='arrow-back'
               size={24}
-              color="white"
+              color='white'
               style={styles.shadow}
             />
           ),
-          // headerTitleStyle: {
-          //     fontWeight: '600',
-          //     color:'white',
-          //     textShadowColor: 'rgba(0, 0, 0, 0.75)',
-          //     textShadowOffset: {width: -1, height: 1},
-          //     textShadowRadius: 10
-          //   },
         })}
       />
       <Stack.Screen
-        name="CreateEvent"
+        name='CreateEvent'
         component={CreateEventScreen}
         options={{
           headerStyle: { backgroundColor: ColorConstants.primary },
@@ -172,9 +165,9 @@ const TrailFlow = () => {
           title: 'Create Event',
           headerBackImage: () => (
             <MaterialIcons
-              name="arrow-back"
+              name='arrow-back'
               size={24}
-              color="white"
+              color='white'
               style={styles.shadow}
             />
           ),
@@ -187,7 +180,7 @@ const TrailFlow = () => {
           },
         })}
       />
-      <Stack.Screen name="ListEvent" component={ListEventScreen} />
+      <Stack.Screen name='ListEvent' component={ListEventScreen} />
     </Stack.Navigator>
   )
 }
@@ -196,7 +189,7 @@ const EventFlow = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="MyEvent"
+        name='MyEvent'
         component={MyEventScreen}
         options={{
           headerStyle: { backgroundColor: ColorConstants.primary },
@@ -214,7 +207,7 @@ const MainTabFlow = () => {
   const autFlag = useSelector((state) => state.user.isAuth)
   return (
     <Tab.Navigator
-      initialRouteName="TrailFlow"
+      initialRouteName='TrailFlow'
       tabBarOptions={{
         activeTintColor: ColorConstants.secondary,
         inactiveTintColor: ColorConstants.darkGray,
@@ -226,19 +219,19 @@ const MainTabFlow = () => {
       }}
     >
       <Tab.Screen
-        name="TrailFlow"
+        name='TrailFlow'
         component={TrailFlow}
         options={({ route }) => ({
           tabBarVisible:
             getFocusedRouteNameFromRoute(route) === 'ViewTrail' ? false : true,
           tabBarLabel: 'Explore',
           tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="search" size={24} color={color} />
+            <MaterialIcons name='search' size={24} color={color} />
           ),
         })}
       />
       <Tab.Screen
-        name="EventFlow"
+        name='EventFlow'
         component={EventFlow}
         listeners={({ navigation }) => ({
           tabPress: (e) => {
@@ -253,12 +246,12 @@ const MainTabFlow = () => {
         options={{
           tabBarLabel: 'Events',
           tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="event" size={24} color={color} />
+            <MaterialIcons name='event' size={24} color={color} />
           ),
         }}
       />
       <Tab.Screen
-        name="ProfileFlow"
+        name='ProfileFlow'
         component={ProfileFlow}
         listeners={({ navigation }) => ({
           tabPress: (e) => {
@@ -273,7 +266,7 @@ const MainTabFlow = () => {
         options={{
           tabBarLabel: 'Profile',
           tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="account-circle" size={24} color={color} />
+            <MaterialIcons name='account-circle' size={24} color={color} />
           ),
           headerRight: () => (
             <TouchableOpacity
@@ -282,7 +275,7 @@ const MainTabFlow = () => {
               }}
             >
               <Ionicons
-                name="md-create"
+                name='md-create'
                 size={30}
                 style={{ marginRight: 10 }}
               />
@@ -384,9 +377,9 @@ const AppNav = () => {
     <Root>
       <NavigationContainer>
         <Host>
-          <Stack.Navigator initialRouteName="MainTab">
+          <Stack.Navigator initialRouteName='MainTab'>
             <Stack.Screen
-              name="MainTab"
+              name='MainTab'
               component={MainTabFlow}
               options={{
                 headerShown: false,
@@ -394,16 +387,16 @@ const AppNav = () => {
               }}
             />
             <Stack.Screen
-              name="ViewEvent"
+              name='ViewEvent'
               component={ViewEventScreen}
               options={({ navigation, route }) => ({
                 title: '',
                 headerTransparent: true,
                 headerBackImage: () => (
                   <MaterialIcons
-                    name="arrow-back"
+                    name='arrow-back'
                     size={24}
-                    color="#000000"
+                    color='#000000'
                     style={styles.shadow}
                   />
                 ),
@@ -416,7 +409,7 @@ const AppNav = () => {
                         }}
                       >
                         <MaterialIcons
-                          name="edit"
+                          name='edit'
                           size={24}
                           style={{ color: '#000000', marginRight: 20 }}
                         />
@@ -464,7 +457,7 @@ const AppNav = () => {
               })}
             />
             <Stack.Screen
-              name="EditEvent"
+              name='EditEvent'
               component={EditEventScreen}
               options={{
                 headerStyle: { backgroundColor: ColorConstants.primary },
@@ -472,9 +465,9 @@ const AppNav = () => {
                 title: 'Edit Events',
                 headerBackImage: () => (
                   <MaterialIcons
-                    name="arrow-back"
+                    name='arrow-back'
                     size={24}
-                    color="white"
+                    color='white'
                     style={styles.shadow}
                   />
                 ),
@@ -482,7 +475,7 @@ const AppNav = () => {
               }}
             />
             <Stack.Screen
-              name="Authentication"
+              name='Authentication'
               component={AuthenticationFlow}
               options={{ headerTransparent: true, title: '', headerLeft: null }}
             />
