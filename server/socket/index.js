@@ -4,26 +4,26 @@ require('dotenv').config({
 
 const cors = require('cors')
 const express = require('express')
-const app = express()
-
-const http = require('http').createServer(app)
-const io = require('socket.io')(http, {
-  cors: {
-    origin: '*',
-  },
-})
-
 const mongoose = require('mongoose')
 
 const { getDecodedToken } = require('../src/middlewares/verify-token')
-
 const User = require('../src/models/user.mongo')
 const Trail = require('../src/models/trail')
 const Event = require('../src/models/event')
 
+const app = express()
 app.use(cors())
-
 app.use(express.static(__dirname + '/client'))
+
+const server = app.listen(process.env.SOCKET_PORT, () =>
+  console.log(`listening on *:${process.env.SOCKET_PORT}`)
+)
+
+const io = require('socket.io')(server, {
+  cors: {
+    origin: '*',
+  },
+})
 
 // We have separation of concerns defined by different namespaces in our socket server
 
@@ -145,8 +145,3 @@ function startMongoDB() {
 }
 
 startMongoDB()
-
-const port = process.env.SOCKET_PORT
-http.listen(port, () => {
-  console.log(`listening on *:${port}`)
-})
