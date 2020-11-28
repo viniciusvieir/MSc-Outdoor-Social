@@ -19,11 +19,7 @@ const server = app.listen(process.env.SOCKET_PORT, () =>
   console.log(`listening on *:${process.env.SOCKET_PORT}`)
 )
 
-const io = require('socket.io')(server, {
-  cors: {
-    origin: '*',
-  },
-})
+const io = require('socket.io')(server)
 
 // We have separation of concerns defined by different namespaces in our socket server
 
@@ -132,16 +128,12 @@ io.of('location').on('connection', async (socket) => {
   socket.on('location:user', async (coordinates) => {})
 })
 
-function startMongoDB() {
-  mongoose
-    .connect(process.env.MONGO_URL, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      useFindAndModify: false,
-      useCreateIndex: true,
-    })
-    .then(() => console.log('MongoDB connected...'))
-    .catch((e) => console.error(e))
-}
-
-startMongoDB()
+mongoose
+  .connect(process.env.MONGO_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+    useCreateIndex: true,
+  })
+  .then(() => console.log('MongoDB connected...'))
+  .catch((e) => console.error(e))
