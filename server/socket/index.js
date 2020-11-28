@@ -4,8 +4,8 @@ require('dotenv').config({
 // require('../src/databases')
 
 const cors = require('cors')
-const app = require('express')()
-app.use(cors())
+const express = require('express')
+const app = express()
 
 const http = require('http').createServer(app)
 const io = require('socket.io')(http)
@@ -16,6 +16,10 @@ const { getDecodedToken } = require('../src/middlewares/verify-token')
 const User = require('../src/models/user.mongo')
 const Trail = require('../src/models/trail')
 const Event = require('../src/models/event')
+
+app.use(cors())
+
+app.use(express.static(__dirname + '/client'))
 
 app.get('/', (req, res) => {
   res.send('Hello from socket')

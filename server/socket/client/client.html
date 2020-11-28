@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io('https://api.trailseek.eu/socket/socket.io/comments', {
+        query: {
+          trailId: '5fbd4cbcc1dbd0485ee48f7d',
+        },
+      })
+
+      socket.on('connect', () => {
+        console.log('Connect', socket.id)
+      })
+
+      socket.on('comments:all-comments', (data) => {
+        console.log('All comments')
+        console.log(data)
+        data.forEach((comment) => {
+          document.querySelector(
+            '#comments'
+          ).innerHTML += `<li>${comment.content}</li>`
+        })
+      })
+    </script>
+  </head>
+
+  <body>
+    <h1>Socket Client</h1>
+    <div>
+      <ul id="comments"></ul>
+    </div>
+  </body>
+</html>
