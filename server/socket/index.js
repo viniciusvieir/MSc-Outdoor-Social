@@ -15,6 +15,8 @@ const io = require('socket.io')(http, {
     credentials: true,
   },
 })
+io.origins('*:*')
+
 const mongoose = require('mongoose')
 
 const { getDecodedToken } = require('../src/middlewares/verify-token')
