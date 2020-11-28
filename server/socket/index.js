@@ -2,7 +2,11 @@ require('dotenv').config({
   path: '../.env',
 })
 // require('../src/databases')
+
+const cors = require('cors')
 const app = require('express')()
+app.use(cors())
+
 const http = require('http').createServer(app)
 const io = require('socket.io')(http)
 const mongoose = require('mongoose')
@@ -57,6 +61,8 @@ io.of('comments').on('connection', async (socket) => {
       io.of('/comments').in(room).emit('comments:receive-new', comment)
     }
   })
+
+  socket.on('disconnect', () => console.log('Socket disconnected'))
 })
 
 // Chat Namespace
