@@ -123,18 +123,6 @@ const CommentsTabs = ({ trailData }) => {
     setIsAuthenticated(authenticated)
   }
 
-  const createSocket = async () => {
-    await checkAuthentication()
-    const token = await getToken()
-    socket.current = io('http://94.245.110.210:5050/comments', {
-      auth: { token },
-      query: {
-        trailId: trailData._id,
-      },
-    })
-    manageSocket()
-  }
-
   const manageSocket = () => {
     socket.current.on('comments:all-comments', (data) => {
       const comments = data.map((comment, index) => {
@@ -174,14 +162,23 @@ const CommentsTabs = ({ trailData }) => {
       return
     }
 
+    const token = await getToken()
     const trailId = trailData._id
     const content = comments[0].text
 
-    socket.current.emit('comments:send-new', { trailId, content })
+    socket.current.emit('comments:send-new', { token, trailId, content })
   }
 
   useEffect(() => {
-    createSocket()
+    checkAuthentication()
+
+    socket.current = io('http://94.245.110.210:5050/comments', {
+      query: {
+        trailId: trailData._id,
+      },
+    })
+
+    manageSocket()
 
     return () => {
       socket.current.close()
