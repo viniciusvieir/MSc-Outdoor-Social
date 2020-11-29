@@ -123,6 +123,18 @@ const CommentsTabs = ({ trailData }) => {
     setIsAuthenticated(authenticated)
   }
 
+  const createSocket = async () => {
+    await checkAuthentication()
+    const token = await getToken()
+    socket.current = io('http://94.245.110.210:5050/comments', {
+      auth: { token },
+      query: {
+        trailId: trailData._id,
+      },
+    })
+    manageSocket()
+  }
+
   const manageSocket = () => {
     socket.current.on('comments:all-comments', (data) => {
       const comments = data.map((comment, index) => {
@@ -162,40 +174,14 @@ const CommentsTabs = ({ trailData }) => {
       return
     }
 
-    const token = await getToken()
     const trailId = trailData._id
     const content = comments[0].text
-    console.log(token)
 
-    socket.current.emit('comments:send-new', { token, trailId, content })
-
-    // comments.forEach((comment) => (comment.user._id = uuidv4()))
-
-    // const content = comments[0].text
-    // trailSeek
-    //   .post(`/trails/${trailData._id}/comments`, { content })
-    //   .then((response) => {
-    //     comments.forEach((comment) => {
-    //       comment.user.name = response.data.name
-    //       comment.user.avatar = response.data.profileImage
-    //     })
-    //     setMessages((old) => GiftedChat.append(old, comments))
-    //   })
-    //   .catch((err) => {
-    //     Toast.show({ text: err.response.data.errors[0].msg || err.message })
-    //   })
+    socket.current.emit('comments:send-new', { trailId, content })
   }
 
   useEffect(() => {
-    checkAuthentication()
-
-    socket.current = io('https://api.trailseek.eu/socket/socket.io/comments', {
-      query: {
-        trailId: trailData._id,
-      },
-    })
-
-    manageSocket()
+    createSocket()
 
     return () => {
       socket.current.close()

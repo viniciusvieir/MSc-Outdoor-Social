@@ -6,7 +6,9 @@
 //   },
 // })
 // https://api.trailseek.eu
-const socket = io('http://192.168.15.15:5050/comments', {
+// http://94.245.110.210:5050/
+const socket = io('http://94.245.110.210:5050', {
+  //   path: '/socket/comments',
   query: {
     trailId: '5fbd4cbcc1dbd0485ee48f7d',
   },

@@ -29,6 +29,15 @@ const io = require('socket.io')(server, {
 
 // We have separation of concerns defined by different namespaces in our socket server
 
+io.use(async (socket, next) => {
+  if (socket.handshake.auth && socket.handshake.auth.token) {
+    const token = socket.handshake.auth.token
+    const userInfo = await getDecodedToken(token)
+    if (userInfo) socket.context = userInfo
+  }
+  next()
+})
+
 io.of('/').on('connection', () => console.log('Connected to /'))
 
 io.of('comments').on('connection', async (socket) => {
@@ -49,19 +58,15 @@ io.of('comments').on('connection', async (socket) => {
   socket.emit('comments:all-comments', trail.comments)
 
   socket.on('comments:send-new', async (data) => {
-    const { token, trailId, content } = data
-    const userInfo = await getDecodedToken(token)
-
-    if (!userInfo) return
-
-    const user = await User.findOne({ userId: userInfo.id }).select(
-      'name profileImage'
-    )
+    if (!socket.context) return
+    const { id: userId } = socket.context
+    const { trailId, content } = data
+    const user = await User.findOne({ userId }).select('name profileImage')
 
     if (user) {
       const comment = {
         content,
-        userId: userInfo.id,
+        userId,
         date: new Date(),
         name: user.name,
         profileImage: user.profileImage,
