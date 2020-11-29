@@ -1,15 +1,14 @@
-//const express = require('express')
-//const app = express()
-const socketio = require('socket.io')
-//const cors = require('cors')
+const express = require('express')
+const app = express()
+app.use(express.static(__dirname + '/client'))
 
-//app.use(cors())
-//app.use(express.static(__dirname + '/client'))
-const server = require('http').createServer();
-//const expressServer = app.listen(5050)
+const socketio = require('socket.io')
+
+const server = require('http').createServer()
+
 const io = socketio(server)
 io.on('connection', (socket) => {
-	console.log('socket connected')
+  console.log('socket connected')
   socket.emit('messageFromServer', { data: 'Welcome to the socketio server' })
 })
 

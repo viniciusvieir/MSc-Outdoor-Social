@@ -2,11 +2,15 @@
 // http://localhost:5050/comments
 // const socket = io('http://localhost:5050', {
 //   query: {
-//     trailId: '5fbd4cbcc1dbd0485ee48f7d',
+// trailId: '5fbd4cbcc1dbd0485ee48f7d',
 //   },
 // })
-
-const socket = io('https://api.trailseek.eu/socket')
+// https://api.trailseek.eu
+const socket = io('http://192.168.15.15:5050/comments', {
+  query: {
+    trailId: '5fbd4cbcc1dbd0485ee48f7d',
+  },
+})
 
 socket.on('connect', () => {
   console.log('Connect', socket.id)
@@ -14,11 +18,11 @@ socket.on('connect', () => {
 
 socket.on('messageFromServer', (data) => console.log(data))
 
-// socket.on('comments:all-comments', (data) => {
-//   console.log('All comments', data)
-//   data.forEach((comment) => {
-//     document.querySelector(
-//       '#comments'
-//     ).innerHTML += `<li>${comment.content}</li>`
-//   })
-// })
+socket.on('comments:all-comments', (data) => {
+  console.log('All comments', data)
+  data.forEach((comment) => {
+    document.querySelector(
+      '#comments'
+    ).innerHTML += `<li>${comment.content}</li>`
+  })
+})

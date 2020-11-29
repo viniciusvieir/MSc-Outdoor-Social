@@ -4,7 +4,6 @@ require('dotenv').config({
 
 const express = require('express')
 const cors = require('cors')
-const helmet = require('helmet')
 const mongoose = require('mongoose')
 
 const { getDecodedToken } = require('../src/middlewares/verify-token')
@@ -14,7 +13,6 @@ const Event = require('../src/models/event')
 
 const app = express()
 app.use(cors())
-app.use(helmet())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(express.static(__dirname + '/client'))
@@ -23,7 +21,11 @@ const server = app.listen(process.env.SOCKET_PORT, () =>
   console.log(`listening on *:${process.env.SOCKET_PORT}`)
 )
 
-const io = require('socket.io')(server)
+const io = require('socket.io')(server, {
+  cors: {
+    origin: '*',
+  },
+})
 
 // We have separation of concerns defined by different namespaces in our socket server
 
@@ -31,6 +33,12 @@ io.of('/').on('connection', () => console.log('Connected to /'))
 
 io.of('comments').on('connection', async (socket) => {
   const { trailId } = socket.handshake.query
+
+  if (!trailId) {
+    console.log('socket disconnected for not giving sending information')
+    socket.disconnect()
+    return
+  }
 
   console.log('New comments socket connected', socket.id, 'for trail', trailId)
 
