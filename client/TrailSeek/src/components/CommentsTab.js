@@ -13,8 +13,10 @@ const CommentsTabs = ({ trailData }) => {
 
   const [messages, setMessages] = useState([])
   const [isLoading, setIsLoading] = useState(true)
+  const [isTyping, setIsTyping] = useState(false)
 
   const socket = useRef(null)
+  const timeout = useRef(null)
 
   const uuidv4 = () => {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(
@@ -43,9 +45,16 @@ const CommentsTabs = ({ trailData }) => {
           },
         }
       })
-      console.log(comments)
       setMessages(comments.reverse())
       setIsLoading(false)
+    })
+
+    socket.current.on('comments:someone-typing', () => {
+      setIsTyping(true)
+      clearTimeout(timeout.current)
+      timeout.current = setTimeout(() => {
+        setIsTyping(false)
+      }, 2000)
     })
 
     socket.current.on('comments:receive-new', (data) => {
@@ -59,6 +68,7 @@ const CommentsTabs = ({ trailData }) => {
           avatar: data.profileImage,
         },
       }
+      setIsTyping(false)
       setMessages((old) => GiftedChat.append(old, [comment]))
     })
   }
@@ -93,10 +103,13 @@ const CommentsTabs = ({ trailData }) => {
           onSend={(comments) => onSend(comments)}
           showAvatarForEveryMessage={true}
           renderUsernameOnMessage={true}
-          isTyping={false}
+          isTyping={isTyping}
           //   inverted={false}
           renderDay={() => null}
           renderTime={() => null}
+          onInputTextChanged={(text) => {
+            if (text.length > 0) socket.current.emit('comments:user-typing')
+          }}
           user={{
             _id: 1,
             name: 'Me',
