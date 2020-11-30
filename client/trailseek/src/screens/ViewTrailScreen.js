@@ -60,37 +60,37 @@ const ViewTrailScreen = ({ route }) => {
         <Header
           hasTabs
           style={{ height: 0 }}
-          androidStatusBarColor='#ffffff00'
+          androidStatusBarColor="#ffffff00"
         />
 
         <Tabs
-          initialPage={showEvents ? 2 : 0}
+          initialPage={showEvents ? 3 : 0}
           locked={true}
           activeTextStyle={{ color: ColorConstants.secondary }}
         >
           <Tab
-            heading='Details'
+            heading="Details"
             tabStyle={{ backgroundColor: ColorConstants.primary }}
             activeTabStyle={{ backgroundColor: ColorConstants.primary }}
           >
             <DetailsTab trailData={trailData} covData={covData} />
           </Tab>
           <Tab
-            heading='Comments'
+            heading="Comments"
             tabStyle={{ backgroundColor: ColorConstants.primary }}
             activeTabStyle={{ backgroundColor: ColorConstants.primary }}
           >
             <CommentsTabs trailData={trailData} />
           </Tab>
           <Tab
-            heading='Maps'
+            heading="Maps"
             tabStyle={{ backgroundColor: ColorConstants.primary }}
             activeTabStyle={{ backgroundColor: ColorConstants.primary }}
           >
             <MapsTab trailData={trailData} />
           </Tab>
           <Tab
-            heading='Events'
+            heading="Events"
             tabStyle={{ backgroundColor: ColorConstants.primary }}
             activeTabStyle={{ backgroundColor: ColorConstants.primary }}
           >
