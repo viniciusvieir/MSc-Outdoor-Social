@@ -5,7 +5,7 @@ import { Spinner, Toast } from 'native-base'
 import { getToken, isLoggedIn } from '../util/auth'
 import ColorConstants from '../util/ColorConstants'
 
-import io from 'socket.io-client'
+import defaultSocket from '../api/socket'
 
 const CommentsTabs = ({ trailData }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -31,6 +31,8 @@ const CommentsTabs = ({ trailData }) => {
   }
 
   const manageSocket = () => {
+    socket.current = defaultSocket('/comments', { trailId: trailData._id })
+
     socket.current.on('comments:all-comments', (data) => {
       const comments = data.map((comment, index) => {
         return {
@@ -78,13 +80,6 @@ const CommentsTabs = ({ trailData }) => {
 
   useEffect(() => {
     checkAuthentication()
-
-    socket.current = io('http://94.245.110.210:5050/comments', {
-      query: {
-        trailId: trailData._id,
-      },
-    })
-
     manageSocket()
 
     return () => {
