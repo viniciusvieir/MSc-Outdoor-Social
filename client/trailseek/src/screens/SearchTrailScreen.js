@@ -105,7 +105,7 @@ const SearchTrailScreen = ({ navigation }) => {
       setFilter(bestParams)
       getTrailsByQuery({
         query: {
-          avg_rating: { $gt: 4 },
+          weighted_rating: { $gt: 4 },
         },
       })
     }
@@ -212,7 +212,7 @@ const SearchTrailScreen = ({ navigation }) => {
               setTrails([])
               await getTrailsByQuery({
                 query: {
-                  avg_rating: { $gt: 4 },
+                  weighted_rating: { $gt: 4 },
                 },
               })
             }}
