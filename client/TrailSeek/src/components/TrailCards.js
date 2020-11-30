@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   FlatList,
   Image,
+  Platform,
 } from 'react-native'
 
 import { Entypo } from '@expo/vector-icons'
@@ -73,8 +74,8 @@ const TrailCards = ({ trails, filter }) => {
                     source={{ uri: item.img_url }}
                     style={styles.imageStyle}
                     PlaceholderContent={<ActivityIndicator />}
-                    resizeMethod="auto"
-                    resizeMode="cover"
+                    resizeMethod='auto'
+                    resizeMode='cover'
                   />
                 </CardItem>
                 <CardItem>
@@ -83,7 +84,7 @@ const TrailCards = ({ trails, filter }) => {
                       <Text style={styles.nameStyle}>{item.name}</Text>
                     </Row>
                     <Row>
-                      <Entypo name="location-pin" size={16} color="gray" />
+                      <Entypo name='location-pin' size={16} color='gray' />
                       <Text style={{ fontSize: 14 }}>{item.location}</Text>
                     </Row>
                   </Grid>
@@ -107,7 +108,14 @@ const TrailCards = ({ trails, filter }) => {
                       style={{
                         marginTop: 3,
                         color: ColorConstants.secondary,
-                        fontSize: item.weighted_rating > 0 ? 16 : 13,
+                        fontSize:
+                          item.weighted_rating > 0
+                            ? Platform.OS === 'ios'
+                              ? 16
+                              : 13
+                            : Platform.OS === 'ios'
+                            ? 13
+                            : 12,
                       }}
                     >
                       {item.weighted_rating > 0
@@ -119,13 +127,14 @@ const TrailCards = ({ trails, filter }) => {
                   <Right>
                     <Button transparent>
                       <FontAwesome5
-                        name="comments"
+                        name='comments'
                         size={18}
                         color={ColorConstants.darkGray}
                       />
                       <Text
+                        uppercase={false}
                         style={{
-                          fontSize: 14,
+                          fontSize: Platform.OS === 'ios' ? 14 : 12,
                           color: ColorConstants.darkGray,
                         }}
                       >
@@ -150,13 +159,14 @@ const TrailCards = ({ trails, filter }) => {
                       }}
                     >
                       <FontAwesome5
-                        name="hiking"
+                        name='hiking'
                         size={18}
                         color={ColorConstants.primary}
                       />
                       <Text
+                        uppercase={false}
                         style={{
-                          fontSize: 14,
+                          fontSize: Platform.OS === 'ios' ? 14 : 12,
                           color: ColorConstants.primary,
                         }}
                       >

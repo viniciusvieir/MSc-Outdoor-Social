@@ -1,5 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef } from 'react'
 import { StyleSheet } from 'react-native'
+import { useSelector } from 'react-redux'
 import { View, Text, Button, Spinner, Toast } from 'native-base'
 import { Modalize } from 'react-native-modalize'
 import ColorConstants from '../util/ColorConstants'
@@ -7,27 +8,17 @@ import StarRating from 'react-native-star-rating'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { Portal } from 'react-native-portalize'
 import trailSeek from '../api/trailSeek'
-import { isLoggedIn } from '../util/auth'
 
 const RatingModal = ({ trailData }) => {
   const modelizeRef = useRef(null)
+  const isAuth = useSelector((state) => state.user.isAuth)
 
   const [weightedAverage, setWeightedAverage] = useState(
     trailData.weighted_rating
   )
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [starRating, setStarRating] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
   const [hasRated, setHasRated] = useState(false)
-
-  const checkAuthentication = async () => {
-    const authenticated = await isLoggedIn()
-    setIsAuthenticated(authenticated)
-  }
-
-  useEffect(() => {
-    checkAuthentication()
-  }, [])
 
   const rateTrail = () => {
     if (starRating === 0) {
@@ -56,7 +47,7 @@ const RatingModal = ({ trailData }) => {
   }
 
   let buttonContent
-  if (isAuthenticated) {
+  if (isAuth) {
     if (isLoading) {
       buttonContent = <Spinner style={{ marginHorizontal: 25 }} />
     } else {
@@ -141,7 +132,7 @@ const RatingModal = ({ trailData }) => {
                 marginTop: 20,
               }}
               onPress={() => rateTrail()}
-              disabled={!isAuthenticated || isLoading || hasRated}
+              disabled={!isAuth || isLoading || hasRated}
             >
               {buttonContent}
             </Button>

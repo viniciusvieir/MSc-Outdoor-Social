@@ -23,8 +23,6 @@ import { fetchTrailsByQuery } from '../app/trailSlice'
 import { getLocation } from '../app/userSlice'
 import Constants from '../util/Constants'
 
-// import TrailFilter from '../components/TrailFilter'
-
 const SearchTrailScreen = ({ navigation }) => {
   const dispatch = useDispatch()
   const [searchTerm, setSearchTerm] = useState('')
@@ -105,7 +103,7 @@ const SearchTrailScreen = ({ navigation }) => {
       setFilter(bestParams)
       getTrailsByQuery({
         query: {
-          avg_rating: { $gt: 4 },
+          weighted_rating: { $gt: 4 },
         },
       })
     }
@@ -194,32 +192,6 @@ const SearchTrailScreen = ({ navigation }) => {
             paddingVertical: 10,
           }}
         >
-          <Button
-            rounded
-            color={ColorConstants.primary}
-            light={filter.title !== bestParams.title}
-            bordered={filter.title !== bestParams.title}
-            style={{
-              height: 32,
-              marginRight: 8,
-              backgroundColor:
-                filter.title === bestParams.title
-                  ? ColorConstants.primary
-                  : 'transparent',
-            }}
-            onPress={async () => {
-              setFilter(bestParams)
-              setTrails([])
-              await getTrailsByQuery({
-                query: {
-                  avg_rating: { $gt: 4 },
-                },
-              })
-            }}
-          >
-            <Text>Best Rated</Text>
-          </Button>
-
           {isAuth ? (
             <Button
               rounded
@@ -243,11 +215,37 @@ const SearchTrailScreen = ({ navigation }) => {
                 })
               }}
             >
-              <Text>For you</Text>
+              <Text uppercase={false}>For you</Text>
             </Button>
           ) : (
             <></>
           )}
+
+          <Button
+            rounded
+            color={ColorConstants.primary}
+            light={filter.title !== bestParams.title}
+            bordered={filter.title !== bestParams.title}
+            style={{
+              height: 32,
+              marginRight: 8,
+              backgroundColor:
+                filter.title === bestParams.title
+                  ? ColorConstants.primary
+                  : 'transparent',
+            }}
+            onPress={async () => {
+              setFilter(bestParams)
+              setTrails([])
+              await getTrailsByQuery({
+                query: {
+                  weighted_rating: { $gt: 4 },
+                },
+              })
+            }}
+          >
+            <Text uppercase={false}>Best Rated</Text>
+          </Button>
 
           <Button
             rounded
@@ -272,7 +270,7 @@ const SearchTrailScreen = ({ navigation }) => {
               })
             }}
           >
-            <Text>Easy Trails</Text>
+            <Text uppercase={false}>Easy Trails</Text>
           </Button>
 
           <Button
@@ -296,7 +294,7 @@ const SearchTrailScreen = ({ navigation }) => {
               })
             }}
           >
-            <Text>Near You</Text>
+            <Text uppercase={false}>Near You</Text>
           </Button>
         </ScrollView>
       </View>
