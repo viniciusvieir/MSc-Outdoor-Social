@@ -64,7 +64,7 @@ const ViewTrailScreen = ({ route }) => {
         />
 
         <Tabs
-          initialPage={showEvents ? 3 : 0}
+          initialPage={showEvents ? 2 : 0}
           locked={true}
           activeTextStyle={{ color: ColorConstants.secondary }}
           tabBarUnderlineStyle={{ backgroundColor: ColorConstants.White }}

@@ -81,6 +81,7 @@ export const fetchUserData = createAsyncThunk(
   'user/fetchUserData',
   async (_, { rejectWithValue }) => {
     try {
+      //TODO: handle offline
       const response = await trailSeek.get('/user')
       console.log(response.data)
       return response.data
@@ -318,7 +319,7 @@ export const userSlice = createSlice({
       state.profile.status = CONSTANTS.LOADING
     },
     [fetchUserData.fulfilled]: (state, action) => {
-      state.profile.id = action.payload.id
+      state.profile.id = action.payload.userId
       state.profile.name = action.payload.name
       state.profile.dob = action.payload.dob
       state.profile.gender = action.payload.gender
