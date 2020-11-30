@@ -57,6 +57,10 @@ io.of('comments').on('connection', async (socket) => {
 
   socket.emit('comments:all-comments', trail.comments)
 
+  socket.on('comments:user-typing', async (data) => {
+    socket.in(room).emit('comments:someone-typing')
+  })
+
   socket.on('comments:send-new', async (data) => {
     const { token, trailId, content } = data
     const userInfo = await getDecodedToken(token)

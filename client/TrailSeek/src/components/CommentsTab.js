@@ -3,7 +3,6 @@ import { View } from 'react-native'
 import { GiftedChat } from 'react-native-gifted-chat'
 import { Spinner, Toast } from 'native-base'
 import { useSelector } from 'react-redux'
-import { getToken, isLoggedIn } from '../util/auth'
 import ColorConstants from '../util/ColorConstants'
 
 import defaultSocket from '../api/socket'
@@ -11,7 +10,7 @@ import defaultSocket from '../api/socket'
 const CommentsTabs = ({ trailData }) => {
   const isAuth = useSelector((state) => state.user.isAuth)
   const token = useSelector((state) => state.user.profile.token)
-  // const [isAuthenticated, setIsAuthenticated] = useState(false)
+
   const [messages, setMessages] = useState([])
   const [isLoading, setIsLoading] = useState(true)
 
@@ -27,11 +26,6 @@ const CommentsTabs = ({ trailData }) => {
       }
     )
   }
-
-  // const checkAuthentication = async () => {
-  //   const authenticated = await isLoggedIn()
-  //   setIsAuthenticated(authenticated)
-  // }
 
   const manageSocket = () => {
     socket.current = defaultSocket('/comments', { trailId: trailData._id })
@@ -75,7 +69,6 @@ const CommentsTabs = ({ trailData }) => {
       return
     }
 
-    // const token = await getToken()
     const trailId = trailData._id
     const content = comments[0].text
 
@@ -83,7 +76,6 @@ const CommentsTabs = ({ trailData }) => {
   }
 
   useEffect(() => {
-    // checkAuthentication()
     manageSocket()
 
     return () => {

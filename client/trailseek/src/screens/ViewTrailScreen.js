@@ -54,13 +54,13 @@ const ViewTrailScreen = ({ route }) => {
           // title={trailData.name}
           titleStyle={styles.tilettlstyle}
           activeOpacity={1}
-          height={320}
+          height={280}
         />
 
         <Header
           hasTabs
           style={{ height: 0 }}
-          androidStatusBarColor="#ffffff00"
+          androidStatusBarColor='#ffffff00'
         />
 
         <Tabs
@@ -70,7 +70,7 @@ const ViewTrailScreen = ({ route }) => {
           tabBarUnderlineStyle={{ backgroundColor: ColorConstants.White }}
         >
           <Tab
-            heading="Details"
+            heading='Details'
             tabStyle={{ backgroundColor: ColorConstants.primary }}
             activeTabStyle={{ backgroundColor: ColorConstants.primary }}
             textStyle={{ color: ColorConstants.White }}
@@ -79,7 +79,7 @@ const ViewTrailScreen = ({ route }) => {
             <DetailsTab trailData={trailData} covData={covData} />
           </Tab>
           <Tab
-            heading="Comments"
+            heading='Comments'
             tabStyle={{ backgroundColor: ColorConstants.primary }}
             activeTabStyle={{ backgroundColor: ColorConstants.primary }}
             textStyle={{ color: ColorConstants.White }}
@@ -88,7 +88,7 @@ const ViewTrailScreen = ({ route }) => {
             <CommentsTabs trailData={trailData} />
           </Tab>
           <Tab
-            heading="Events"
+            heading='Events'
             tabStyle={{ backgroundColor: ColorConstants.primary }}
             activeTabStyle={{ backgroundColor: ColorConstants.primary }}
             textStyle={{ color: ColorConstants.White }}
@@ -97,7 +97,7 @@ const ViewTrailScreen = ({ route }) => {
             <EventsTab trailData={trailData} />
           </Tab>
           <Tab
-            heading="Maps"
+            heading='Maps'
             tabStyle={{ backgroundColor: ColorConstants.primary }}
             activeTabStyle={{ backgroundColor: ColorConstants.primary }}
             textStyle={{ color: ColorConstants.White }}
