@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 import trailSeek from '../api/trailSeek'
 import CONSTANTS from '../util/Constants'
+import { errorHandler } from '../util/errorHandler'
 
 const initialState = {
   currentEvent: [],
@@ -17,15 +18,7 @@ export const fetchEvents = createAsyncThunk(
       const response = await trailSeek.get(`/trails/${trailID}/events`)
       return { data: response.data, trailID }
     } catch (e) {
-      return rejectWithValue(
-        e.response.data?.errors
-          ? e.response.data.errors
-              .map((item) => {
-                return item.msg
-              })
-              .join(' ')
-          : e.status
-      )
+      return rejectWithValue(errorHandler(e))
     }
   }
 )
@@ -60,15 +53,7 @@ export const fetchSingleEvent = createAsyncThunk(
       return response.data
     } catch (e) {
       console.log(e.response)
-      return rejectWithValue(
-        e.response.data?.errors
-          ? e.response.data.errors
-              .map((item) => {
-                return item.msg
-              })
-              .join(' ')
-          : e.status
-      )
+      return rejectWithValue(errorHandler(e))
     }
   }
 )
@@ -83,15 +68,7 @@ export const joinEvent = createAsyncThunk(
       return response.data
     } catch (e) {
       console.log(e.response)
-      return rejectWithValue(
-        e.response.data?.errors
-          ? e.response.data.errors
-              .map((item) => {
-                return item.msg
-              })
-              .join(' ')
-          : e.status
-      )
+      return rejectWithValue(errorHandler(e))
     }
   }
 )
@@ -106,15 +83,7 @@ export const deleteEvent = createAsyncThunk(
       return response.data
     } catch (e) {
       console.log(e.response)
-      return rejectWithValue(
-        e.response.data?.errors
-          ? e.response.data.errors
-              .map((item) => {
-                return item.msg
-              })
-              .join(' ')
-          : e.status
-      )
+      return rejectWithValue(errorHandler(e))
     }
   }
 )
@@ -129,15 +98,7 @@ export const leaveEvent = createAsyncThunk(
       return response.data
     } catch (e) {
       console.log(e.response)
-      return rejectWithValue(
-        e.response.data?.errors
-          ? e.response.data.errors
-              .map((item) => {
-                return item.msg
-              })
-              .join(' ')
-          : e.status
-      )
+      return rejectWithValue(errorHandler(e))
     }
   }
 )
@@ -151,15 +112,7 @@ export const postEvents = createAsyncThunk(
       return { eventID: response.data, data: inputs, trailID }
     } catch (e) {
       console.log(e.response)
-      return rejectWithValue(
-        e.response.data?.errors
-          ? e.response.data.errors
-              .map((item) => {
-                return item.msg
-              })
-              .join(' ')
-          : e.status
-      )
+      return rejectWithValue(errorHandler(e))
     }
   }
 )
@@ -177,15 +130,7 @@ export const putEvents = createAsyncThunk(
       return { eventData: response.data }
     } catch (e) {
       console.log(e)
-      return rejectWithValue(
-        e.response.data?.errors
-          ? e.response.data.errors
-              .map((item) => {
-                return item.msg
-              })
-              .join(' ')
-          : e.status
-      )
+      return rejectWithValue(errorHandler(e))
     }
   }
 )
