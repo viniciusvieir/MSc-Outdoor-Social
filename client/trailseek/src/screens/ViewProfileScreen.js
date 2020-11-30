@@ -1,27 +1,27 @@
-import React from "react";
-import { StyleSheet, Platform, Switch, View } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
-import { CommonActions } from "@react-navigation/native";
+import React from 'react'
+import { StyleSheet, Platform, Switch, View } from 'react-native'
+import { useDispatch, useSelector } from 'react-redux'
+import { CommonActions } from '@react-navigation/native'
 // import NetInfo from "@react-native-community/netinfo";
-import { Button, Text, Container, Thumbnail, Content } from "native-base";
+import { Button, Text, Container, Thumbnail, Content } from 'native-base'
 
-import { logOut, toggleCovid } from "../app/userSlice";
-import ToastAlert from "../components/ToastAlert";
-import ColorConstants from "../util/ColorConstants";
+import { logOut, toggleCovid } from '../app/userSlice'
+import ToastAlert from '../components/ToastAlert'
+import ColorConstants from '../util/ColorConstants'
 
 const ViewProfileScreen = ({ navigation }) => {
-  const isAuth = useSelector((state) => state.user.isAuth);
-  const userData = useSelector((state) => state.user.profile);
-  const dispatch = useDispatch();
-  const covidToggle = useSelector((state) => state.user.covidToggle);
+  const isAuth = useSelector((state) => state.user.isAuth)
+  const userData = useSelector((state) => state.user.profile)
+  const dispatch = useDispatch()
+  const covidToggle = useSelector((state) => state.user.covidToggle)
 
   const userLogout = async () => {
     try {
-      const response = await dispatch(logOut());
+      const response = await dispatch(logOut())
     } catch (e) {
-      console.log(e.message);
+      console.log(e.message)
     }
-  };
+  }
 
   // const checNet = () => {
   //   // For Android devices
@@ -49,7 +49,7 @@ const ViewProfileScreen = ({ navigation }) => {
         <View
           style={{
             flex: 1,
-            shadowColor: "#000",
+            shadowColor: '#000',
             shadowOffset: {
               width: 0,
               height: 12,
@@ -66,19 +66,21 @@ const ViewProfileScreen = ({ navigation }) => {
             style={{
               borderColor: ColorConstants.DGreen,
               borderWidth: 3,
-              alignSelf: "center",
+              alignSelf: 'center',
             }}
             large
             source={{
-              uri: `https://eu.ui-avatars.com/api/?name=${userData.name}`,
+              uri: userData.profileImage
+                ? userData.profileImage
+                : `https://eu.ui-avatars.com/api/?name=${userData.name}`,
             }}
           />
           <Text
             style={{
               color: ColorConstants.Black,
               fontSize: 40,
-              fontWeight: "bold",
-              alignSelf: "center",
+              fontWeight: 'bold',
+              alignSelf: 'center',
             }}
           >
             {userData.name}
@@ -92,7 +94,7 @@ const ViewProfileScreen = ({ navigation }) => {
             <View style={styles.infoContainers}>
               <Text style={styles.textInfoLabel}>Gender</Text>
               <Text style={styles.textInfo}>
-                {userData.gender === "M" ? "Male" : "Female"}
+                {userData.gender === 'M' ? 'Male' : 'Female'}
               </Text>
             </View>
             <View style={styles.infoContainers}>
@@ -104,7 +106,7 @@ const ViewProfileScreen = ({ navigation }) => {
               style={[
                 styles.infoContainers,
                 {
-                  alignItems: "center",
+                  alignItems: 'center',
                 },
               ]}
             >
@@ -124,24 +126,24 @@ const ViewProfileScreen = ({ navigation }) => {
               block
               style={{ marginTop: 30 }}
               onPress={async () => {
-                const res = await userLogout();
-                console.log(res);
+                const res = await userLogout()
+                console.log(res)
                 await navigation.dispatch(
                   CommonActions.reset({
                     index: 0,
-                    routes: [{ name: "Authentication" }],
+                    routes: [{ name: 'Authentication' }],
                   })
-                );
+                )
               }}
             >
-              <Text style={{ fontSize: 16, color: "white" }}>Logout</Text>
+              <Text style={{ fontSize: 16, color: 'white' }}>Logout</Text>
             </Button>
           ) : null}
         </View>
       </Content>
     </Container>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   textInfo: {
@@ -155,6 +157,6 @@ const styles = StyleSheet.create({
   infoContainers: {
     flex: 1,
   },
-});
+})
 
-export default ViewProfileScreen;
+export default ViewProfileScreen

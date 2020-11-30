@@ -2,13 +2,16 @@ import React, { useEffect, useRef, useState } from 'react'
 import { View } from 'react-native'
 import { GiftedChat } from 'react-native-gifted-chat'
 import { Spinner, Toast } from 'native-base'
+import { useSelector } from 'react-redux'
 import { getToken, isLoggedIn } from '../util/auth'
 import ColorConstants from '../util/ColorConstants'
 
 import defaultSocket from '../api/socket'
 
 const CommentsTabs = ({ trailData }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const isAuth = useSelector((state) => state.user.isAuth)
+  const token = useSelector((state) => state.user.profile.token)
+  // const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [messages, setMessages] = useState([])
   const [isLoading, setIsLoading] = useState(true)
 
@@ -25,10 +28,10 @@ const CommentsTabs = ({ trailData }) => {
     )
   }
 
-  const checkAuthentication = async () => {
-    const authenticated = await isLoggedIn()
-    setIsAuthenticated(authenticated)
-  }
+  // const checkAuthentication = async () => {
+  //   const authenticated = await isLoggedIn()
+  //   setIsAuthenticated(authenticated)
+  // }
 
   const manageSocket = () => {
     socket.current = defaultSocket('/comments', { trailId: trailData._id })
@@ -46,6 +49,7 @@ const CommentsTabs = ({ trailData }) => {
           },
         }
       })
+      console.log(comments)
       setMessages(comments.reverse())
       setIsLoading(false)
     })
@@ -66,12 +70,12 @@ const CommentsTabs = ({ trailData }) => {
   }
 
   const onSend = async (comments) => {
-    if (!isAuthenticated) {
+    if (!isAuth) {
       Toast.show({ text: 'You need to be authenticated to comment' })
       return
     }
 
-    const token = await getToken()
+    // const token = await getToken()
     const trailId = trailData._id
     const content = comments[0].text
 
@@ -79,7 +83,7 @@ const CommentsTabs = ({ trailData }) => {
   }
 
   useEffect(() => {
-    checkAuthentication()
+    // checkAuthentication()
     manageSocket()
 
     return () => {
