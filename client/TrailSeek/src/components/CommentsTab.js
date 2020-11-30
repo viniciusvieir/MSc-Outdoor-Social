@@ -87,7 +87,6 @@ const CommentsTabs = ({ trailData }) => {
 
   useEffect(() => {
     manageSocket()
-
     return () => {
       socket.current.close()
     }
