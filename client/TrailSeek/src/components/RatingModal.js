@@ -46,11 +46,12 @@ const RatingModal = ({ trailData }) => {
       })
       .catch((err) => {
         setIsLoading(false)
-        if (err.response.data) {
-          Toast.show({ text: err.response.data.errors[0].msg || err.message })
-        } else {
-          Toast.show({ text: err.message })
-        }
+        modelizeRef.current?.close()
+        // if (err.response.data) {
+        //   Toast.show({ text: err.response.data.errors[0].msg || err.message })
+        // } else {
+        //   Toast.show({ text: err.message })
+        // }
       })
   }
 
