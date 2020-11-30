@@ -51,6 +51,7 @@ const DetaiTabs = ({ trailData, covData }) => {
         flex: 1,
         padding: Constants.POINTS.marginHorizontal,
       }}
+      contentContainerStyle={{ paddingBottom: 80 }}
       nestedScrollEnabled
     >
       <Grid>
@@ -162,6 +163,7 @@ const DetaiTabs = ({ trailData, covData }) => {
         ListEmptyComponent={<NoData />}
         nestedScrollEnabled
         horizontal
+        showsHorizontalScrollIndicator={false}
         data={trailData.recommended}
         keyExtractor={(trails) => {
           return trails._id
@@ -171,6 +173,7 @@ const DetaiTabs = ({ trailData, covData }) => {
             <View style={{ flex: 1 }}>
               <Card
                 style={{
+                  flex: 1,
                   width: 250,
                   marginLeft: 10,
                   backgroundColor: ColorConstants.DWhite,
