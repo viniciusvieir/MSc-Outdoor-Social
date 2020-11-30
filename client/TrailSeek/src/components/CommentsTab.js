@@ -1,11 +1,18 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import { View } from 'react-native'
 import { GiftedChat } from 'react-native-gifted-chat'
-import moment from 'moment'
-import trailSeek from '../api/trailSeek'
-import { Toast } from 'native-base'
+import { Spinner, Toast } from 'native-base'
+import { getToken, isLoggedIn } from '../util/auth'
+import ColorConstants from '../util/ColorConstants'
+
+import defaultSocket from '../api/socket'
 
 const CommentsTabs = ({ trailData }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [messages, setMessages] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  const socket = useRef(null)
 
   const uuidv4 = () => {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(
@@ -18,9 +25,16 @@ const CommentsTabs = ({ trailData }) => {
     )
   }
 
-  useEffect(() => {
-    trailSeek.get(`/trails/${trailData._id}/comments`).then((response) => {
-      const comments = response.data.map((comment, index) => {
+  const checkAuthentication = async () => {
+    const authenticated = await isLoggedIn()
+    setIsAuthenticated(authenticated)
+  }
+
+  const manageSocket = () => {
+    socket.current = defaultSocket('/comments', { trailId: trailData._id })
+
+    socket.current.on('comments:all-comments', (data) => {
+      const comments = data.map((comment, index) => {
         return {
           _id: index,
           text: comment.content,
@@ -32,44 +46,69 @@ const CommentsTabs = ({ trailData }) => {
           },
         }
       })
-
       setMessages(comments.reverse())
+      setIsLoading(false)
     })
-  }, [])
 
-  const onSend = (comments) => {
-    comments.forEach((comment) => (comment.user._id = uuidv4()))
-
-    const content = comments[0].text
-    trailSeek
-      .post(`/trails/${trailData._id}/comments`, { content })
-      .then((response) => {
-        comments.forEach((comment) => {
-          comment.user.name = response.data.name
-          comment.user.avatar = response.data.profileImage
-        })
-        setMessages((old) => GiftedChat.append(old, comments))
-      })
-      .catch((err) => {
-        Toast.show({ text: err.response.data.errors[0].msg || err.message })
-      })
+    socket.current.on('comments:receive-new', (data) => {
+      const comment = {
+        _id: uuidv4(),
+        text: data.content,
+        createdAt: new Date(data.date),
+        user: {
+          _id: data.userId,
+          name: data.name,
+          avatar: data.profileImage,
+        },
+      }
+      setMessages((old) => GiftedChat.append(old, [comment]))
+    })
   }
 
+  const onSend = async (comments) => {
+    if (!isAuthenticated) {
+      Toast.show({ text: 'You need to be authenticated to comment' })
+      return
+    }
+
+    const token = await getToken()
+    const trailId = trailData._id
+    const content = comments[0].text
+
+    socket.current.emit('comments:send-new', { token, trailId, content })
+  }
+
+  useEffect(() => {
+    checkAuthentication()
+    manageSocket()
+
+    return () => {
+      socket.current.close()
+    }
+  }, [])
+
   return (
-    <GiftedChat
-      messages={messages}
-      onSend={(comments) => onSend(comments)}
-      showAvatarForEveryMessage={true}
-      renderUsernameOnMessage={true}
-      //   inverted={false}
-      renderDay={() => null}
-      renderTime={() => null}
-      user={{
-        _id: 1,
-        name: 'Me',
-        avatar: 'https://placeimg.com/140/140/any',
-      }}
-    />
+    <View style={{ flex: 1, justifyContent: 'center' }}>
+      {isLoading ? (
+        <Spinner color={ColorConstants.primary} />
+      ) : (
+        <GiftedChat
+          messages={messages}
+          onSend={(comments) => onSend(comments)}
+          showAvatarForEveryMessage={true}
+          renderUsernameOnMessage={true}
+          isTyping={false}
+          //   inverted={false}
+          renderDay={() => null}
+          renderTime={() => null}
+          user={{
+            _id: 1,
+            name: 'Me',
+            avatar: 'https://placeimg.com/140/140/any',
+          }}
+        />
+      )}
+    </View>
   )
 }
 

@@ -37,4 +37,15 @@ const optionalToken = async (req, res, next) => {
   next()
 }
 
-module.exports = { verifyToken, optionalToken }
+const getDecodedToken = async (token) => {
+  if (!token) return null
+  try {
+    const decoded = await promisify(JWT.verify)(token, JWT_SECRET)
+    return decoded
+  } catch (err) {
+    console.log('JWT Error: ' + err.message)
+    return null
+  }
+}
+
+module.exports = { verifyToken, optionalToken, getDecodedToken }

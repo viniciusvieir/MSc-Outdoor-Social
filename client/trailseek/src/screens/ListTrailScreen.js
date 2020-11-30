@@ -6,15 +6,15 @@ import { useNavigation } from '@react-navigation/native'
 import { unwrapResult } from '@reduxjs/toolkit'
 
 import ToastAlert from '../components/ToastAlert'
-import LoadSpinner from '../components/LoadSpinner'
 import { fetchTrailsByQuery } from '../app/trailSlice'
 import CONSTANTS from '../util/Constants'
 import NoData from '../components/NoData'
 import ColorConstants from '../util/ColorConstants'
+import { Spinner } from 'native-base'
 
 const ListTrailScreen = ({ route }) => {
   const { query } = route.params
-  console.log(query)
+
   let content
   const limit = 100000
   let spinner = true
@@ -79,7 +79,7 @@ const ListTrailScreen = ({ route }) => {
   }
   return (
     <View style={{ backgroundColor: ColorConstants.DWhite, flex: 1 }}>
-      <LoadSpinner visible={spinner} />
+      {spinner ? <Spinner color={ColorConstants.primary} /> : <></>}
       {content}
     </View>
   )
