@@ -30,6 +30,9 @@ const WeatherWidget = ({ data }) => {
         return itemW.dt.toString()
       }}
       nestedScrollEnabled
+      contentContainerStyle={{
+        paddingHorizontal: Constants.POINTS.marginHorizontal,
+      }}
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={{
         paddingHorizontal: Constants.POINTS.marginHorizontal,
@@ -38,6 +41,8 @@ const WeatherWidget = ({ data }) => {
         return (
           <View
             style={{
+              marginTop: 1,
+              marginBottom: 10,
               borderRadius: 10,
               backgroundColor: '#ffffff',
               marginHorizontal: 5,

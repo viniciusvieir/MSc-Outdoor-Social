@@ -268,7 +268,7 @@ const SearchTrailScreen = ({ navigation }) => {
               filter.action()
             }}
           >
-            <Text uppercase={false}>Near You</Text>
+            <Text uppercase={false}>{nearMe.title}</Text>
           </Button>
 
           <Button
@@ -290,7 +290,7 @@ const SearchTrailScreen = ({ navigation }) => {
               filter.action()
             }}
           >
-            <Text uppercase={false}>Best Rated</Text>
+            <Text uppercase={false}>{bestParams.title}</Text>
           </Button>
 
           <Button
@@ -311,7 +311,7 @@ const SearchTrailScreen = ({ navigation }) => {
               filter.action()
             }}
           >
-            <Text uppercase={false}>Easy Trails</Text>
+            <Text uppercase={false}>{easyParams.title}</Text>
           </Button>
 
           <Button
