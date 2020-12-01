@@ -24,8 +24,8 @@ const ViewTrailScreen = ({ route }) => {
   const [trailData, setTrailData] = useState({})
   const [covData, setCovData] = useState([])
   const [weathData, setWeathData] = useState({})
-  const [latitude, setLatitude] = useState(0)
-  const [longitude, setLongitude] = useState(0)
+  // const [latitude, setLatitude] = useState(0)
+  // const [longitude, setLongitude] = useState(0)
 
   let spinner = true
   let content
@@ -41,14 +41,14 @@ const ViewTrailScreen = ({ route }) => {
       const results = await dispatch(fetchTrailsByID({ fields, id, covFlag }))
       const uResults = unwrapResult(results)
       setTrailData(uResults)
-      setLatitude(uResults?.start?.coordinates[0])
-      setLongitude(uResults?.start?.coordinates[1])
     } catch (e) {
       ToastAlert(error)
     }
   }
 
   const getCovidData = async () => {
+    const latitude = trailData?.start?.coordinates[0]
+    const longitude = trailData?.start?.coordinates[1]
     try {
       const results = await dispatch(fetchCovidData({ latitude, longitude }))
       const uResult = unwrapResult(results)
@@ -60,6 +60,8 @@ const ViewTrailScreen = ({ route }) => {
   }
 
   const getWeatherData = async () => {
+    const latitude = trailData?.start?.coordinates[0]
+    const longitude = trailData?.start?.coordinates[1]
     try {
       const results = await dispatch(fetchWeatherData({ latitude, longitude }))
       const uResult = unwrapResult(results)
@@ -75,22 +77,12 @@ const ViewTrailScreen = ({ route }) => {
   }, [])
 
   useEffect(() => {
-    latitude !== null &&
-    longitude !== null &&
-    covData.length === 0 &&
-    JSON.stringify(trailData) !== '{}' &&
-    covFlag
-      ? getCovidData()
-      : null
-  }, [covFlag, latitude, longitude])
+    JSON.stringify(trailData) !== '{}' && covFlag ? getCovidData() : null
+  }, [covFlag, trailData])
 
   useEffect(() => {
-    latitude !== null &&
-    longitude !== null &&
-    JSON.stringify(weathData) === '{}'
-      ? getWeatherData()
-      : null
-  }, [latitude, longitude])
+    JSON.stringify(trailData) !== '{}' ? getWeatherData() : null
+  }, [trailData])
 
   if (!(JSON.stringify(trailData) === '{}')) {
     spinner = false
@@ -108,7 +100,7 @@ const ViewTrailScreen = ({ route }) => {
         <Header
           hasTabs
           style={{ height: 0 }}
-          androidStatusBarColor='#ffffff00'
+          androidStatusBarColor="#ffffff00"
         />
 
         <Tabs
@@ -118,7 +110,7 @@ const ViewTrailScreen = ({ route }) => {
           tabBarUnderlineStyle={{ backgroundColor: ColorConstants.White }}
         >
           <Tab
-            heading='Details'
+            heading="Details"
             tabStyle={{ backgroundColor: ColorConstants.primary }}
             activeTabStyle={{ backgroundColor: ColorConstants.primary }}
             textStyle={{ color: ColorConstants.White }}
@@ -131,7 +123,7 @@ const ViewTrailScreen = ({ route }) => {
             />
           </Tab>
           <Tab
-            heading='Comments'
+            heading="Comments"
             tabStyle={{ backgroundColor: ColorConstants.primary }}
             activeTabStyle={{ backgroundColor: ColorConstants.primary }}
             textStyle={{ color: ColorConstants.White }}
@@ -140,7 +132,7 @@ const ViewTrailScreen = ({ route }) => {
             <CommentsTabs trailData={trailData} />
           </Tab>
           <Tab
-            heading='Events'
+            heading="Events"
             tabStyle={{ backgroundColor: ColorConstants.primary }}
             activeTabStyle={{ backgroundColor: ColorConstants.primary }}
             textStyle={{ color: ColorConstants.White }}
@@ -149,7 +141,7 @@ const ViewTrailScreen = ({ route }) => {
             <EventsTab trailData={trailData} />
           </Tab>
           <Tab
-            heading='Maps'
+            heading="Maps"
             tabStyle={{ backgroundColor: ColorConstants.primary }}
             activeTabStyle={{ backgroundColor: ColorConstants.primary }}
             textStyle={{ color: ColorConstants.White }}
