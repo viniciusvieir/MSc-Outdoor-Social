@@ -45,6 +45,15 @@ const SearchTrailScreen = ({ navigation }) => {
       }),
   }
 
+  const nearMe = {
+    title: 'Near You',
+    action: () =>
+      getTrailsByQuery({
+        query: {},
+        location: true,
+      }),
+  }
+
   const bestParams = {
     title: 'Best Rated',
     action: () =>
@@ -66,12 +75,14 @@ const SearchTrailScreen = ({ navigation }) => {
       }),
   }
 
-  const nearMe = {
-    title: 'Near You',
+  const wholeDayParams = {
+    title: 'Whole Day',
     action: () =>
       getTrailsByQuery({
-        query: {},
-        location: true,
+        query: {
+          estimate_time_min: { $gte: 360 },
+          estimate_time_min: { $lte: 600 },
+        },
       }),
   }
 
@@ -241,6 +252,27 @@ const SearchTrailScreen = ({ navigation }) => {
 
           <Button
             rounded
+            light={filter.title !== nearMe.title}
+            bordered={filter.title !== nearMe.title}
+            style={{
+              height: 32,
+              marginRight: 8,
+              backgroundColor:
+                filter.title === nearMe.title
+                  ? ColorConstants.primary
+                  : 'transparent',
+            }}
+            onPress={() => {
+              setFilter(nearMe)
+              setTrails([])
+              filter.action()
+            }}
+          >
+            <Text uppercase={false}>Near You</Text>
+          </Button>
+
+          <Button
+            rounded
             color={ColorConstants.primary}
             light={filter.title !== bestParams.title}
             bordered={filter.title !== bestParams.title}
@@ -284,23 +316,23 @@ const SearchTrailScreen = ({ navigation }) => {
 
           <Button
             rounded
-            light={filter.title !== nearMe.title}
-            bordered={filter.title !== nearMe.title}
+            light={filter.title !== wholeDayParams.title}
+            bordered={filter.title !== wholeDayParams.title}
             style={{
               height: 32,
               marginRight: 8,
               backgroundColor:
-                filter.title === nearMe.title
+                filter.title === wholeDayParams.title
                   ? ColorConstants.primary
                   : 'transparent',
             }}
             onPress={() => {
-              setFilter(nearMe)
+              setFilter(wholeDayParams)
               setTrails([])
               filter.action()
             }}
           >
-            <Text uppercase={false}>Near You</Text>
+            <Text uppercase={false}>{wholeDayParams.title}</Text>
           </Button>
         </ScrollView>
       </View>

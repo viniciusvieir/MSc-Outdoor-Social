@@ -31,6 +31,9 @@ const WeatherWidget = ({ data }) => {
       }}
       nestedScrollEnabled
       showsHorizontalScrollIndicator={false}
+      contentContainerStyle={{
+        paddingHorizontal: Constants.POINTS.marginHorizontal,
+      }}
       renderItem={({ item }) => {
         return (
           <View
