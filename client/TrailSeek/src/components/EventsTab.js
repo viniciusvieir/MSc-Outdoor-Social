@@ -69,7 +69,6 @@ const EventsTab = ({ trailData }) => {
       style={{
         flex: 1,
         backgroundColor: ColorConstants.DWhite,
-        justifyContent: 'center',
       }}
     >
       {didFinishRequest && events.length > 0 ? (
@@ -101,7 +100,9 @@ const EventsTab = ({ trailData }) => {
       )}
 
       {isLoading ? (
-        <Spinner color={ColorConstants.primary} />
+        <View style={{ flex: 1, justifyContent: 'center' }}>
+          <Spinner color={ColorConstants.primary} />
+        </View>
       ) : (
         <List>
           <FlatList

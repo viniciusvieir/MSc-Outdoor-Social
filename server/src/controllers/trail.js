@@ -72,6 +72,19 @@ class TrailController {
           .select((fields && fields.replace(/,|;/g, ' ')) || '-path')
           .lean()
       }
+    } else if (query && query.random) {
+      const project = {}
+      if (fields) {
+        fields.split(/,|;/g).forEach((field) => {
+          project[field] = true
+        })
+      } else {
+        project.path = false
+      }
+      trails = await Trail.aggregate([
+        { $sample: { size: limit || 20 } },
+        { $project: project },
+      ])
     }
 
     if (trails.length === 0) {
