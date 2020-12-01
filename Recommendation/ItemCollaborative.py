@@ -100,7 +100,7 @@ def get_recommendation(user_id):
     user_spec_data = user_review_df[user_review_df['userID']==ITcoll.user_id]
     #print('data for selected user ', len(user_spec_data))
     if len(user_spec_data) == 0:
-        recommendations = ['5fa17e268f4d258042edf4be','5fa17e268f4d258042edf4bb','5fa17e268f4d258042edf4bc','5fa17e268f4d258042edf4b6','5fa17e268f4d258042edf4b9','5fa17e268f4d258042edf4c3','5fa17e268f4d258042edf4b8', '5fa17e268f4d258042edf4b7', '5fa17e268f4d258042edf4bf', '5fa17e268f4d258042edf4bd']
+        recommendations = ['5fc5bfe761f37f5943b6fb95','5fc5bfe761f37f5943b6fb96','5fc5bfe761f37f5943b6fb98','5fc5bfe761f37f5943b6fb97','5fc5bfe761f37f5943b6fb9b','5fc5bfe761f37f5943b6fb9a','5fc5bfe761f37f5943b6fb9c','5fc5bfe761f37f5943b6fb9d','5fc5bfe761f37f5943b6fb9e','5fc5bfe761f37f5943b6fba2']
     else:
         
         user_spec_data = ITcoll.getUserSpecDetails(user_spec_data)
