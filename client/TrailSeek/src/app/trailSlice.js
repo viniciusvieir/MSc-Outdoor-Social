@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { errorHandler } from '../util/errorHandler'
 
 import trailSeek from '../api/trailSeek'
 import weather from '../api/weather'
@@ -31,8 +32,8 @@ export const fetchTrailsByQuery = createAsyncThunk(
       limit = 20,
       skip = 0,
       location = false,
-      maxDist = 10000,
-      minDist = 0,
+      // maxDist = 10000,
+      // minDist = 0,
       fields = 'name,weighted_rating,location,img_url,outing_count,comment_count',
     },
     { rejectWithValue, getState }
@@ -95,54 +96,26 @@ export const fetchTrailsByQuery = createAsyncThunk(
 
 export const fetchTrailsByID = createAsyncThunk(
   'trails/fetchTrailsByID',
-  async (
-    {
-      covFlag = true,
-      weathFlag = true,
-      fields,
-      id,
-      excludeWeather = 'hourly,current,minutely,alerts',
-    },
-    { rejectWithValue, getState }
-  ) => {
-    let weatherResponse = []
-    let covidResponse = []
-    const covToggleFlag = getState().user.covidToggle
+  async ({ fields, id }, { rejectWithValue, getState }) => {
+    // let weatherResponse = []
+    // let covidResponse = []
+    // const covToggleFlag = getState().user.covidToggle
     try {
       // const existTrail = getState().trails.trailDetails.find(
       //   (item) => item._id === id
       // );
       // if (existTrail) return existTrail;
       const response = await trailSeek.get(`/trails/${id}?fields=${fields}`)
-      if (weathFlag) {
-        try {
-          weatherResponse = await weather.get('/onecall', {
-            params: {
-              // appid:trailData.weatherApiToken,
-              lat: response.data.start.coordinates[0],
-              lon: response.data.start.coordinates[1],
-              exclude: excludeWeather,
-            },
-          })
-          response.data.weatherData = weatherResponse.data
-        } catch (e) {
-          console.log('Weather API Error')
-          console.log(e.response.data.message)
-        }
-      }
-      if (covToggleFlag && covFlag) {
-        try {
-          covidResponse = await covid.get('', {
-            params: {
-              geometry: `${response.data.start.coordinates[1]},${response.data.start.coordinates[0]}`,
-            },
-          })
-          response.data.covidData = covidResponse.data.features
-        } catch (e) {
-          console.log('Covid API Error')
-          console.log(e.response.data.message)
-        }
-      }
+      // if (weathFlag) {
+      //   try {
+      //     response.data.weatherData = weatherResponse.data
+      //   } catch (e) {
+      //     console.log('Weather API Error')
+      //     console.log(e.response.data.message)
+      //   }
+      // }
+      // if (covToggleFlag && covFlag) {
+      // }
       // response.data.weatherData = weathFlag ? weatherResponse.data : []
       // response.data.covidData =
       //   covToggleFlag && covFlag ? covidResponse.data.features : []
@@ -158,6 +131,51 @@ export const fetchTrailsByID = createAsyncThunk(
               .join(' ')
           : error.status
       )
+    }
+  }
+)
+
+export const fetchCovidData = createAsyncThunk(
+  'trails/fetchCovidData',
+  async ({ latitude, longitude }, { rejectWithValue, getState }) => {
+    const covToggleFlag = getState().user.covidToggle
+    if (covToggleFlag) {
+      try {
+        const covidResponse = await covid.get('', {
+          params: {
+            geometry: `${longitude},${latitude}`,
+          },
+        })
+        return covidResponse.data.features
+      } catch (e) {
+        console.log(e.message)
+        console.log('Covid API Error')
+        return rejectWithValue(errorHandler(e))
+      }
+    } else return []
+  }
+)
+
+export const fetchWeatherData = createAsyncThunk(
+  'trails/fetchWeatherData',
+  async (
+    { latitude, longitude, excludeWeather = 'hourly,current,minutely,alerts' },
+    { rejectWithValue }
+  ) => {
+    try {
+      const weatherResponse = await weather.get('/onecall', {
+        params: {
+          // appid:trailData.weatherApiToken,
+          lat: latitude,
+          lon: longitude,
+          exclude: excludeWeather,
+        },
+      })
+      return weatherResponse.data
+    } catch (e) {
+      console.log('Weather API Error')
+      console.log(e)
+      return rejectWithValue(errorHandler(e))
     }
   }
 )
@@ -205,6 +223,31 @@ export const trailSlice = createSlice({
       state.filteredTrails.data = action.payload
     },
     [fetchTrailsByQuery.rejected]: (state, action) => {
+      state.status = CONSTANTS.FAILED
+      state.error = action.payload
+    },
+    //////////////////////////////////////////////////////////////
+    [fetchWeatherData.pending]: (state, action) => {
+      state.weatherData.status = CONSTANTS.LOADING
+    },
+    [fetchWeatherData.fulfilled]: (state, action) => {
+      state.weatherData.status = CONSTANTS.SUCCESS
+      state.weatherData = action.payload
+      // state.filteredTrails.query = action.payload.query;
+    },
+    [fetchWeatherData.rejected]: (state, action) => {
+      state.weatherData.status = CONSTANTS.FAILED
+      state.weatherData.error = action.payload
+    },
+    //////////////////////////////////////////////////////////////
+    [fetchCovidData.pending]: (state, action) => {
+      state.status = CONSTANTS.LOADING
+    },
+    [fetchCovidData.fulfilled]: (state, action) => {
+      state.status = CONSTANTS.SUCCESS
+      // state.filteredTrails.query = action.payload.query;
+    },
+    [fetchCovidData.rejected]: (state, action) => {
       state.status = CONSTANTS.FAILED
       state.error = action.payload
     },

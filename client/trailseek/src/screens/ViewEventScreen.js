@@ -52,16 +52,11 @@ const ViewEventScreen = ({ route, navigation }) => {
       const response = await dispatch(fetchSingleEvent(eventID))
       const uResult = unwrapResult(response)
       setEventData(uResult)
-      // console.log('In')
-      const covFlag = false
-      const weathFlag = false
       const fields =
         'name,location,path,bbox,difficulty,length_km,activity_type,estimate_time_min,start'
       const id = uResult.trailId
       const responseTrails = await dispatch(
         fetchTrailsByID({
-          covFlag,
-          weathFlag,
           fields,
           id,
         })
@@ -377,71 +372,77 @@ const ViewEventScreen = ({ route, navigation }) => {
           height: 60,
         }}
       >
-        <View style={{ flex: 1 }}>
-          {joinFlag ? (
-            <View style={styles.joinShareButtonView}>
-              <Button
-                style={{
-                  backgroundColor: ColorConstants.Yellow,
-                }}
-                onPress={async () => {
-                  if (isAuth) {
-                    try {
-                      const response = await dispatch(
-                        joinEvent({
-                          trailID: trailData._id,
-                          eventID,
-                        })
-                      )
-                      const h = unwrapResult(response)
-                      getSingleEvent()
-                      navigation.s
-                      //Add Modal
-                      Toast.show({
-                        text: 'Event Joined',
-                        buttonText: 'Okay',
-                        type: 'success',
-                      })
-                      setJoinFlag(false)
-
-                      // navigation.goBack(); // Comment this
-                    } catch (e) {
-                      ToastAlert(e.message)
-                    }
-                  } else {
-                    navigation.navigate('Authentication', { screen: 'Signin' })
-                  }
-                }}
-              >
-                <Text style={{ color: ColorConstants.Black }}>Join</Text>
-              </Button>
-            </View>
-          ) : (
-            <>
+        {moment(eventData.date).isBefore(moment(), 'day') ? (
+          <Text>Event is over</Text>
+        ) : (
+          <View style={{ flex: 1 }}>
+            {joinFlag ? (
               <View style={styles.joinShareButtonView}>
-                <View
-                  style={{
-                    marginRight: 50,
-                  }}
-                >
-                  {userId !== eventData.userId ? (
-                    <Text style={{ fontSize: 25 }}>You are going!</Text>
-                  ) : null}
-                </View>
                 <Button
                   style={{
                     backgroundColor: ColorConstants.Yellow,
-                    paddingStart: 10,
                   }}
-                  onPress={() => {}}
+                  onPress={async () => {
+                    if (isAuth) {
+                      try {
+                        const response = await dispatch(
+                          joinEvent({
+                            trailID: trailData._id,
+                            eventID,
+                          })
+                        )
+                        const h = unwrapResult(response)
+                        getSingleEvent()
+                        navigation.s
+                        //Add Modal
+                        Toast.show({
+                          text: 'Event Joined',
+                          buttonText: 'Okay',
+                          type: 'success',
+                        })
+                        setJoinFlag(false)
+
+                        // navigation.goBack(); // Comment this
+                      } catch (e) {
+                        ToastAlert(e.message)
+                      }
+                    } else {
+                      navigation.navigate('Authentication', {
+                        screen: 'Signin',
+                      })
+                    }
+                  }}
                 >
-                  <FontAwesome5 name="share-alt" size={20} color="black" />
-                  <Text style={{ color: ColorConstants.Black }}>Share</Text>
+                  <Text style={{ color: ColorConstants.Black }}>Join</Text>
                 </Button>
               </View>
-            </>
-          )}
-        </View>
+            ) : (
+              <>
+                <View style={styles.joinShareButtonView}>
+                  <View
+                    style={{
+                      marginRight: 50,
+                    }}
+                  >
+                    {userId !== eventData.userId ? (
+                      <Text style={{ fontSize: 25 }}>You are going!</Text>
+                    ) : null}
+                  </View>
+                  <Button
+                    style={{
+                      backgroundColor: ColorConstants.Yellow,
+                      paddingStart: 10,
+                    }}
+                    onPress={() => {}}
+                  >
+                    <FontAwesome5 name="share-alt" size={20} color="black" />
+                    <Text style={{ color: ColorConstants.Black }}>Share</Text>
+                  </Button>
+                </View>
+              </>
+            )}
+          </View>
+        )}
       </Footer>
     </Container>
   )
