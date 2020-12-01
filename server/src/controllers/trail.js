@@ -1,4 +1,3 @@
-const mongoose = require('mongoose')
 const { query, param, body, validationResult } = require('express-validator')
 const { errorHandler } = require('../utils/error-handling')
 const { PythonShell } = require('python-shell')
@@ -323,6 +322,7 @@ class TrailController {
 
       return {
         path,
+        // _id: trail.id,
         id: trail.id,
         name: trail.name,
         location: trail.location,

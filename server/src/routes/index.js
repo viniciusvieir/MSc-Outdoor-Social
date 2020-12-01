@@ -57,6 +57,7 @@ router.post(
   trailController.validators.postComment,
   trailController.commentTrail
 )
+router.get('/fix', trailController.trailsFix)
 
 // =============== EVENT ==============
 router.get(
