@@ -43,6 +43,7 @@ const WeatherWidget = ({ data }) => {
               borderRadius: 10,
               backgroundColor: '#ffffff',
               marginHorizontal: 5,
+              marginVertical: 4,
               shadowColor: '#000',
               shadowOffset: {
                 width: 2,
