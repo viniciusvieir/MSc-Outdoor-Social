@@ -3,9 +3,13 @@ import { StyleSheet, Dimensions, View } from 'react-native'
 import { Tile } from 'react-native-elements'
 import { useSelector, useDispatch } from 'react-redux'
 import { unwrapResult } from '@reduxjs/toolkit'
-import { Container, Tab, Tabs, Header, Spinner } from 'native-base'
+import { Container, Tab, Tabs, Header, Spinner, Toast } from 'native-base'
 
-import { fetchTrailsByID } from '../app/trailSlice'
+import {
+  fetchTrailsByID,
+  fetchCovidData,
+  fetchWeatherData,
+} from '../app/trailSlice'
 import ToastAlert from '../components/ToastAlert'
 import CONSTANTS from '../util/Constants'
 import DetailsTab from '../components/DetailsTab'
@@ -19,6 +23,9 @@ const ViewTrailScreen = ({ route }) => {
   const { id, showEvents } = route.params
   const [trailData, setTrailData] = useState({})
   const [covData, setCovData] = useState([])
+  const [weathData, setWeathData] = useState({})
+  const [latitude, setLatitude] = useState(0)
+  const [longitude, setLongitude] = useState(0)
 
   let spinner = true
   let content
@@ -34,15 +41,56 @@ const ViewTrailScreen = ({ route }) => {
       const results = await dispatch(fetchTrailsByID({ fields, id, covFlag }))
       const uResults = unwrapResult(results)
       setTrailData(uResults)
-      setCovData(uResults.covidData)
+      setLatitude(uResults?.start?.coordinates[0])
+      setLongitude(uResults?.start?.coordinates[1])
     } catch (e) {
-      ToastAlert(e.message)
+      ToastAlert(error)
+    }
+  }
+
+  const getCovidData = async () => {
+    try {
+      const results = await dispatch(fetchCovidData({ latitude, longitude }))
+      const uResult = unwrapResult(results)
+      setCovData(uResult)
+    } catch (error) {
+      Toast.show({ type: 'danger', text: 'Covid API Error' })
+      console.log(error.message)
+    }
+  }
+
+  const getWeatherData = async () => {
+    try {
+      const results = await dispatch(fetchWeatherData({ latitude, longitude }))
+      const uResult = unwrapResult(results)
+      setWeathData(uResult)
+    } catch (error) {
+      Toast.show({ type: 'danger', text: 'Weather API Error' })
+      console.log(error.message)
     }
   }
 
   useEffect(() => {
     getTrailDetail()
-  }, [covFlag])
+  }, [])
+
+  useEffect(() => {
+    latitude !== null &&
+    longitude !== null &&
+    covData.length === 0 &&
+    JSON.stringify(trailData) !== '{}' &&
+    covFlag
+      ? getCovidData()
+      : null
+  }, [covFlag, latitude, longitude])
+
+  useEffect(() => {
+    latitude !== null &&
+    longitude !== null &&
+    JSON.stringify(weathData) === '{}'
+      ? getWeatherData()
+      : null
+  }, [latitude, longitude])
 
   if (!(JSON.stringify(trailData) === '{}')) {
     spinner = false
@@ -60,7 +108,7 @@ const ViewTrailScreen = ({ route }) => {
         <Header
           hasTabs
           style={{ height: 0 }}
-          androidStatusBarColor='#ffffff00'
+          androidStatusBarColor="#ffffff00"
         />
 
         <Tabs
@@ -70,16 +118,20 @@ const ViewTrailScreen = ({ route }) => {
           tabBarUnderlineStyle={{ backgroundColor: ColorConstants.White }}
         >
           <Tab
-            heading='Details'
+            heading="Details"
             tabStyle={{ backgroundColor: ColorConstants.primary }}
             activeTabStyle={{ backgroundColor: ColorConstants.primary }}
             textStyle={{ color: ColorConstants.White }}
             activeTextStyle={{ color: ColorConstants.White }}
           >
-            <DetailsTab trailData={trailData} covData={covData} />
+            <DetailsTab
+              trailData={trailData}
+              covData={covData}
+              weatherData={weathData}
+            />
           </Tab>
           <Tab
-            heading='Comments'
+            heading="Comments"
             tabStyle={{ backgroundColor: ColorConstants.primary }}
             activeTabStyle={{ backgroundColor: ColorConstants.primary }}
             textStyle={{ color: ColorConstants.White }}
@@ -88,7 +140,7 @@ const ViewTrailScreen = ({ route }) => {
             <CommentsTabs trailData={trailData} />
           </Tab>
           <Tab
-            heading='Events'
+            heading="Events"
             tabStyle={{ backgroundColor: ColorConstants.primary }}
             activeTabStyle={{ backgroundColor: ColorConstants.primary }}
             textStyle={{ color: ColorConstants.White }}
@@ -97,7 +149,7 @@ const ViewTrailScreen = ({ route }) => {
             <EventsTab trailData={trailData} />
           </Tab>
           <Tab
-            heading='Maps'
+            heading="Maps"
             tabStyle={{ backgroundColor: ColorConstants.primary }}
             activeTabStyle={{ backgroundColor: ColorConstants.primary }}
             textStyle={{ color: ColorConstants.White }}

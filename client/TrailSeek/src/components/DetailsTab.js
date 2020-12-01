@@ -25,7 +25,7 @@ import NoData from './NoData'
 import Constants from '../util/Constants'
 import RatingModal from './RatingModal'
 
-const DetaiTabs = ({ trailData, covData }) => {
+const DetaiTabs = ({ trailData, covData, weatherData }) => {
   const navigation = useNavigation()
   const covidToggle = useSelector((state) => state.user.covidToggle)
   let covContent
@@ -72,7 +72,7 @@ const DetaiTabs = ({ trailData, covData }) => {
         </Row>
 
         <Row>
-          <Entypo name='location-pin' size={16} color='gray' />
+          <Entypo name="location-pin" size={16} color="gray" />
           <Text style={{ fontSize: 14 }}>{trailData.location}</Text>
         </Row>
 
@@ -80,7 +80,7 @@ const DetaiTabs = ({ trailData, covData }) => {
           <Col size={1}>
             <Row>
               <FontAwesome5
-                name='hiking'
+                name="hiking"
                 size={20}
                 color={ColorConstants.Black2}
               />
@@ -90,7 +90,7 @@ const DetaiTabs = ({ trailData, covData }) => {
           <Col size={1}>
             <Row>
               <FontAwesome5
-                name='mountain'
+                name="mountain"
                 size={16}
                 color={ColorConstants.Black2}
               />
@@ -100,7 +100,7 @@ const DetaiTabs = ({ trailData, covData }) => {
           <Col size={1}>
             <Row>
               <FontAwesome5
-                name='route'
+                name="route"
                 size={20}
                 color={ColorConstants.Black2}
               />
@@ -110,7 +110,7 @@ const DetaiTabs = ({ trailData, covData }) => {
           <Col size={1}>
             <Row>
               <FontAwesome5
-                name='clock'
+                name="clock"
                 size={20}
                 color={ColorConstants.Black2}
               />
@@ -147,7 +147,7 @@ const DetaiTabs = ({ trailData, covData }) => {
           }}
         />
         <Row style={{ marginVertical: 10 }}>
-          <WeatherWidget data={trailData.weatherData} />
+          <WeatherWidget data={weatherData} />
         </Row>
       </Grid>
       <View
@@ -189,8 +189,8 @@ const DetaiTabs = ({ trailData, covData }) => {
                       source={{ uri: item.img_url }}
                       style={styles.imageStyle}
                       PlaceholderContent={<ActivityIndicator />}
-                      resizeMethod='auto'
-                      resizeMode='cover'
+                      resizeMethod="auto"
+                      resizeMode="cover"
                     />
                   </CardItem>
                   <CardItem style={{ backgroundColor: ColorConstants.DWhite }}>
