@@ -243,31 +243,9 @@ class TrailController {
     const { trailId } = req.params
     const { content } = req.body
 
+    const user = await UserMongo.findOne({ userId }).select('name profileImage')
+
     const date = new Date()
-
-    let user = await UserMongo.findOne({ userId }).select('name profileImage')
-
-    if (!user) {
-      const userPsql = await UserPsql.findByPk(userId, {
-        attributes: ['name', 'dob', 'gender', 'email'],
-      })
-
-      const randomId = Math.floor(Math.random() * Math.floor(1000)) + 1
-      const profileImage = `https://picsum.photos/id/${randomId}/200/200`
-      await UserMongo.create({
-        userId,
-        profileImage,
-        name: userPsql.name,
-        dob: new Date(userPsql.dob),
-        gender: userPsql.gender,
-        email: userPsql.email,
-      })
-      user = {
-        name: userPsql.name,
-        profileImage,
-      }
-    }
-
     const comment = {
       userId,
       content,
@@ -276,14 +254,7 @@ class TrailController {
       profileImage: user.profileImage,
     }
 
-    await Trail.updateOne(
-      { _id: trailId },
-      {
-        $push: {
-          comments: comment,
-        },
-      }
-    )
+    await Trail.updateOne({ _id: trailId }, { $push: { comments: comment } })
 
     res.json(comment)
   }
