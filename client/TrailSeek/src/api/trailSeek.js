@@ -13,3 +13,7 @@ trailSeek.interceptors.request.use(async (config) => {
 })
 
 export default trailSeek
+
+export const trailSeekAuth = axios.create({
+  baseURL: 'https://api.trailseek.eu/v1',
+})

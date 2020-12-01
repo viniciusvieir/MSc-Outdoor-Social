@@ -25,7 +25,7 @@ import Constants from '../util/Constants'
 
 const SearchTrailScreen = ({ navigation }) => {
   const dispatch = useDispatch()
-  const [searchTerm, setSearchTerm] = useState('')
+
   const trailStatus = useSelector((state) => state.trails.status)
   const error = useSelector((state) => state.trails.error)
   const user = useSelector((state) => state.user.profile.name)
@@ -34,6 +34,7 @@ const SearchTrailScreen = ({ navigation }) => {
 
   const [trails, setTrails] = useState([])
   const [filter, setFilter] = useState({})
+  const [searchTerm, setSearchTerm] = useState('')
 
   const recomended = {
     title: 'Recommended',
@@ -86,14 +87,26 @@ const SearchTrailScreen = ({ navigation }) => {
       }),
   }
 
-  let searchParam = {
-    title: 'Search Results',
-    query: {
-      $text: {
-        $search: `${searchTerm}`,
-      },
-    },
+  const searchParam = {
+    title: 'Search',
+    action: () =>
+      getTrailsByQuery({
+        query: {
+          $text: {
+            $search: `${searchTerm}`,
+          },
+        },
+      }),
   }
+
+  // let searchParam = {
+  //   title: 'Search Results',
+  //   query: {
+  //     $text: {
+  //       $search: `${searchTerm}`,
+  //     },
+  //   },
+  // }
 
   let content,
     spinner = true
@@ -173,7 +186,7 @@ const SearchTrailScreen = ({ navigation }) => {
       style={{ backgroundColor: ColorConstants.primary, flex: 1 }}
       contentContainerStyle={{ flex: 1 }}
     >
-      <Header transparent androidStatusBarColor='#ffffff00'>
+      <Header transparent androidStatusBarColor="#ffffff00">
         <Body>
           <Title
             style={{
@@ -195,18 +208,27 @@ const SearchTrailScreen = ({ navigation }) => {
           marginBottom: 20,
           height: 44,
         }}
-        placeholder='Search'
+        placeholder="Search"
         value={searchTerm}
         onChangeText={(text) => {
           setSearchTerm(text)
         }}
         inputContainerStyle={{ height: 29, marginLeft: 2 }}
-        autoCapitalize='none'
-        platform='android'
-        autoCompleteType='name'
+        autoCapitalize="none"
+        platform="android"
+        autoCompleteType="name"
         enablesReturnKeyAutomatically
         onSubmitEditing={() => {
-          navigation.navigate('ListTrail', { query: searchParam.query })
+          setFilter(searchParam)
+          setTrails([])
+          getTrailsByQuery({
+            query: {
+              $text: {
+                $search: `${searchTerm}`,
+              },
+            },
+          })
+          // navigation.navigate('ListTrail', { query: searchParam.query })
         }}
       />
 
@@ -240,8 +262,14 @@ const SearchTrailScreen = ({ navigation }) => {
               }}
               onPress={() => {
                 setFilter(recomended)
+                setSearchTerm('')
                 setTrails([])
-                filter.action()
+                getTrailsByQuery({
+                  query: {
+                    recommendation: true,
+                  },
+                })
+                // filter.action()
               }}
             >
               <Text uppercase={false}>For you</Text>
@@ -264,8 +292,13 @@ const SearchTrailScreen = ({ navigation }) => {
             }}
             onPress={() => {
               setFilter(nearMe)
+              setSearchTerm('')
               setTrails([])
-              filter.action()
+              getTrailsByQuery({
+                query: {},
+                location: true,
+              })
+              // filter.action()
             }}
           >
             <Text uppercase={false}>{nearMe.title}</Text>
@@ -286,8 +319,14 @@ const SearchTrailScreen = ({ navigation }) => {
             }}
             onPress={() => {
               setFilter(bestParams)
+              setSearchTerm('')
               setTrails([])
-              filter.action()
+              getTrailsByQuery({
+                query: {
+                  weighted_rating: { $gt: 4 },
+                },
+              })
+              // filter.action()
             }}
           >
             <Text uppercase={false}>{bestParams.title}</Text>
@@ -307,8 +346,15 @@ const SearchTrailScreen = ({ navigation }) => {
             }}
             onPress={() => {
               setFilter(easyParams)
+              setSearchTerm('')
               setTrails([])
-              filter.action()
+              getTrailsByQuery({
+                query: {
+                  difficulty: 'easy',
+                  length_km: { $lt: 5 },
+                },
+              })
+              // filter.action()
             }}
           >
             <Text uppercase={false}>{easyParams.title}</Text>
@@ -328,8 +374,15 @@ const SearchTrailScreen = ({ navigation }) => {
             }}
             onPress={() => {
               setFilter(wholeDayParams)
+              setSearchTerm('')
               setTrails([])
-              filter.action()
+              getTrailsByQuery({
+                query: {
+                  estimate_time_min: { $gte: 360 },
+                  estimate_time_min: { $lte: 600 },
+                },
+              })
+              // filter.action()
             }}
           >
             <Text uppercase={false}>{wholeDayParams.title}</Text>

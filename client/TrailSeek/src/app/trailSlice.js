@@ -162,6 +162,7 @@ export const fetchWeatherData = createAsyncThunk(
     { latitude, longitude, excludeWeather = 'hourly,current,minutely,alerts' },
     { rejectWithValue }
   ) => {
+    console.log(latitude + '' + longitude)
     try {
       const weatherResponse = await weather.get('/onecall', {
         params: {
@@ -171,6 +172,7 @@ export const fetchWeatherData = createAsyncThunk(
           exclude: excludeWeather,
         },
       })
+      console.log(weatherResponse.data)
       return weatherResponse.data
     } catch (e) {
       console.log('Weather API Error')

@@ -60,11 +60,11 @@ const UserForm = ({ onSubmitFunc, userData }) => {
               <TextInput
                 onChangeText={props.handleChange('name')}
                 onBlur={props.handleBlur('name')}
-                value={props.values.title}
+                value={props.values.name}
                 autoFocus
                 style={styles.input}
-                autoCapitalize='words'
-                placeholder='Name'
+                autoCapitalize="words"
+                placeholder="Name"
               />
             </Row>
             <Row>
@@ -107,7 +107,7 @@ const UserForm = ({ onSubmitFunc, userData }) => {
                   }}
                 >
                   <FontAwesome5
-                    name='calendar-alt'
+                    name="calendar-alt"
                     size={24}
                     color={ColorConstants.darkGray}
                   />
@@ -122,8 +122,8 @@ const UserForm = ({ onSubmitFunc, userData }) => {
             </Row>
             {show && (
               <DateTimePicker
-                display='default'
-                mode='date'
+                display="default"
+                mode="date"
                 onChange={(event, selectedDate) => {
                   setShow(Platform.OS === 'ios')
                   props.setFieldValue(
@@ -138,22 +138,22 @@ const UserForm = ({ onSubmitFunc, userData }) => {
 
             <Row style={styles.input}>
               <Picker
-                mode='dropdown'
-                placeholder='Gender'
-                iosHeader='Gender'
+                mode="dropdown"
+                placeholder="Gender"
+                iosHeader="Gender"
                 selectedValue={props.values.gender}
                 textStyle={{ fontSize: 14 }}
                 onValueChange={(itemValue, itemIndex) =>
                   props.setFieldValue('gender', itemValue)
                 }
               >
-                <Picker.Item label='Male' value='M' />
-                <Picker.Item label='Female' value='F' />
-                <Picker.Item label='Transgender Male' value='TM' />
-                <Picker.Item label='Transgender Female' value='TF' />
-                <Picker.Item label='Gender Variant/Non-Conforming' value='NC' />
-                <Picker.Item label='Other' value='O' />
-                <Picker.Item label='Prefer Not to Answer' value='NA' />
+                <Picker.Item label="Male" value="M" />
+                <Picker.Item label="Female" value="F" />
+                <Picker.Item label="Transgender Male" value="TM" />
+                <Picker.Item label="Transgender Female" value="TF" />
+                <Picker.Item label="Gender Variant/Non-Conforming" value="NC" />
+                <Picker.Item label="Other" value="O" />
+                <Picker.Item label="Prefer Not to Answer" value="NA" />
               </Picker>
             </Row>
             <Row>
@@ -170,9 +170,9 @@ const UserForm = ({ onSubmitFunc, userData }) => {
                 onChangeText={props.handleChange('email')}
                 onBlur={props.handleBlur('email')}
                 value={props.values.email}
-                autoCapitalize='none'
+                autoCapitalize="none"
                 style={styles.input}
-                placeholder='Email'
+                placeholder="Email"
               />
             </Row>
             <Row>
@@ -186,11 +186,11 @@ const UserForm = ({ onSubmitFunc, userData }) => {
                 onChangeText={props.handleChange('password')}
                 onBlur={props.handleBlur('password')}
                 value={props.values.password}
-                autoCapitalize='none'
+                autoCapitalize="none"
                 style={styles.input}
-                keyboardType='default'
+                keyboardType="default"
                 secureTextEntry={true}
-                placeholder='Password'
+                placeholder="Password"
               />
             </Row>
             <Row>
@@ -204,11 +204,11 @@ const UserForm = ({ onSubmitFunc, userData }) => {
                 onChangeText={props.handleChange('confirmPassword')}
                 onBlur={props.handleBlur('confirmPassword')}
                 value={props.values.confirmPassword}
-                autoCapitalize='none'
+                autoCapitalize="none"
                 style={styles.input}
-                keyboardType='default'
+                keyboardType="default"
                 secureTextEntry={true}
-                placeholder='Confirm Password'
+                placeholder="Confirm Password"
               />
             </Row>
             <Row>

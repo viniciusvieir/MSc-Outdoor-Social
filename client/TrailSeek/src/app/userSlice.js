@@ -29,15 +29,15 @@ const initialState = {
 
 export const signIn = createAsyncThunk(
   'user/signIn',
-  async ({ inputs }, { dispatch, rejectWithValue }) => {
+  async (data, { dispatch, rejectWithValue }) => {
     try {
-      const response = await trailSeek.post('/signin', inputs)
+      // const response = await trailSeekAuth.post('/signin', data)
       try {
-        const sav = await dispatch(saveToken({ data: response.data }))
+        const sav = await dispatch(saveToken({ data }))
       } catch (e) {
         console.log(e.message)
       }
-      return response.data
+      return data
     } catch (error) {
       return rejectWithValue(
         error.response.data?.errors
@@ -52,17 +52,42 @@ export const signIn = createAsyncThunk(
   }
 )
 
+// export const signIn = createAsyncThunk(
+//   'user/signIn',
+//   async ({ inputs }, { dispatch, rejectWithValue }) => {
+//     try {
+//       const response = await trailSeekAuth.post('/signin', inputs)
+//       try {
+//         const sav = await dispatch(saveToken({ data: response.data }))
+//       } catch (e) {
+//         console.log(e.message)
+//       }
+//       return response.data
+//     } catch (error) {
+//       return rejectWithValue(
+//         error.response.data?.errors
+//           ? error.response.data.errors
+//               .map((item) => {
+//                 return item.msg
+//               })
+//               .join(' ')
+//           : error.status
+//       )
+//     }
+//   }
+// )
+
 export const signUp = createAsyncThunk(
   'user/signUp',
-  async ({ inputs }, { dispatch, rejectWithValue }) => {
+  async (data, { dispatch, rejectWithValue }) => {
     try {
-      const response = await trailSeek.post('/signup', inputs)
-      try {
-        const sav = await dispatch(saveToken({ data: response.data }))
-      } catch (e) {
-        console.log(e.message)
-      }
-      return response.data
+      // const response = await trailSeekAuth.post('/signup', inputs)
+      // try {
+      const sav = await dispatch(saveToken({ data }))
+      // } catch (e) {
+      //   console.log(e.message)
+      // }
+      return data
     } catch (error) {
       return rejectWithValue(
         error.response.data?.errors
@@ -76,6 +101,31 @@ export const signUp = createAsyncThunk(
     }
   }
 )
+
+// export const signUp = createAsyncThunk(
+//   'user/signUp',
+//   async ({ inputs }, { dispatch, rejectWithValue }) => {
+//     try {
+//       const response = await trailSeekAuth.post('/signup', inputs)
+//       try {
+//         const sav = await dispatch(saveToken({ data: response.data }))
+//       } catch (e) {
+//         console.log(e.message)
+//       }
+//       return response.data
+//     } catch (error) {
+//       return rejectWithValue(
+//         error.response.data?.errors
+//           ? error.response.data.errors
+//               .map((item) => {
+//                 return item.msg
+//               })
+//               .join(' ')
+//           : error.status
+//       )
+//     }
+//   }
+// )
 
 export const fetchUserData = createAsyncThunk(
   'user/fetchUserData',

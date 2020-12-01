@@ -39,11 +39,15 @@ const TrailCards = ({ trails, filter }) => {
         data={trails}
         keyExtractor={(trails) => trails._id}
         ListFooterComponent={
-          trails.length >= 10 ? (
+          trails.length >= 20 ? (
             <Button
               rounded
               onPress={() => {
-                navigation.navigate('ListTrail', { query: filter })
+                navigation.navigate('ListTrail', {
+                  query: filter.query,
+                  skip: 20,
+                  title: filter.title,
+                })
               }}
               style={{
                 marginTop: 12,
@@ -74,8 +78,8 @@ const TrailCards = ({ trails, filter }) => {
                     source={{ uri: item.img_url }}
                     style={styles.imageStyle}
                     PlaceholderContent={<ActivityIndicator />}
-                    resizeMethod='auto'
-                    resizeMode='cover'
+                    resizeMethod="auto"
+                    resizeMode="cover"
                   />
                 </CardItem>
                 <CardItem>
@@ -84,7 +88,7 @@ const TrailCards = ({ trails, filter }) => {
                       <Text style={styles.nameStyle}>{item.name}</Text>
                     </Row>
                     <Row>
-                      <Entypo name='location-pin' size={16} color='gray' />
+                      <Entypo name="location-pin" size={16} color="gray" />
                       <Text style={{ fontSize: 14 }}>{item.location}</Text>
                     </Row>
                   </Grid>
@@ -127,7 +131,7 @@ const TrailCards = ({ trails, filter }) => {
                   <Right>
                     <Button transparent>
                       <FontAwesome5
-                        name='comments'
+                        name="comments"
                         size={18}
                         color={ColorConstants.darkGray}
                       />
@@ -159,7 +163,7 @@ const TrailCards = ({ trails, filter }) => {
                       }}
                     >
                       <FontAwesome5
-                        name='hiking'
+                        name="hiking"
                         size={18}
                         color={ColorConstants.primary}
                       />
