@@ -7,7 +7,7 @@ from pathlib import Path
 import os
 import sys
 import json
-
+######### Changing API file
 class ItemCollaborative:
     
     def __init__(self, user_id):
@@ -27,7 +27,7 @@ class ItemCollaborative:
         for doc in user_review:
             df = pd.DataFrame(doc['reviews'])
             df2 = df.assign(userID = doc['userID'])
-            user_review_df = user_review_df.append(df2)
+            user_review_df = user_review_df.append(df2, sort=True)
         return user_review_df
 
     def getUserSpecDetails(self, user_spec_data):
@@ -37,7 +37,7 @@ class ItemCollaborative:
         user_spec_data.loc[:, 'timestamp'] = pd.to_datetime(user_spec_data.loc[:, 'timestamp'])
         #pd.to_datetime(user_spec_data["timestamp"])
         #user_spec_data.loc[:, 'timestamp']
-        user_spec_data = user_spec_data.sort_values(by='timestamp', ascending=False, kind='quicksort')
+        user_spec_data.sort_values(by='timestamp', ascending=False, kind='quicksort', inplace=True)
         
         user_spec_data = user_spec_data[user_spec_data.rating >=3]
         
@@ -86,23 +86,11 @@ class ItemCollaborative:
         recommend = pd.concat([t,d], axis=1)
         
         return recommend
-    
-    def fetchTrailObjectID(self,recommend):
-        # get Trail Object ID of the recommended trail from Trail dev collection:
-        trail_id = list(recommend['trail'])
-
-        collection_trail = self.db['trails']
-        
-        trailObjID = collection_trail.find({ "id": {"$in": trail_id } },{"_id":1})
-
-        return trailObjID
-
-
-
 
 #function that will make recomms
 def get_recommendation(user_id):
     try:
+        
         ITcoll = ItemCollaborative(int(user_id))
     except IndexError:
         raise Exception("Error Occured: Cause 'No Input'")
@@ -112,7 +100,7 @@ def get_recommendation(user_id):
     user_spec_data = user_review_df[user_review_df['userID']==ITcoll.user_id]
     #print('data for selected user ', len(user_spec_data))
     if len(user_spec_data) == 0:
-        recommendations = []
+        recommendations = ['5fa17e268f4d258042edf4be','5fa17e268f4d258042edf4bb','5fa17e268f4d258042edf4bc','5fa17e268f4d258042edf4b6','5fa17e268f4d258042edf4b9','5fa17e268f4d258042edf4c3','5fa17e268f4d258042edf4b8', '5fa17e268f4d258042edf4b7', '5fa17e268f4d258042edf4bf', '5fa17e268f4d258042edf4bd']
     else:
         
         user_spec_data = ITcoll.getUserSpecDetails(user_spec_data)
@@ -125,19 +113,14 @@ def get_recommendation(user_id):
         
         recommend = recommend[~recommend.trail.isin(ITcoll.list_user_spec_data)]
         
-        trailObjID = ITcoll.fetchTrailObjectID(recommend)
-        
-        trailObjID_df = pd.DataFrame(list(trailObjID))
-
-        trailObjID_df = trailObjID_df['_id'].values
+        recommend_idx = recommend['trail'].values
         recommendations = []
         count = 1
-        for idx, _ in enumerate(trailObjID_df):
+        for idx, id in enumerate(recommend_idx):
             if count > 10:
                 break
-            recommendations.append(str(trailObjID_df[idx]))
+            recommendations.append(str(recommend_idx[idx]))
             count= count + 1
-
     print(recommendations)
     return recommendations
 
