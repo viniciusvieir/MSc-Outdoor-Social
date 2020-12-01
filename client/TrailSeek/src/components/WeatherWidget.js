@@ -4,6 +4,7 @@ import { Grid, Row, Text } from 'native-base'
 import moment from 'moment'
 import ColorConstants from '../util/ColorConstants'
 import NoData from './NoData'
+import Constants from '../util/Constants'
 
 const WeatherWidget = ({ data }) => {
   const day = (dt) => {
