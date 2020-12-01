@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, View, FlatList } from 'react-native'
-import { Text, Button, List, ListItem, Body } from 'native-base'
+import {
+  Text,
+  Button,
+  List,
+  ListItem,
+  Body,
+  Fab,
+  Icon,
+  Spinner,
+} from 'native-base'
 import { useNavigation } from '@react-navigation/native'
 
 import { useDispatch, useSelector } from 'react-redux'
@@ -9,16 +18,37 @@ import { unwrapResult } from '@reduxjs/toolkit'
 import ColorConstants from '../util/ColorConstants'
 import { fetchEvents } from '../app/eventSlice'
 import ToastAlert from '../components/ToastAlert'
+import Constants from '../util/Constants'
+import EmptyStateView from './EmptyStateView'
 
 const EventsTab = ({ trailData }) => {
   const isAuth = useSelector((state) => state.user.isAuth)
-  const dispatch = useDispatch()
+
+  const [isLoading, setIsLoading] = useState(false)
+  const [didFinishRequest, setDidFinishRequest] = useState(false)
   const [events, setEvents] = useState([])
+
+  const dispatch = useDispatch()
   const navigation = useNavigation()
+
+  const displayCreateEventScreen = () => {
+    if (isAuth) {
+      navigation.navigate('CreateEvent', {
+        trailID: trailData._id,
+        trailName: trailData.name,
+      })
+    } else {
+      navigation.navigate('Authentication', { screen: 'Signin' })
+    }
+  }
+
   const getEvents = async () => {
+    setIsLoading(true)
     try {
       const results = await dispatch(fetchEvents(trailData._id))
       const uResults = unwrapResult(results)
+      setDidFinishRequest(true)
+      setIsLoading(false)
       setEvents(uResults.data)
     } catch (e) {
       console.log(e)
@@ -37,59 +67,75 @@ const EventsTab = ({ trailData }) => {
   return (
     <View
       style={{
-        backgroundColor: ColorConstants.DWhite,
         flex: 1,
+        backgroundColor: ColorConstants.DWhite,
       }}
     >
-      <Button
-        onPress={() => {
-          if (isAuth) {
-            navigation.navigate('CreateEvent', {
-              trailID: trailData._id,
-              trailName: trailData.name,
-            })
-          } else {
-            navigation.navigate('Authentication', { screen: 'Signin' })
+      {didFinishRequest && events.length > 0 ? (
+        <Fab
+          direction='up'
+          containerStyle={{}}
+          style={{ backgroundColor: ColorConstants.primary }}
+          position='bottomRight'
+          onPress={displayCreateEventScreen}
+        >
+          <Icon name='add' />
+        </Fab>
+      ) : (
+        <></>
+      )}
+
+      {didFinishRequest && events.length == 0 ? (
+        <EmptyStateView
+          icon={'shoe-prints'}
+          title={'No events here so far'}
+          description={
+            'Be the first one to create an event in this trail and invite other people to join you.'
           }
-        }}
-        full
-        style={{ margin: 5, backgroundColor: ColorConstants.Yellow }}
-      >
-        <Text>Create Event</Text>
-      </Button>
-      <List>
-        <FlatList
-          style={{ marginBottom: 60 }}
-          data={events}
-          keyExtractor={(item) => {
-            return item._id
-          }}
-          renderItem={
-            ({ item }) => {
-              // if (!moment(item.date).isBefore(moment(), 'day')) {
-              return (
-                <ListItem
-                  onPress={() => {
-                    navigation.navigate('ViewEvent', {
-                      eventID: item._id,
-                    })
-                  }}
-                  noIndent
-                  style={{ backgroundColor: ColorConstants.DWhite }}
-                >
-                  <Body>
-                    <Text style={styles.listText}>{item.title}</Text>
-                    <Text note style={styles.listText}>
-                      {item.description}
-                    </Text>
-                  </Body>
-                </ListItem>
-              )
-            }
-            // }
-          }
+          buttonTitle={'Create Event'}
+          onPress={displayCreateEventScreen}
         />
-      </List>
+      ) : (
+        <></>
+      )}
+
+      {isLoading ? (
+        <Spinner color={ColorConstants.primary} />
+      ) : (
+        <List>
+          <FlatList
+            style={{ marginBottom: 60 }}
+            data={events}
+            keyExtractor={(item) => {
+              return item._id
+            }}
+            renderItem={
+              ({ item }) => {
+                // if (!moment(item.date).isBefore(moment(), 'day')) {
+                return (
+                  <ListItem
+                    onPress={() => {
+                      navigation.navigate('ViewEvent', {
+                        eventID: item._id,
+                      })
+                    }}
+                    noIndent
+                    style={{ backgroundColor: ColorConstants.DWhite }}
+                  >
+                    <Body>
+                      <Text style={styles.listText}>{item.title}</Text>
+                      <Text note style={styles.listText}>
+                        {item.description}
+                      </Text>
+                    </Body>
+                  </ListItem>
+                )
+              }
+              // }
+            }
+          />
+        </List>
+      )}
     </View>
   )
 }
