@@ -95,19 +95,6 @@ class TrailController {
         .lean()
     }
 
-    if (fields && fields.includes('outing_count')) {
-      const date = new Date()
-      date.setHours(0, 0, 0, 0)
-      for (let i = 0; i < trails.length; i++) {
-        trails[i].outing_count = await Event.find({
-          trailId: trails[i]._id,
-          date: {
-            $gte: date.toLocaleString(),
-          },
-        }).countDocuments()
-      }
-    }
-
     if (fields && fields.includes('comment_count')) {
       const ids = trails.map((trail) => trail._id)
       const comment_count = await Trail.aggregate([
@@ -119,6 +106,17 @@ class TrailController {
           (item) => `${item._id}` === `${trail._id}`
         ).count
       })
+    }
+
+    if (fields && fields.includes('outing_count')) {
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+      for (let i = 0; i < trails.length; i++) {
+        trails[i].outing_count = await Event.find({
+          trailId: trails[i]._id,
+          date: { $gte: today },
+        }).countDocuments()
+      }
     }
 
     res.json(trails)
