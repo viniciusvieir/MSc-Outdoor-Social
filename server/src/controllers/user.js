@@ -22,6 +22,14 @@ class UserController {
 
     const user = await UserPsql.findByPk(id)
     await user.update(req.body)
+
+    await UserMongo.updateOne(
+      {
+        userId: id,
+      },
+      req.body
+    )
+
     res.json({ success: true })
   }
 }
