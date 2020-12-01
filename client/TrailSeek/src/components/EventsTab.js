@@ -9,6 +9,9 @@ import {
   Fab,
   Icon,
   Spinner,
+  Row,
+  Left,
+  Right,
 } from 'native-base'
 import { useNavigation } from '@react-navigation/native'
 
@@ -20,6 +23,8 @@ import { fetchEvents } from '../app/eventSlice'
 import ToastAlert from '../components/ToastAlert'
 import Constants from '../util/Constants'
 import EmptyStateView from './EmptyStateView'
+
+import moment from 'moment'
 
 const EventsTab = ({ trailData }) => {
   const isAuth = useSelector((state) => state.user.isAuth)
@@ -125,10 +130,20 @@ const EventsTab = ({ trailData }) => {
                     style={{ backgroundColor: ColorConstants.DWhite }}
                   >
                     <Body>
-                      <Text style={styles.listText}>{item.title}</Text>
-                      <Text note style={styles.listText}>
-                        {item.description}
-                      </Text>
+                      <Row>
+                        <Left>
+                          <Text style={styles.titleText}>{item.title}</Text>
+                        </Left>
+                        <Right>
+                          <Text style={styles.dateText}>
+                            {moment(item.date).format('DD/MM/YY HH:mm')}
+                          </Text>
+                        </Right>
+                      </Row>
+
+                      <Row>
+                        <Text style={styles.subtitleText}>{item.subtitle}</Text>
+                      </Row>
                     </Body>
                   </ListItem>
                 )
@@ -143,8 +158,17 @@ const EventsTab = ({ trailData }) => {
 }
 
 const styles = StyleSheet.create({
-  listText: {
+  titleText: {
     color: ColorConstants.Black2,
+    fontWeight: 'bold',
+  },
+  dateText: {
+    color: ColorConstants.darkGray,
+    fontSize: 10,
+  },
+  subtitleText: {
+    color: ColorConstants.Black2,
+    fontSize: 12,
   },
 })
 

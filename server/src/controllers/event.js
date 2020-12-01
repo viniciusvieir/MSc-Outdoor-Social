@@ -19,8 +19,6 @@ class EventController {
 
     for (let i = 0; i < events.length; i++) {
       const participants = events[i].participants.length
-
-      const datetime = ddmmyyhhmm(events[i].date)
       const duration = eventDuration(events[i].duration_min)
 
       const peopleGoing =
@@ -31,9 +29,7 @@ class EventController {
           : 'no participants'
       const maxParticipants = `${events[i].max_participants} max`
 
-      events[
-        i
-      ].subtitle = `${datetime} • ${duration} • ${peopleGoing} • ${maxParticipants}`
+      events[i].subtitle = `${duration} • ${peopleGoing} • ${maxParticipants}`
     }
 
     res.json(events)
