@@ -1,12 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { StyleSheet, Platform, Switch, View } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
 import { CommonActions } from '@react-navigation/native'
 // import NetInfo from "@react-native-community/netinfo";
 import { Button, Text, Container, Thumbnail, Content } from 'native-base'
+import moment from 'moment'
 
 import { logOut, toggleCovid } from '../app/userSlice'
-import ToastAlert from '../components/ToastAlert'
 import ColorConstants from '../util/ColorConstants'
 
 const ViewProfileScreen = ({ navigation }) => {
@@ -14,6 +14,7 @@ const ViewProfileScreen = ({ navigation }) => {
   const userData = useSelector((state) => state.user.profile)
   const dispatch = useDispatch()
   const covidToggle = useSelector((state) => state.user.covidToggle)
+  let gender = ''
 
   const userLogout = async () => {
     try {
@@ -21,6 +22,32 @@ const ViewProfileScreen = ({ navigation }) => {
     } catch (e) {
       console.log(e.message)
     }
+  }
+
+  switch (userData.gender) {
+    case 'M':
+      gender = 'Male'
+      break
+    case 'F':
+      gender = 'Female'
+      break
+    case 'TM':
+      gender = 'Transgender Male'
+      break
+    case 'TF':
+      gender = 'Transgender Female'
+      break
+    case 'NC':
+      gender = 'Gender Variant/Non-Conforming'
+      break
+    case 'O':
+      gender = 'Other'
+      break
+    case 'NA':
+      gender = 'Undisclosed'
+      break
+    default:
+      break
   }
 
   // const checNet = () => {
@@ -93,14 +120,14 @@ const ViewProfileScreen = ({ navigation }) => {
             </View>
             <View style={styles.infoContainers}>
               <Text style={styles.textInfoLabel}>Gender</Text>
-              <Text style={styles.textInfo}>
-                {userData.gender === 'M' ? 'Male' : 'Female'}
-              </Text>
+              <Text style={styles.textInfo}>{gender}</Text>
             </View>
             <View style={styles.infoContainers}>
               <Text style={styles.textInfoLabel}>Date of Birth</Text>
 
-              <Text style={styles.textInfo}>{userData.dob}</Text>
+              <Text style={styles.textInfo}>
+                {moment(userData.dob).format('MM/DD/YYYY')}
+              </Text>
             </View>
             <View
               style={[
@@ -127,7 +154,7 @@ const ViewProfileScreen = ({ navigation }) => {
               style={{ marginTop: 30 }}
               onPress={async () => {
                 const res = await userLogout()
-                console.log(res)
+                // console.log(res)
                 await navigation.dispatch(
                   CommonActions.reset({
                     index: 0,

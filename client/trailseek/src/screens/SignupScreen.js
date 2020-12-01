@@ -18,6 +18,7 @@ const SignupScreen = ({ navigation }) => {
     trailSeekAuth
       .post('/signup', values)
       .then(async (response) => {
+        // console.log(response)
         try {
           const res = await dispatch(signUp(response.data))
           const user = unwrapResult(res)
