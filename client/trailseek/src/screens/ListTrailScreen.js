@@ -13,7 +13,7 @@ import ColorConstants from '../util/ColorConstants'
 import { Spinner } from 'native-base'
 
 const ListTrailScreen = ({ route }) => {
-  const { query } = route.params
+  const { query, skip } = route.params
 
   let content
   const limit = 100000
@@ -29,7 +29,9 @@ const ListTrailScreen = ({ route }) => {
   useEffect(() => {
     const getTrailsByQuery = async () => {
       try {
-        const results = await dispatch(fetchTrailsByQuery({ query, limit }))
+        const results = await dispatch(
+          fetchTrailsByQuery({ query, limit, skip })
+        )
         const uResults = unwrapResult(results)
         setFilteredTrails(uResults)
       } catch (e) {

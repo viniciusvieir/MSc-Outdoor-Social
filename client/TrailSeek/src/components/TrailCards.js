@@ -39,11 +39,15 @@ const TrailCards = ({ trails, filter }) => {
         data={trails}
         keyExtractor={(trails) => trails._id}
         ListFooterComponent={
-          trails.length >= 10 ? (
+          trails.length >= 20 ? (
             <Button
               rounded
               onPress={() => {
-                navigation.navigate('ListTrail', { query: filter.query })
+                navigation.navigate('ListTrail', {
+                  query: filter.query,
+                  skip: 20,
+                  title: filter.title,
+                })
               }}
               style={{
                 marginTop: 12,

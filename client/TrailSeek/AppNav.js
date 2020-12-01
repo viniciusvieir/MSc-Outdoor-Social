@@ -135,10 +135,7 @@ const TrailFlow = () => {
               style={styles.shadow}
             />
           ),
-          title:
-            typeof route.params.getParams?.title === 'undefined'
-              ? 'Search'
-              : route.params.filter.title,
+          title: route.params.title ? route.params.title : 'Search',
         })}
       />
       <Stack.Screen
