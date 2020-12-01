@@ -225,7 +225,8 @@ const MainTabFlow = () => {
         component={TrailFlow}
         options={({ route }) => ({
           tabBarVisible:
-            getFocusedRouteNameFromRoute(route) === 'ViewTrail' || 'CreateEvent'
+            getFocusedRouteNameFromRoute(route) === 'ViewTrail' ||
+            getFocusedRouteNameFromRoute(route) === 'CreateEvent'
               ? false
               : true,
           tabBarLabel: 'Explore',

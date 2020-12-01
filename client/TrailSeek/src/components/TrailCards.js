@@ -43,7 +43,7 @@ const TrailCards = ({ trails, filter }) => {
             <Button
               rounded
               onPress={() => {
-                navigation.navigate('ListTrail', { query: filter })
+                navigation.navigate('ListTrail', { query: filter.query })
               }}
               style={{
                 marginTop: 12,
@@ -74,8 +74,8 @@ const TrailCards = ({ trails, filter }) => {
                     source={{ uri: item.img_url }}
                     style={styles.imageStyle}
                     PlaceholderContent={<ActivityIndicator />}
-                    resizeMethod='auto'
-                    resizeMode='cover'
+                    resizeMethod="auto"
+                    resizeMode="cover"
                   />
                 </CardItem>
                 <CardItem>
@@ -84,7 +84,7 @@ const TrailCards = ({ trails, filter }) => {
                       <Text style={styles.nameStyle}>{item.name}</Text>
                     </Row>
                     <Row>
-                      <Entypo name='location-pin' size={16} color='gray' />
+                      <Entypo name="location-pin" size={16} color="gray" />
                       <Text style={{ fontSize: 14 }}>{item.location}</Text>
                     </Row>
                   </Grid>
@@ -127,7 +127,7 @@ const TrailCards = ({ trails, filter }) => {
                   <Right>
                     <Button transparent>
                       <FontAwesome5
-                        name='comments'
+                        name="comments"
                         size={18}
                         color={ColorConstants.darkGray}
                       />
@@ -159,7 +159,7 @@ const TrailCards = ({ trails, filter }) => {
                       }}
                     >
                       <FontAwesome5
-                        name='hiking'
+                        name="hiking"
                         size={18}
                         color={ColorConstants.primary}
                       />
