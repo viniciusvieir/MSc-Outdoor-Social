@@ -1,5 +1,6 @@
 const { query, body, validationResult } = require('express-validator')
 const { errorHandler } = require('../utils/error-handling')
+const { ddmmyyhhmm, eventDuration } = require('../utils/date-handling')
 
 const Trail = require('../models/trail')
 const Event = require('../models/event')
@@ -13,18 +14,27 @@ class EventController {
     const events = await Event.find({
       trailId,
     })
-      .select((fields && fields.replace(/,|;/g, ' ')) || '-chat')
+      .select((fields && fields.replace(/,|;/g, ' ')) || '-chat -trailId')
       .lean()
 
-    // for (let i = 0; i < events.length; i++) {
-    //   console.log(events[i].userId)
-    //   const user = await User.findByPk(events[i].userId, {
-    //     attributes: ['name'],
-    //   })
-    //   events[
-    //     i
-    //   ].subtitle = `${events[0].date} • ${events[0].duration_min} • ${events[0].max_participants} • ${user.name}`
-    // }
+    for (let i = 0; i < events.length; i++) {
+      const participants = events[i].participants.length
+
+      const datetime = ddmmyyhhmm(events[i].date)
+      const duration = eventDuration(events[i].duration_min)
+
+      const peopleGoing =
+        participants > 1
+          ? `${participants} people going`
+          : participants === 1
+          ? '1 person going'
+          : 'no participants'
+      const maxParticipants = `${events[i].max_participants} max`
+
+      events[
+        i
+      ].subtitle = `${datetime} • ${duration} • ${peopleGoing} • ${maxParticipants}`
+    }
 
     res.json(events)
   }
