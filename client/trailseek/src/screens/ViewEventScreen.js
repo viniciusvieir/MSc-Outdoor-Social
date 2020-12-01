@@ -373,7 +373,7 @@ const ViewEventScreen = ({ route, navigation }) => {
         }}
       >
         {moment(eventData.date).isBefore(moment(), 'day') ? (
-          <Text>Event is over</Text>
+          <Text style={{ fontSize: 25, marginTop: 5 }}>Event is over</Text>
         ) : (
           <View style={{ flex: 1 }}>
             {joinFlag ? (
@@ -425,7 +425,9 @@ const ViewEventScreen = ({ route, navigation }) => {
                     }}
                   >
                     {userId !== eventData.userId ? (
-                      <Text style={{ fontSize: 25 }}>You are going!</Text>
+                      <Text style={{ fontSize: 25, marginTop: 5 }}>
+                        You are going!
+                      </Text>
                     ) : null}
                   </View>
                   <Button
