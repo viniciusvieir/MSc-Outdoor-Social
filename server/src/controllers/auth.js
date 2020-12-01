@@ -56,7 +56,6 @@ class AuthController {
 
     await UserMongo.create({
       dob,
-      _id: user.id,
       userId: user.id,
       name: user.name,
       gender: user.gender,
