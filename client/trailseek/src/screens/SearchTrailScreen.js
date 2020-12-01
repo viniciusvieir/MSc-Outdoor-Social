@@ -35,20 +35,44 @@ const SearchTrailScreen = ({ navigation }) => {
   const [trails, setTrails] = useState([])
   const [filter, setFilter] = useState({})
 
+  const recomended = {
+    title: 'Recommended',
+    action: () =>
+      getTrailsByQuery({
+        query: {
+          recommendation: true,
+        },
+      }),
+  }
+
   const bestParams = {
     title: 'Best Rated',
+    action: () =>
+      getTrailsByQuery({
+        query: {
+          weighted_rating: { $gt: 4 },
+        },
+      }),
   }
 
   const easyParams = {
     title: 'Easy Trails',
+    action: () =>
+      getTrailsByQuery({
+        query: {
+          difficulty: 'easy',
+          length_km: { $lt: 5 },
+        },
+      }),
   }
 
   const nearMe = {
     title: 'Near You',
-  }
-
-  const recomended = {
-    title: 'Recommended',
+    action: () =>
+      getTrailsByQuery({
+        query: {},
+        location: true,
+      }),
   }
 
   let searchParam = {
@@ -74,8 +98,7 @@ const SearchTrailScreen = ({ navigation }) => {
     }
     console.log(query)
     try {
-      let results
-      let gpsLoc
+      let results, gpsLoc
       if (location) {
         try {
           gpsLoc = await dispatch(getLocation())
@@ -99,7 +122,6 @@ const SearchTrailScreen = ({ navigation }) => {
   //Initial Trail Fetch
   useEffect(() => {
     if (JSON.stringify(filter) === '{}') {
-      setFilter(bestParams)
       setFilter(bestParams)
       getTrailsByQuery({
         query: {
@@ -205,14 +227,10 @@ const SearchTrailScreen = ({ navigation }) => {
                     ? ColorConstants.primary
                     : 'transparent',
               }}
-              onPress={async () => {
+              onPress={() => {
                 setFilter(recomended)
                 setTrails([])
-                await getTrailsByQuery({
-                  query: {
-                    recommendation: true,
-                  },
-                })
+                filter.action()
               }}
             >
               <Text uppercase={false}>For you</Text>
@@ -234,14 +252,10 @@ const SearchTrailScreen = ({ navigation }) => {
                   ? ColorConstants.primary
                   : 'transparent',
             }}
-            onPress={async () => {
+            onPress={() => {
               setFilter(bestParams)
               setTrails([])
-              await getTrailsByQuery({
-                query: {
-                  weighted_rating: { $gt: 4 },
-                },
-              })
+              filter.action()
             }}
           >
             <Text uppercase={false}>Best Rated</Text>
@@ -259,15 +273,10 @@ const SearchTrailScreen = ({ navigation }) => {
                   ? ColorConstants.primary
                   : 'transparent',
             }}
-            onPress={async () => {
+            onPress={() => {
               setFilter(easyParams)
               setTrails([])
-              await getTrailsByQuery({
-                query: {
-                  difficulty: 'easy',
-                  length_km: { $lt: 5 },
-                },
-              })
+              filter.action()
             }}
           >
             <Text uppercase={false}>Easy Trails</Text>
@@ -285,13 +294,10 @@ const SearchTrailScreen = ({ navigation }) => {
                   ? ColorConstants.primary
                   : 'transparent',
             }}
-            onPress={async () => {
+            onPress={() => {
               setFilter(nearMe)
               setTrails([])
-              await getTrailsByQuery({
-                query: {},
-                location: true,
-              })
+              filter.action()
             }}
           >
             <Text uppercase={false}>Near You</Text>
@@ -319,17 +325,6 @@ const SearchTrailScreen = ({ navigation }) => {
   )
 }
 
-const styles = StyleSheet.create({
-  filterButtons: {
-    borderColor: '#a1a1a1',
-    borderWidth: 1,
-    marginHorizontal: 3,
-    height: 44,
-    backgroundColor: ColorConstants.secondayLight,
-  },
-  filterButtonsText: {
-    color: ColorConstants.Black2,
-  },
-})
+const styles = StyleSheet.create({})
 
 export default SearchTrailScreen

@@ -33,6 +33,8 @@ const TrailCards = ({ trails, filter }) => {
           paddingHorizontal: Constants.POINTS.marginHorizontal,
           flex: 1,
         }}
+        onRefresh={() => filter.action()}
+        refreshing={false}
         ListEmptyComponent={<NoData type={'funny'} />}
         // initialNumToRender={10}
         data={trails}

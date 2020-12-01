@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native'
-import { Text, CardItem, Card } from 'native-base'
+import { Text, CardItem, Card, Right, Body } from 'native-base'
 import StarRating from 'react-native-star-rating'
 import { Col, Row, Grid } from 'react-native-easy-grid'
 import { useNavigation } from '@react-navigation/native'
@@ -24,6 +24,7 @@ import ColorConstants from '../util/ColorConstants'
 import NoData from './NoData'
 import Constants from '../util/Constants'
 import RatingModal from './RatingModal'
+import { capitalizeFirstLetter } from '../util/string'
 
 const DetaiTabs = ({ trailData, covData }) => {
   const navigation = useNavigation()
@@ -49,12 +50,17 @@ const DetaiTabs = ({ trailData, covData }) => {
       style={{
         backgroundColor: ColorConstants.DWhite,
         flex: 1,
-        padding: Constants.POINTS.marginHorizontal,
       }}
+      contentContainerStyle={{ paddingBottom: 80 }}
       nestedScrollEnabled
     >
       <Grid>
-        <Row>
+        <Row
+          style={{
+            marginTop: 10,
+            paddingHorizontal: Constants.POINTS.marginHorizontal,
+          }}
+        >
           <Col size={3}>
             <Text
               style={{
@@ -71,12 +77,17 @@ const DetaiTabs = ({ trailData, covData }) => {
           </Col>
         </Row>
 
-        <Row>
+        <Row style={{ paddingHorizontal: Constants.POINTS.marginHorizontal }}>
           <Entypo name='location-pin' size={16} color='gray' />
           <Text style={{ fontSize: 14 }}>{trailData.location}</Text>
         </Row>
 
-        <Row style={{ marginTop: 16 }}>
+        <Row
+          style={{
+            marginTop: 16,
+            paddingHorizontal: Constants.POINTS.marginHorizontal,
+          }}
+        >
           <Col size={1}>
             <Row>
               <FontAwesome5
@@ -87,42 +98,58 @@ const DetaiTabs = ({ trailData, covData }) => {
               <Text style={styles.textInfo}>{trailData.activity_type}</Text>
             </Row>
           </Col>
-          <Col size={1}>
-            <Row>
-              <FontAwesome5
-                name='mountain'
-                size={16}
-                color={ColorConstants.Black2}
-              />
-              <Text style={styles.textInfo}>{trailData.difficulty}</Text>
-            </Row>
-          </Col>
-          <Col size={1}>
-            <Row>
-              <FontAwesome5
-                name='route'
-                size={20}
-                color={ColorConstants.Black2}
-              />
-              <Text style={styles.textInfo}>{trailData.length_km} km</Text>
-            </Row>
-          </Col>
-          <Col size={1}>
-            <Row>
-              <FontAwesome5
-                name='clock'
-                size={20}
-                color={ColorConstants.Black2}
-              />
-              <Text style={styles.textInfo}>
-                {moment
-                  .utc()
-                  .startOf('day')
-                  .add({ minutes: trailData.estimate_time_min })
-                  .format('H[h]mm')}
-              </Text>
-            </Row>
-          </Col>
+
+          <Body>
+            <Col size={1}>
+              <Row>
+                <FontAwesome5
+                  name='mountain'
+                  size={16}
+                  color={ColorConstants.Black2}
+                />
+                <Text style={styles.textInfo}>
+                  {capitalizeFirstLetter(trailData.difficulty)}
+                </Text>
+              </Row>
+            </Col>
+          </Body>
+
+          <Body>
+            <Col size={1}>
+              <Row>
+                <FontAwesome5
+                  name='route'
+                  size={20}
+                  color={ColorConstants.Black2}
+                />
+                <Text style={styles.textInfo}>
+                  {trailData.length_km >= 10
+                    ? trailData.length_km.toFixed(0)
+                    : trailData.length_km.toFixed(1)}
+                  {'km'}
+                </Text>
+              </Row>
+            </Col>
+          </Body>
+
+          <Right>
+            <Col size={1}>
+              <Row>
+                <FontAwesome5
+                  name='clock'
+                  size={20}
+                  color={ColorConstants.Black2}
+                />
+                <Text style={styles.textInfo}>
+                  {moment
+                    .utc()
+                    .startOf('day')
+                    .add({ minutes: trailData.estimate_time_min })
+                    .format('H[h]mm')}
+                </Text>
+              </Row>
+            </Col>
+          </Right>
         </Row>
 
         <View
@@ -133,7 +160,12 @@ const DetaiTabs = ({ trailData, covData }) => {
           }}
         />
 
-        <Row style={{ marginTop: 16 }}>
+        <Row
+          style={{
+            marginTop: 16,
+            paddingHorizontal: Constants.POINTS.marginHorizontal,
+          }}
+        >
           <Text style={styles.textInfoDescription}>
             {trailData.description}
           </Text>
@@ -150,6 +182,7 @@ const DetaiTabs = ({ trailData, covData }) => {
           <WeatherWidget data={trailData.weatherData} />
         </Row>
       </Grid>
+
       <View
         style={{
           marginVertical: 16,
@@ -157,12 +190,18 @@ const DetaiTabs = ({ trailData, covData }) => {
           borderBottomWidth: 1,
         }}
       />
-      <Text style={styles.similarTrails}>Similar Trails: </Text>
+
+      <Text style={styles.similarTrails}>Similar Trails</Text>
       <FlatList
         ListEmptyComponent={<NoData />}
         nestedScrollEnabled
         horizontal
+        showsHorizontalScrollIndicator={false}
         data={trailData.recommended}
+        contentContainerStyle={{
+          marginTop: 10,
+          paddingHorizontal: Constants.POINTS.marginHorizontal,
+        }}
         keyExtractor={(trails) => {
           return trails._id
         }}
@@ -171,6 +210,7 @@ const DetaiTabs = ({ trailData, covData }) => {
             <View style={{ flex: 1 }}>
               <Card
                 style={{
+                  flex: 1,
                   width: 250,
                   marginLeft: 10,
                   backgroundColor: ColorConstants.DWhite,
@@ -198,19 +238,21 @@ const DetaiTabs = ({ trailData, covData }) => {
                       <Col size={4}>
                         <Text>{item.name}</Text>
                       </Col>
-                      <Col size={2}>
-                        <StarRating
-                          disabled={true}
-                          emptyStar={'ios-star-outline'}
-                          fullStar={'ios-star'}
-                          halfStar={'ios-star-half'}
-                          iconSet={'Ionicons'}
-                          maxStars={5}
-                          rating={item.avg_rating}
-                          fullStarColor={'gold'}
-                          starSize={16}
-                        />
-                      </Col>
+                      <Right>
+                        <Col size={2}>
+                          <StarRating
+                            disabled={true}
+                            emptyStar={'ios-star-outline'}
+                            fullStar={'ios-star'}
+                            halfStar={'ios-star-half'}
+                            iconSet={'Ionicons'}
+                            maxStars={1}
+                            rating={1}
+                            fullStarColor={'gold'}
+                            starSize={16}
+                          />
+                        </Col>
+                      </Right>
                     </Grid>
                   </CardItem>
                 </TouchableOpacity>
@@ -219,6 +261,8 @@ const DetaiTabs = ({ trailData, covData }) => {
           )
         }}
       />
+
+      {/* <SimilarTrailsWidget trailData={trailData} /> */}
     </ScrollView>
   )
 }
@@ -237,7 +281,6 @@ const styles = StyleSheet.create({
     color: ColorConstants.darkGray,
     fontSize: 15,
   },
-
   imageStyle: {
     width: null,
     flex: 1,
@@ -248,6 +291,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: ColorConstants.darkGray,
+    paddingHorizontal: Constants.POINTS.marginHorizontal,
   },
 })
 
