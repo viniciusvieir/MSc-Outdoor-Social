@@ -7,20 +7,21 @@ import {
   ImageBackground,
 } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
+import { unwrapResult } from '@reduxjs/toolkit'
 import { Formik, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
 import { Grid, Row } from 'react-native-easy-grid'
-import { Container, Button, Text, Content, Spinner } from 'native-base'
+import { Container, Button, Text, Content, Spinner, Toast } from 'native-base'
 
 import { fetchUserData, signIn } from '../app/userSlice'
 import ToastAlert from '../components/ToastAlert'
 import ColorConstants from '../util/ColorConstants'
-import { unwrapResult } from '@reduxjs/toolkit'
+import { trailSeekAuth } from '../api/trailSeek'
 
 const SigninScreen = ({ navigation }) => {
   const dispatch = useDispatch()
-  const error = useSelector((state) => state.user.profile.error)
-  const isAuth = useSelector((state) => state.user.isAuth)
+  // const error = useSelector((state) => state.user.profile.error)
+  // const isAuth = useSelector((state) => state.user.isAuth)
 
   return (
     <Container>
@@ -33,7 +34,7 @@ const SigninScreen = ({ navigation }) => {
         <View style={{ flex: 1 }}>
           <Image
             source={require('../images/tslogov2.2grey.png')}
-            resizeMode='contain'
+            resizeMode="contain"
             style={styles.image}
           />
         </View>
@@ -48,18 +49,52 @@ const SigninScreen = ({ navigation }) => {
               password: Yup.string().label('Password').required(),
             })}
             onSubmit={async (values, formikActions) => {
-              try {
-                const res = await dispatch(signIn({ inputs: values }))
-                const user = unwrapResult(res)
-                // console.log(user.token);
-                if (user.token) {
-                  const results = await dispatch(fetchUserData())
-                  const reS = unwrapResult(results)
-                  navigation.navigate('MainTab')
-                }
-              } catch (e) {
-                ToastAlert(error)
-              }
+              trailSeekAuth
+                .post('/signin', values)
+                .then(async (response) => {
+                  try {
+                    if (response.data.token) {
+                      const res = await dispatch(signIn(response.data))
+                      const user = unwrapResult(res)
+                      const results = await dispatch(fetchUserData())
+                      const reS = unwrapResult(results)
+                      Toast.show({
+                        type: 'success',
+                        text: 'Logged In',
+                        buttonText: 'Ok',
+                      })
+                      navigation.navigate('MainTab')
+                    }
+                  } catch (error) {
+                    console.log(error)
+                  }
+                })
+                .catch((error) => {
+                  console.log(error.response)
+                  ToastAlert(
+                    error.response.data?.errors
+                      ? error.response.data.errors
+                          .map((item) => {
+                            return `${item.msg} ${
+                              item.param ? `on ${item.param}` : ''
+                            }.`
+                          })
+                          .join(' ')
+                      : error.status
+                  )
+                })
+              // try {
+              //   const res = await dispatch(signIn({ inputs: values }))
+              //   const user = unwrapResult(res)
+              //   // console.log(user.token);
+              //   if (user.token) {
+              //     const results = await dispatch(fetchUserData())
+              //     const reS = unwrapResult(results)
+              //     navigation.navigate('MainTab')
+              //   }
+              // } catch (e) {
+              //   ToastAlert(error)
+              // }
             }}
           >
             {(props) => (
@@ -67,13 +102,13 @@ const SigninScreen = ({ navigation }) => {
                 <Row>
                   <TextInput
                     autoFocus
-                    autoCapitalize='none'
+                    autoCapitalize="none"
                     onChangeText={props.handleChange('email')}
                     onBlur={props.handleBlur('email')}
                     value={props.values.email}
-                    autoCapitalize='none'
+                    autoCapitalize="none"
                     style={styles.input}
-                    placeholder='Email'
+                    placeholder="Email"
                   />
                 </Row>
                 <Row>
@@ -87,11 +122,11 @@ const SigninScreen = ({ navigation }) => {
                     onChangeText={props.handleChange('password')}
                     onBlur={props.handleBlur('password')}
                     value={props.values.password}
-                    autoCapitalize='none'
+                    autoCapitalize="none"
                     style={styles.input}
-                    keyboardType='default'
+                    keyboardType="default"
                     secureTextEntry={true}
-                    placeholder='Password'
+                    placeholder="Password"
                   />
                 </Row>
                 <Row>
