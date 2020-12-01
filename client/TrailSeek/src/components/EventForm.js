@@ -20,6 +20,7 @@ import { StackActions } from '@react-navigation/native'
 import ColorConstants from '../util/ColorConstants'
 import { deleteEvent } from '../app/eventSlice'
 import { unwrapResult } from '@reduxjs/toolkit'
+import Constants from '../util/Constants'
 
 const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
   const username = useSelector((state) => state.user.profile.name)
@@ -28,8 +29,18 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
   const navigation = useNavigation()
   return (
     <Container>
-      <Content style={{ backgroundColor: ColorConstants.DWhite }}>
-        <View style={{ backgroundColor: '#ffffff' + 30, flex: 1, padding: 10 }}>
+      <Content
+        style={{
+          backgroundColor: ColorConstants.DWhite,
+          paddingHorizontal: Constants.POINTS.marginHorizontal,
+        }}
+      >
+        <View
+          style={{
+            backgroundColor: '#ffffff' + 30,
+            flex: 1,
+          }}
+        >
           <Text
             style={{
               color: ColorConstants.primary,
@@ -37,9 +48,9 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
               fontWeight: 'bold',
             }}
           >
-            Outing on {trailName}
+            Event on {trailName}
           </Text>
-          <Text style={{ fontSize: 16 }}>Organized by : {username}</Text>
+          <Text style={{ fontSize: 16 }}>Organized by: {username}</Text>
         </View>
         <View style={{ margin: 10 }}>
           <Formik
@@ -72,7 +83,7 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
             {(props) => (
               <Grid>
                 <Row>
-                  <Text>Outing Title :</Text>
+                  <Text>Title:</Text>
                 </Row>
                 <Row>
                   <TextInput
@@ -96,9 +107,7 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
                   ) : null}
                 </Row>
                 <Row>
-                  <Text style={{ color: ColorConstants.Black }}>
-                    Outing Date :{' '}
-                  </Text>
+                  <Text style={{ color: ColorConstants.Black }}>Date: </Text>
                 </Row>
                 <Row>
                   <TouchableOpacity
@@ -119,7 +128,7 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
                       }}
                     >
                       <FontAwesome5
-                        name="calendar-alt"
+                        name='calendar-alt'
                         size={24}
                         color={ColorConstants.darkGray}
                       />
@@ -134,8 +143,8 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
 
                 {show && (
                   <DateTimePicker
-                    display="default"
-                    mode="date"
+                    display='default'
+                    mode='date'
                     onChange={(event, selectedDate) => {
                       setShow(Platform.OS === 'ios')
                       props.setFieldValue(
@@ -151,7 +160,7 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
                 {/* </View> */}
                 <Row>
                   <Text style={{ color: ColorConstants.Black }}>
-                    Outing Description :
+                    Description:
                   </Text>
                 </Row>
                 <Row>
@@ -175,7 +184,7 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
                 </Row>
                 <Row>
                   <Text style={{ color: ColorConstants.Black }}>
-                    Event Duration in minutes :
+                    Event Duration in minutes:
                   </Text>
                 </Row>
                 <Row>
@@ -185,7 +194,7 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
                     value={props.values.duration_min.toString()}
                     style={styles.input}
                     onSubmitEditing={() => {}}
-                    keyboardType="number-pad"
+                    keyboardType='number-pad'
                     placeholderTextColor={ColorConstants.Black}
                   />
                 </Row>
@@ -198,7 +207,7 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
                 </Row>
                 <Row>
                   <Text style={{ color: ColorConstants.Black }}>
-                    Maximum Participants :
+                    Maximum Participants:
                   </Text>
                 </Row>
                 <Row>
@@ -208,7 +217,7 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
                     value={props.values.max_participants.toString()}
                     style={styles.input}
                     onSubmitEditing={() => {}}
-                    keyboardType="number-pad"
+                    keyboardType='number-pad'
                     placeholderTextColor={ColorConstants.Black}
                   />
                 </Row>
@@ -221,29 +230,30 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
                   ) : null}
                 </Row>
                 <Button
+                  rounded
                   onPress={props.handleSubmit}
                   disabled={props.isSubmitting}
                   block
                   style={{
                     marginTop: 16,
-                    backgroundColor: ColorConstants.Yellow,
+                    backgroundColor: ColorConstants.primary,
                   }}
                 >
                   <Text>Submit</Text>
                 </Button>
-                <Button
-                  onPress={props.handleReset}
-                  disabled={props.isSubmitting}
+                {/* <Button
+                  rounded
                   danger
                   block
-                  style={{
-                    marginTop: 16,
-                  }}
+                  style={{ marginTop: 16 }}
+                  onPress={props.handleReset}
+                  disabled={props.isSubmitting}
                 >
                   <Text>Reset</Text>
-                </Button>
+                </Button> */}
                 {eventData ? (
                   <Button
+                    rounded
                     danger
                     block
                     style={{

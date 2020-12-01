@@ -1,15 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { StyleSheet, Modal, Dimensions } from 'react-native'
-import { View, Text, Button, Spinner } from 'native-base'
+import { View, Text, Button } from 'native-base'
 import moment from 'moment'
-
 import { LineChart } from 'react-native-chart-kit'
 import ColorConstants from '../util/ColorConstants'
-import { useSelector } from 'react-redux'
 import Constants from '../util/Constants'
 
 const CovidWidget = ({ data }) => {
-  const trailStatus = useSelector((state) => state.trails.status)
   const [modalVisible, setModalVisible] = useState(false)
   const day = (dt) => {
     const day = moment(dt).format('ddd').toString()
@@ -25,7 +22,12 @@ const CovidWidget = ({ data }) => {
     const lastItem = data.length - 1
     const pastCumiCases = data[0].attributes.ConfirmedCovidCases
     content = (
-      <View style={{ flex: 1 }}>
+      <View
+        style={{
+          flex: 1,
+          paddingHorizontal: Constants.POINTS.marginHorizontal,
+        }}
+      >
         <Button
           button
           danger
@@ -50,8 +52,8 @@ const CovidWidget = ({ data }) => {
 
         <Modal
           visible={false}
-          animationType="fade"
-          presentationStyle="overFullScreen"
+          animationType='fade'
+          presentationStyle='overFullScreen'
           transparent
           // style={{ borderBottomColor: "red", borderWidth: 5 }}
           visible={modalVisible}
@@ -123,10 +125,6 @@ const CovidWidget = ({ data }) => {
           </View>
         </Modal>
       </View>
-    )
-  } else if (trailStatus == Constants.LOADING) {
-    content = (
-      <Spinner style={{ alignSelf: 'center', justifyContent: 'center' }} />
     )
   } else {
     content = <Text>No Covid Data</Text>

@@ -35,20 +35,55 @@ const SearchTrailScreen = ({ navigation }) => {
   const [trails, setTrails] = useState([])
   const [filter, setFilter] = useState({})
 
-  const bestParams = {
-    title: 'Best Rated',
-  }
-
-  const easyParams = {
-    title: 'Easy Trails',
+  const recomended = {
+    title: 'Recommended',
+    action: () =>
+      getTrailsByQuery({
+        query: {
+          recommendation: true,
+        },
+      }),
   }
 
   const nearMe = {
     title: 'Near You',
+    action: () =>
+      getTrailsByQuery({
+        query: {},
+        location: true,
+      }),
   }
 
-  const recomended = {
-    title: 'Recommended',
+  const bestParams = {
+    title: 'Best Rated',
+    action: () =>
+      getTrailsByQuery({
+        query: {
+          weighted_rating: { $gt: 4 },
+        },
+      }),
+  }
+
+  const easyParams = {
+    title: 'Easy Trails',
+    action: () =>
+      getTrailsByQuery({
+        query: {
+          difficulty: 'easy',
+          length_km: { $lt: 5 },
+        },
+      }),
+  }
+
+  const wholeDayParams = {
+    title: 'Whole Day',
+    action: () =>
+      getTrailsByQuery({
+        query: {
+          estimate_time_min: { $gte: 360 },
+          estimate_time_min: { $lte: 600 },
+        },
+      }),
   }
 
   let searchParam = {
@@ -74,8 +109,7 @@ const SearchTrailScreen = ({ navigation }) => {
     }
     console.log(query)
     try {
-      let results
-      let gpsLoc
+      let results, gpsLoc
       if (location) {
         try {
           gpsLoc = await dispatch(getLocation())
@@ -99,7 +133,6 @@ const SearchTrailScreen = ({ navigation }) => {
   //Initial Trail Fetch
   useEffect(() => {
     if (JSON.stringify(filter) === '{}') {
-      setFilter(bestParams)
       setFilter(bestParams)
       getTrailsByQuery({
         query: {
@@ -205,14 +238,10 @@ const SearchTrailScreen = ({ navigation }) => {
                     ? ColorConstants.primary
                     : 'transparent',
               }}
-              onPress={async () => {
+              onPress={() => {
                 setFilter(recomended)
                 setTrails([])
-                await getTrailsByQuery({
-                  query: {
-                    recommendation: true,
-                  },
-                })
+                filter.action()
               }}
             >
               <Text uppercase={false}>For you</Text>
@@ -220,6 +249,27 @@ const SearchTrailScreen = ({ navigation }) => {
           ) : (
             <></>
           )}
+
+          <Button
+            rounded
+            light={filter.title !== nearMe.title}
+            bordered={filter.title !== nearMe.title}
+            style={{
+              height: 32,
+              marginRight: 8,
+              backgroundColor:
+                filter.title === nearMe.title
+                  ? ColorConstants.primary
+                  : 'transparent',
+            }}
+            onPress={() => {
+              setFilter(nearMe)
+              setTrails([])
+              filter.action()
+            }}
+          >
+            <Text uppercase={false}>{nearMe.title}</Text>
+          </Button>
 
           <Button
             rounded
@@ -234,17 +284,13 @@ const SearchTrailScreen = ({ navigation }) => {
                   ? ColorConstants.primary
                   : 'transparent',
             }}
-            onPress={async () => {
+            onPress={() => {
               setFilter(bestParams)
               setTrails([])
-              await getTrailsByQuery({
-                query: {
-                  weighted_rating: { $gt: 4 },
-                },
-              })
+              filter.action()
             }}
           >
-            <Text uppercase={false}>Best Rated</Text>
+            <Text uppercase={false}>{bestParams.title}</Text>
           </Button>
 
           <Button
@@ -259,42 +305,34 @@ const SearchTrailScreen = ({ navigation }) => {
                   ? ColorConstants.primary
                   : 'transparent',
             }}
-            onPress={async () => {
+            onPress={() => {
               setFilter(easyParams)
               setTrails([])
-              await getTrailsByQuery({
-                query: {
-                  difficulty: 'easy',
-                  length_km: { $lt: 5 },
-                },
-              })
+              filter.action()
             }}
           >
-            <Text uppercase={false}>Easy Trails</Text>
+            <Text uppercase={false}>{easyParams.title}</Text>
           </Button>
 
           <Button
             rounded
-            light={filter.title !== nearMe.title}
-            bordered={filter.title !== nearMe.title}
+            light={filter.title !== wholeDayParams.title}
+            bordered={filter.title !== wholeDayParams.title}
             style={{
               height: 32,
               marginRight: 8,
               backgroundColor:
-                filter.title === nearMe.title
+                filter.title === wholeDayParams.title
                   ? ColorConstants.primary
                   : 'transparent',
             }}
-            onPress={async () => {
-              setFilter(nearMe)
+            onPress={() => {
+              setFilter(wholeDayParams)
               setTrails([])
-              await getTrailsByQuery({
-                query: {},
-                location: true,
-              })
+              filter.action()
             }}
           >
-            <Text uppercase={false}>Near You</Text>
+            <Text uppercase={false}>{wholeDayParams.title}</Text>
           </Button>
         </ScrollView>
       </View>
@@ -319,17 +357,6 @@ const SearchTrailScreen = ({ navigation }) => {
   )
 }
 
-const styles = StyleSheet.create({
-  filterButtons: {
-    borderColor: '#a1a1a1',
-    borderWidth: 1,
-    marginHorizontal: 3,
-    height: 44,
-    backgroundColor: ColorConstants.secondayLight,
-  },
-  filterButtonsText: {
-    color: ColorConstants.Black2,
-  },
-})
+const styles = StyleSheet.create({})
 
 export default SearchTrailScreen

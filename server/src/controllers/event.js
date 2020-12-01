@@ -124,6 +124,7 @@ class EventController {
               userId,
               name,
               profileImage: user.profileImage,
+              lastLocation: null,
             },
           },
         }

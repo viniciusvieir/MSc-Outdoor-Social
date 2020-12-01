@@ -54,9 +54,12 @@ class AuthController {
       password,
     })
 
+    const randomId = Math.floor(Math.random() * Math.floor(1000)) + 1
+    const profileImage = `https://picsum.photos/id/${randomId}/200/200`
+
     await UserMongo.create({
       dob,
-      _id: user.id,
+      profileImage,
       userId: user.id,
       name: user.name,
       gender: user.gender,
@@ -79,7 +82,7 @@ class AuthController {
         body('password').not().isEmpty(),
         body('name').not().isEmpty().trim().escape(),
         body('dob').isDate().toDate(),
-        body('gender').isIn(['F', 'M']),
+        body('gender').isIn(['M', 'F', 'TM', 'TF', 'NC', 'O', 'NA']),
       ],
     }
   }
