@@ -1,11 +1,13 @@
-import React from 'react'
-import { TextInput, View, StyleSheet } from 'react-native'
+import React, { useState } from 'react'
+import { TextInput, View, StyleSheet, TouchableOpacity } from 'react-native'
 // import { Picker } from '@react-native-community/picker'
-import { Text, Button, Picker, Spinner } from 'native-base'
+import { Text, Button, Picker, Spinner, Col } from 'native-base'
 import { Divider } from 'react-native-elements'
 import { Formik, ErrorMessage } from 'formik'
 import { Grid, Row } from 'react-native-easy-grid'
 import { useNavigation } from '@react-navigation/native'
+import { FontAwesome5 } from '@expo/vector-icons'
+import DateTimePicker from '@react-native-community/datetimepicker'
 
 import moment from 'moment'
 import * as Yup from 'yup'
@@ -13,11 +15,12 @@ import ColorConstants from '../util/ColorConstants'
 
 const UserForm = ({ onSubmitFunc, userData }) => {
   const navigation = useNavigation()
+  const [show, setShow] = useState(false)
 
   const initialValues = userData || {
     name: '',
     gender: '',
-    dob: moment().format('DD/MM/YYYY'),
+    dob: moment().format('YYYY-MM-DD'),
     email: '',
     password: '',
     confirmPassword: '',
@@ -69,7 +72,7 @@ const UserForm = ({ onSubmitFunc, userData }) => {
                 <Text style={styles.error}>{props.errors.name}</Text>
               ) : null}
             </Row>
-            <Row>
+            {/* <Row>
               <TextInput
                 // onChangeText={props.handleChange('email')}
                 // onBlur={props.handleBlur('email')}
@@ -85,7 +88,53 @@ const UserForm = ({ onSubmitFunc, userData }) => {
                 style={styles.input}
                 placeholder='Date of Birth'
               />
+            </Row> */}
+
+            <Row>
+              <TouchableOpacity
+                onPress={() => {
+                  setShow(true)
+                }}
+                style={[styles.input, { flexDirection: 'row' }]}
+              >
+                <Col style={{ justifyContent: 'center' }}>
+                  <Text>{moment(props.values.dob).format('YYYY-MM-DD')}</Text>
+                </Col>
+                <Col
+                  style={{
+                    justifyContent: 'center',
+                    alignItems: 'flex-end',
+                  }}
+                >
+                  <FontAwesome5
+                    name='calendar-alt'
+                    size={24}
+                    color={ColorConstants.darkGray}
+                  />
+                </Col>
+              </TouchableOpacity>
             </Row>
+
+            <Row>
+              {props.touched.dob && props.errors.dob ? (
+                <Text style={styles.error}>{props.errors.dob}</Text>
+              ) : null}
+            </Row>
+            {show && (
+              <DateTimePicker
+                display='default'
+                mode='date'
+                onChange={(event, selectedDate) => {
+                  setShow(Platform.OS === 'ios')
+                  props.setFieldValue(
+                    'dob',
+                    moment(selectedDate).format('YYYY-MM-DD')
+                  )
+                }}
+                maximumDate={moment().toDate()}
+                value={moment(props.values.dob).toDate()}
+              />
+            )}
 
             <Row style={styles.input}>
               <Picker
