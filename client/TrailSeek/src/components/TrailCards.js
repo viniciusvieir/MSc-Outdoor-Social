@@ -28,32 +28,30 @@ const TrailCards = ({ trails, filter }) => {
     <View style={{ flex: 1 }}>
       <FlatList
         style={{
-          paddingTop: 20,
-          paddingBottom: 20,
           paddingHorizontal: Constants.POINTS.marginHorizontal,
           flex: 1,
         }}
+        contentContainerStyle={{ paddingVertical: 20 }}
         onRefresh={() => filter.action()}
         refreshing={false}
         ListEmptyComponent={<NoData type={'funny'} />}
         // initialNumToRender={10}
         data={trails}
-        keyExtractor={(trails) => {
-          return trails._id
-        }}
+        keyExtractor={(trails) => trails._id}
         ListFooterComponent={
           trails.length >= 10 ? (
             <Button
-              block
+              rounded
               onPress={() => {
                 navigation.navigate('ListTrail', { query: filter })
               }}
               style={{
-                margin: 5,
-                backgroundColor: ColorConstants.Yellow,
+                marginTop: 12,
+                backgroundColor: ColorConstants.primary,
+                alignSelf: 'center',
               }}
             >
-              <Text>View More</Text>
+              <Text>Load More</Text>
             </Button>
           ) : null
         }

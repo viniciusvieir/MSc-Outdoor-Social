@@ -1,12 +1,11 @@
 import React from 'react'
-import { View, StyleSheet, Image, ImageBackground } from 'react-native'
+import { View, StyleSheet, Image } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 import { unwrapResult } from '@reduxjs/toolkit'
 import { Container, Content, Toast } from 'native-base'
 
 import ToastAlert from '../components/ToastAlert'
 import { signUp } from '../app/userSlice'
-import ColorConstants from '../util/ColorConstants'
 import UserForm from '../components/UserForm'
 
 const SignupScreen = ({ navigation }) => {

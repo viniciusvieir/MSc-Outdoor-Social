@@ -69,6 +69,7 @@ const EventsTab = ({ trailData }) => {
       style={{
         flex: 1,
         backgroundColor: ColorConstants.DWhite,
+        justifyContent: 'center',
       }}
     >
       {didFinishRequest && events.length > 0 ? (
@@ -85,7 +86,7 @@ const EventsTab = ({ trailData }) => {
         <></>
       )}
 
-      {didFinishRequest && events.length == 0 ? (
+      {!isLoading && didFinishRequest && events.length == 0 ? (
         <EmptyStateView
           icon={'shoe-prints'}
           title={'No events here so far'}

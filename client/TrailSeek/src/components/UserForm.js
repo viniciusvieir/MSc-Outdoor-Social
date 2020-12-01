@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { TextInput, View, StyleSheet } from 'react-native'
 // import { Picker } from '@react-native-community/picker'
-import { Text, Button, Picker } from 'native-base'
+import { Text, Button, Picker, Spinner } from 'native-base'
 import { Divider } from 'react-native-elements'
 import { Formik, ErrorMessage } from 'formik'
 import { Grid, Row } from 'react-native-easy-grid'
@@ -13,7 +13,6 @@ import ColorConstants from '../util/ColorConstants'
 
 const UserForm = ({ onSubmitFunc, userData }) => {
   const navigation = useNavigation()
-  const [show, setShow] = useState(false)
 
   const initialValues = userData || {
     name: '',
@@ -32,8 +31,8 @@ const UserForm = ({ onSubmitFunc, userData }) => {
     password: Yup.string()
       .label('Password')
       .required()
-      .min(2, 'Seems a bit short...')
-      .max(10, 'We prefer insecure system, try a shorter password.'),
+      .min(2, 'Seems a bit short')
+      .max(10, 'We prefer insecure systems, try a shorter password'),
     confirmPassword: Yup.string()
       .required()
       .label('Confirm password')
@@ -87,50 +86,7 @@ const UserForm = ({ onSubmitFunc, userData }) => {
                 placeholder='Date of Birth'
               />
             </Row>
-            {/* <Row>
-              <TouchableOpacity
-                onPress={() => {
-                  setShow(true)
-                }}
-                style={[styles.input, { flexDirection: 'row' }]}
-              >
-                <Col style={{ justifyContent: 'center' }}>
-                  <Text>{moment(props.values.dob).format('YYYY-MM-DD')}</Text>
-                </Col>
-                <Col
-                  style={{
-                    justifyContent: 'center',
-                    alignItems: 'flex-end',
-                  }}
-                >
-                  <FontAwesome5
-                    name='calendar-alt'
-                    size={24}
-                    color={ColorConstants.darkGray}
-                  />
-                </Col>
-              </TouchableOpacity>
-            </Row> */}
-            {/* <Row>
-              {props.touched.dob && props.errors.dob ? (
-                <Text style={styles.error}>{props.errors.dob}</Text>
-              ) : null}
-            </Row> */}
-            {/* {show && (
-              <DateTimePicker
-                display='default'
-                mode='date'
-                onChange={(event, selectedDate) => {
-                  setShow(Platform.OS === 'ios')
-                  props.setFieldValue(
-                    'dob',
-                    moment(selectedDate).format('YYYY-MM-DD')
-                  )
-                }}
-                maximumDate={moment().toDate()}
-                value={moment(props.values.dob).toDate()}
-              />
-            )} */}
+
             <Row style={styles.input}>
               <Picker
                 mode='dropdown'
@@ -223,7 +179,11 @@ const UserForm = ({ onSubmitFunc, userData }) => {
                 backgroundColor: ColorConstants.primary,
               }}
             >
-              <Text>Submit</Text>
+              {false ? (
+                <Spinner color={ColorConstants.White} />
+              ) : (
+                <Text>Submit</Text>
+              )}
             </Button>
             {userData ? null : (
               <Button
@@ -237,17 +197,6 @@ const UserForm = ({ onSubmitFunc, userData }) => {
                 <Text uppercase={false}>Already have an account? Sign in</Text>
               </Button>
             )}
-            {/* <Button
-                      onPress={props.handleReset}
-                      disabled={props.isSubmitting}
-                      danger
-                      block
-                      style={{
-                        marginTop: 16,
-                      }}
-                    >
-                      <Text>Reset</Text>
-                    </Button> */}
           </Grid>
         )}
       </Formik>

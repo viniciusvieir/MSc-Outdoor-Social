@@ -10,7 +10,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { Formik, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
 import { Grid, Row } from 'react-native-easy-grid'
-import { Container, Button, Text, Content } from 'native-base'
+import { Container, Button, Text, Content, Spinner } from 'native-base'
 
 import { fetchUserData, signIn } from '../app/userSlice'
 import ToastAlert from '../components/ToastAlert'
@@ -111,7 +111,11 @@ const SigninScreen = ({ navigation }) => {
                     backgroundColor: ColorConstants.primary,
                   }}
                 >
-                  <Text uppercase={false}>Login</Text>
+                  {props.isSubmitting ? (
+                    <Spinner color={ColorConstants.White} />
+                  ) : (
+                    <Text uppercase={false}>Login</Text>
+                  )}
                 </Button>
 
                 <Button
