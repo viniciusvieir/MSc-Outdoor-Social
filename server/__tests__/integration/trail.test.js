@@ -45,6 +45,13 @@ describe('Trails', () => {
     expect(response.body[0]).toHaveProperty('name')
   })
 
+  it('should return outing_count field when requested on /trails', async () => {
+    const response = await supertest(app).get(
+      '/trails?fields=outing_count&limit=1'
+    )
+    expect(response.body[0]).toHaveProperty('outing_count')
+  })
+
   it('should only return n fields when limit is set', async () => {
     const response = await supertest(app).get('/trails?limit=5')
     expect(response.body.length).toBe(5)

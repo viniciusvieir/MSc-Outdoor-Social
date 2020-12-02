@@ -1,5 +1,61 @@
 const mongoose = require('mongoose')
 
+const ParticipantSchema = new mongoose.Schema({
+  userId: {
+    type: Number,
+    required: true,
+  },
+  name: {
+    type: String,
+    required: true,
+  },
+  profileImage: {
+    type: String,
+    required: false,
+  },
+  lastLocation: {
+    type: {
+      type: String,
+      enum: ['Point'],
+      required: true,
+    },
+    coordinates: {
+      type: [Number],
+      required: true,
+    },
+    required: false,
+  },
+  createdAt: {
+    type: Date,
+    required: true,
+    default: new Date(),
+  },
+})
+
+const ChatSchema = new mongoose.Schema({
+  userId: {
+    type: Number,
+    required: true,
+  },
+  name: {
+    type: String,
+    required: true,
+  },
+  profileImage: {
+    type: String,
+    required: false,
+  },
+  content: {
+    type: String,
+    required: true,
+  },
+  createdAt: {
+    type: Date,
+    required: true,
+    default: new Date(),
+  },
+})
+
 const EventSchema = new mongoose.Schema({
   userId: {
     type: Number,
@@ -11,10 +67,15 @@ const EventSchema = new mongoose.Schema({
     required: true,
   },
   participants: {
-    type: [Object],
+    type: [ParticipantSchema],
     default: [],
     required: true,
-  }, // [{ type: Schema.Types.ObjectId, ref: 'User' }]
+  },
+  chat: {
+    type: [ChatSchema],
+    required: true,
+    default: [],
+  },
   title: {
     type: String,
     required: true,

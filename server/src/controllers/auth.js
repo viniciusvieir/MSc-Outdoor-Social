@@ -1,7 +1,9 @@
 const { body, validationResult } = require('express-validator')
 const { errorHandler } = require('../utils/error-handling')
 
-const User = require('../models/user')
+const UserPsql = require('../models/user.psql')
+const UserMongo = require('../models/user.mongo')
+const UserRating = require('../models/user_rating')
 
 class AuthController {
   async signIn(req, res) {
@@ -11,7 +13,7 @@ class AuthController {
 
     const { email, password } = req.body
 
-    const user = await User.findOne({
+    const user = await UserPsql.findOne({
       where: { email: email.toLowerCase() },
       attributes: ['id', 'email', 'name', 'password'],
     })
@@ -35,7 +37,7 @@ class AuthController {
 
     const { email, password, name, dob, gender } = req.body
 
-    const checkIfExists = await User.findOne({
+    const checkIfExists = await UserPsql.findOne({
       where: { email: email.toLowerCase() },
       attributes: ['id'],
     })
@@ -44,12 +46,28 @@ class AuthController {
     if (checkIfExists)
       return res.status(401).json(errorHandler(['User already exists']))
 
-    const user = await User.create({
+    const user = await UserPsql.create({
       name,
       dob,
       gender,
       email: email.toLowerCase(),
       password,
+    })
+
+    const randomId = Math.floor(Math.random() * Math.floor(1000)) + 1
+    const profileImage = `https://picsum.photos/id/${randomId}/200/200`
+
+    await UserMongo.create({
+      dob,
+      profileImage,
+      userId: user.id,
+      name: user.name,
+      gender: user.gender,
+      email: user.email,
+    })
+
+    await UserRating.create({
+      userID: user.id,
     })
 
     return res.json(user.generateTokenPayload())
@@ -64,7 +82,7 @@ class AuthController {
         body('password').not().isEmpty(),
         body('name').not().isEmpty().trim().escape(),
         body('dob').isDate().toDate(),
-        body('gender').isIn(['F', 'M']),
+        body('gender').isIn(['M', 'F', 'TM', 'TF', 'NC', 'O', 'NA']),
       ],
     }
   }

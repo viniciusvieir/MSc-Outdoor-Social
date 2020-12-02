@@ -3,7 +3,7 @@ const app = require('../../src/app')
 const supertest = require('supertest')
 const faker = require('faker')
 
-const User = require('../../src/models/user')
+const User = require('../../src/models/user.psql')
 
 describe('Authentication', () => {
   beforeAll(async () => {
@@ -33,6 +33,7 @@ describe('Authentication', () => {
       password: 'authentication',
       name: 'Authentication',
       gender: 'M',
+      dob: '2000-10-01',
     })
     expect(response.body).toHaveProperty('token')
   })
@@ -43,12 +44,14 @@ describe('Authentication', () => {
       password: 'authentication',
       name: 'Duplicated',
       gender: 'F',
+      dob: '2000-10-01',
     })
     const response = await supertest(app).post('/signup').send({
       email: 'duplicated@test.com',
       password: 'authentication',
       name: 'Duplicated',
       gender: 'F',
+      dob: '2000-10-01',
     })
     expect(response.body).toHaveProperty('errors')
   })
@@ -122,6 +125,7 @@ describe('Authentication', () => {
       password: faker.internet.password(),
       name: faker.name.findName(),
       gender: 'M',
+      dob: '2000-10-01',
     })
 
     const token = signUpResponse.body.token
@@ -141,11 +145,12 @@ describe('Authentication', () => {
       password: faker.internet.password(),
       name: faker.name.findName(),
       gender: 'M',
+      dob: '2000-10-01',
     })
 
     const token = signUpResponse.body.token
     const userResponse = await supertest(app)
-      .post('/user')
+      .put('/user')
       .set('Authorization', `Bearer ${token}`)
       .send({
         name: faker.name.findName(),

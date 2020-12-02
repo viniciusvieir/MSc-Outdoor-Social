@@ -1,9 +1,16 @@
-const { query, param, validationResult } = require('express-validator')
+const { query, param, body, validationResult } = require('express-validator')
 const { errorHandler } = require('../utils/error-handling')
 const { PythonShell } = require('python-shell')
 
+const axios = require('axios').default
+const moment = require('moment')
+
 const Trail = require('../models/trail')
 const Event = require('../models/event')
+const UserRating = require('../models/user_rating')
+
+const UserPsql = require('../models/user.psql')
+const UserMongo = require('../models/user.mongo')
 
 class TrailController {
   async trails(req, res) {
@@ -12,6 +19,8 @@ class TrailController {
       return res.status(400).json({ errors: errors.array() })
 
     const { q: query, fields, limit, skip } = req.query
+
+    let trails = []
 
     // search for nearest places to a point
     if (query && query.near && query.near.lat && query.near.lon) {
@@ -28,7 +37,7 @@ class TrailController {
       const latLon = query.near
       delete query.near
 
-      const trails = await Trail.aggregate([
+      trails = await Trail.aggregate([
         {
           $geoNear: {
             near: {
@@ -46,24 +55,66 @@ class TrailController {
       ])
         .limit(limit || 20)
         .skip(skip || 0)
-      return res.json(trails)
+    } else if (query && query.recommendation) {
+      const { id: userId } = req.context
+      if (!userId) return res.json(errorHandler('Token not provided'))
+
+      const recommendedTrails = await axios.get(
+        `http://localhost:3030/${userId}`
+      )
+
+      if (recommendedTrails.data.length > 0) {
+        trails = await Trail.find({
+          _id: {
+            $in: recommendedTrails.data,
+          },
+        })
+          .select((fields && fields.replace(/,|;/g, ' ')) || '-path')
+          .lean()
+      }
+    } else if (query && query.random) {
+      const project = {}
+      if (fields) {
+        fields.split(/,|;/g).forEach((field) => {
+          project[field] = true
+        })
+      } else {
+        project.path = false
+      }
+      trails = await Trail.aggregate([
+        { $sample: { size: limit || 20 } },
+        { $project: project },
+      ])
     }
 
-    const trails = await Trail.find(query || {})
-      .limit(limit || 20)
-      .skip(skip || 0)
-      .select((fields && fields.replace(/,|;/g, ' ')) || '-path')
-      .lean()
+    if (trails.length === 0) {
+      trails = await Trail.find(query || {})
+        .limit(limit || 20)
+        .skip(skip || 0)
+        .select((fields && fields.replace(/,|;/g, ' ')) || '-path')
+        .lean()
+    }
+
+    if (fields && fields.includes('comment_count')) {
+      const ids = trails.map((trail) => trail._id)
+      const comment_count = await Trail.aggregate([
+        { $match: { _id: { $in: ids } } },
+        { $project: { count: { $size: '$comments' } } },
+      ])
+      trails.forEach((trail) => {
+        trail.comment_count = comment_count.find(
+          (item) => `${item._id}` === `${trail._id}`
+        ).count
+      })
+    }
 
     if (fields && fields.includes('outing_count')) {
-      const date = new Date()
-      date.setHours(0, 0, 0, 0)
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
       for (let i = 0; i < trails.length; i++) {
         trails[i].outing_count = await Event.find({
           trailId: trails[i]._id,
-          date: {
-            $gte: date.toLocaleString(),
-          },
+          date: { $gte: today },
         }).countDocuments()
       }
     }
@@ -91,6 +142,14 @@ class TrailController {
       }))
     }
 
+    if (trail && fields && fields.includes('comment_count')) {
+      const comment_count = await Trail.aggregate([
+        { $match: { _id: trail._id } },
+        { $project: { count: { $size: '$comments' } } },
+      ])
+      trail.comment_count = comment_count[0].count
+    }
+
     // Finds recommended trails if fields include `recommended` attribute
     if (trail && fields && fields.includes('recommended')) {
       const script = new PythonShell('../Recommendation/similar-trails.py', {
@@ -110,6 +169,164 @@ class TrailController {
     } else {
       res.json(trail)
     }
+  }
+
+  async rateTrail(req, res) {
+    const errors = validationResult(req)
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() })
+
+    const { id: userId } = req.context
+    const { trailId } = req.params
+    const { rating } = req.body
+
+    const date = new Date()
+
+    await Trail.updateOne(
+      { _id: trailId },
+      {
+        $push: {
+          ratings: {
+            userId,
+            rating,
+            date,
+          },
+        },
+      }
+    )
+
+    const trail = await Trail.findOne({
+      _id: trailId,
+      ratings: { $elemMatch: { userId } },
+    }).select('ratings')
+
+    let users = {}
+    trail.ratings.forEach((rating) => {
+      if (users[rating.userId]) {
+        users[rating.userId].push(rating.rating)
+      } else {
+        users[rating.userId] = [rating.rating]
+      }
+    })
+
+    let ratings = []
+    Object.keys(users).forEach((userId) => {
+      const item = users[userId]
+      const avg_user = item.reduce((a, b) => a + b, 0) / item.length
+      ratings.push(avg_user)
+    })
+
+    const weighted_rating = ratings.reduce((a, b) => a + b, 0) / ratings.length
+
+    await Trail.updateOne({ _id: trailId }, { weighted_rating })
+    await UserRating.updateOne(
+      { userID: userId },
+      {
+        $push: {
+          reviews: {
+            trailID: trailId,
+            rating,
+            timestamp: moment(date).format('DD-MM-YYYY HH:mm'),
+          },
+        },
+      }
+    )
+
+    res.json({ weighted_rating })
+  }
+
+  async comments(req, res) {
+    const errors = validationResult(req)
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() })
+
+    const { trailId } = req.params
+    const trail = await Trail.findById(trailId).select('comments')
+    res.json(trail.comments)
+  }
+
+  async commentTrail(req, res) {
+    const errors = validationResult(req)
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() })
+
+    const { id: userId } = req.context
+    const { trailId } = req.params
+    const { content } = req.body
+
+    const user = await UserMongo.findOne({ userId }).select('name profileImage')
+
+    const date = new Date()
+    const comment = {
+      userId,
+      content,
+      date,
+      name: user.name,
+      profileImage: user.profileImage,
+    }
+
+    await Trail.updateOne({ _id: trailId }, { $push: { comments: comment } })
+
+    res.json(comment)
+  }
+
+  // FIX
+  async trailsFix(req, res) {
+    const trails = require('../../../trails.json')
+
+    const trailsValidated = trails.map((trail) => {
+      const currentPath = trail.geoLoc.coordinates[0]
+
+      const path = currentPath.map((coordinates) => {
+        return {
+          type: 'Point',
+          coordinates: [coordinates[1], coordinates[0]],
+          elevation: coordinates[2],
+        }
+      })
+
+      let estimate_time_min = null
+      if (trail.estimateTime.includes(' h ')) {
+        const items = trail.estimateTime.split(' h ')
+        const hours = isNaN(parseInt(items[0])) ? 0 : parseInt(items[0])
+        const min = isNaN(parseInt(items[1].replace(' m')))
+          ? 0
+          : parseInt(items[1].replace(' m'))
+        estimate_time_min = hours * 60 + min
+      } else if (trail.estimateTime.includes(' m')) {
+        const min = parseInt(trail.estimateTime.replace(' m'))
+        estimate_time_min = min
+      }
+
+      if (isNaN(estimate_time_min)) {
+        console.log(trail)
+      }
+
+      return {
+        path,
+        // _id: trail.id,
+        id: trail.id,
+        name: trail.name,
+        location: trail.location,
+        county: trail.county,
+        difficulty: trail.difficulty.toLowerCase() || 'unknown',
+        length_km: trail.length_km,
+        description: trail.description,
+        activity_type: trail.activityType,
+        estimate_time_min: estimate_time_min || -1,
+        elevation_gain_ft: trail.elevationGain_ft,
+        no_of_ratings: trail.no_of_ratings,
+        avg_rating: trail.avgRating,
+        img_url: trail.img_url,
+        start: path[0],
+        end: path[path.length - 1],
+        bbox: trail.geoLoc.bbox,
+      }
+    })
+
+    await Trail.insertMany(trailsValidated)
+
+    res.json({ success: 123 })
   }
 
   // VALIDATION
@@ -133,6 +350,15 @@ class TrailController {
       trailById: [
         param('id').isString().isLength(24),
         query('fields').optional().isString(),
+      ],
+      rating: [
+        param('trailId').isString().isLength(24),
+        body('rating').isFloat({ min: 0, max: 5 }),
+      ],
+      getComments: [param('trailId').isString().isLength(24)],
+      postComment: [
+        param('trailId').isString().isLength(24),
+        body('content').isString(),
       ],
     }
   }

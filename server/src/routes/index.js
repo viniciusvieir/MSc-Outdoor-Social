@@ -1,6 +1,6 @@
 const router = require('express').Router()
 
-const verifyToken = require('../middlewares/verify-token').verifyToken
+const { verifyToken, optionalToken } = require('../middlewares/verify-token')
 
 const authController = require('../controllers/auth')
 const userController = require('../controllers/user')
@@ -15,7 +15,7 @@ router.post('/signup', authController.validators.signUp, authController.signUp)
 
 // =============== USER ===============
 router.get('/user', verifyToken, userController.user)
-router.post('/user', verifyToken, userController.changeUserInfo)
+router.put('/user', verifyToken, userController.changeUserInfo)
 
 router.get(
   '/user/eventsCreated',
@@ -29,13 +29,35 @@ router.get(
 )
 
 // =============== TRAIL ==============
-router.get('/trails', trailController.validators.trails, trailController.trails)
+router.get(
+  '/trails',
+  optionalToken,
+  trailController.validators.trails,
+  trailController.trails
+)
 router.get(
   '/trails/:id',
   trailController.validators.trailById,
   trailController.trailById
 )
-// router.get('/trailsfix', trailController.trailsFix)
+router.post(
+  '/trails/:trailId/rate',
+  verifyToken,
+  trailController.validators.rating,
+  trailController.rateTrail
+)
+router.get(
+  '/trails/:trailId/comments',
+  trailController.validators.getComments,
+  trailController.comments
+)
+router.post(
+  '/trails/:trailId/comments',
+  verifyToken,
+  trailController.validators.postComment,
+  trailController.commentTrail
+)
+router.get('/fix', trailController.trailsFix)
 
 // =============== EVENT ==============
 router.get(
@@ -49,6 +71,16 @@ router.post(
   eventController.validators.createEvent,
   eventController.createEvent
 )
+router.get(
+  '/events/:eventId',
+  eventController.validators.events,
+  eventController.event
+)
+router.get(
+  '/trails/:trailId/events/:eventId',
+  eventController.validators.events,
+  eventController.event
+)
 router.put(
   '/trails/:trailId/events/:eventId',
   verifyToken,
@@ -60,10 +92,15 @@ router.delete(
   verifyToken,
   eventController.deleteEvent
 )
-router.post(
+router.put(
   '/trails/:trailId/events/:eventId/join',
   verifyToken,
   eventController.joinEvent
+)
+router.put(
+  '/trails/:trailId/events/:eventId/leave',
+  verifyToken,
+  eventController.leaveEvent
 )
 
 module.exports = router

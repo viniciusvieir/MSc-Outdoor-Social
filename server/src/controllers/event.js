@@ -1,31 +1,47 @@
 const { query, body, validationResult } = require('express-validator')
 const { errorHandler } = require('../utils/error-handling')
-const faker = require('faker')
+const { ddmmyyhhmm, eventDuration } = require('../utils/date-handling')
 
 const Trail = require('../models/trail')
 const Event = require('../models/event')
-const User = require('../models/user')
+const UserMongo = require('../models/user.mongo')
 
 class EventController {
   async events(req, res) {
     const { trailId } = req.params
     const { fields } = req.query
 
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
     const events = await Event.find({
       trailId,
-    }).lean()
+      date: { $gte: today },
+    })
+      .select((fields && fields.replace(/,|;/g, ' ')) || '-chat -trailId')
+      .lean()
 
-    // for (let i = 0; i < events.length; i++) {
-    //   console.log(events[i].userId)
-    //   const user = await User.findByPk(events[i].userId, {
-    //     attributes: ['name'],
-    //   })
-    //   events[
-    //     i
-    //   ].subtitle = `${events[0].date} • ${events[0].duration_min} • ${events[0].max_participants} • ${user.name}`
-    // }
+    for (let i = 0; i < events.length; i++) {
+      const participants = events[i].participants.length + 1
+      const duration = eventDuration(events[i].duration_min)
+      const peopleGoing =
+        participants > 1 ? `${participants} people going` : '1 person going'
+      const maxParticipants = `${events[i].max_participants} max`
+
+      events[i].subtitle = `${duration} • ${peopleGoing} • ${maxParticipants}`
+    }
 
     res.json(events)
+  }
+
+  async event(req, res) {
+    const { eventId } = req.params
+    const { fields } = req.query
+
+    const event = await Event.findById(eventId)
+      .select((fields && fields.replace(/,|;/g, ' ')) || '-chat')
+      .lean()
+    res.json(event)
   }
 
   async createEvent(req, res) {
@@ -42,6 +58,12 @@ class EventController {
       duration_min,
       max_participants,
     } = req.body
+
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    if (date < today)
+      return res.status(400).json(errorHandler('Date cannot be in the past'))
 
     const trail = await Trail.findById(trailId).select('estimate_time_min')
     if (!trail) return res.status(403).json(errorHandler('Trail not found'))
@@ -65,7 +87,6 @@ class EventController {
       return res.status(400).json({ errors: errors.array() })
 
     const { id: userId } = req.context
-    // TODO: check if user owns the event
 
     const { eventId } = req.params
     const {
@@ -80,20 +101,18 @@ class EventController {
       return res.status(403).json(errorHandler('Nothing to update'))
 
     await Event.updateOne(
-      { eventId },
+      { _id: eventId, userId },
       { title, description, date, duration_min, max_participants }
     )
 
     const event = await Event.findById(eventId)
-
     res.json(event)
   }
 
   async deleteEvent(req, res) {
     const { id: userId } = req.context
-    // TODO: check if user owns the event
     const { eventId } = req.params
-    await Event.deleteOne({ eventId })
+    await Event.deleteOne({ _id: eventId, userId })
     res.json({ success: true })
   }
 
@@ -101,22 +120,46 @@ class EventController {
     const { id: userId, name } = req.context
     const { eventId } = req.params
 
-    const imageUrl = faker.internet.avatar()
+    const joined = await Event.findOne({
+      _id: eventId,
+      participants: { $elemMatch: { userId } },
+    }).countDocuments()
 
-    await Event.update(
+    if (!joined) {
+      const user = await UserMongo.findOne({ userId }).select('profileImage')
+      await Event.updateOne(
+        { _id: eventId },
+        {
+          $push: {
+            participants: {
+              userId,
+              name,
+              profileImage: user.profileImage,
+              lastLocation: null,
+            },
+          },
+        }
+      )
+    }
+
+    res.json({ success: !joined })
+  }
+
+  async leaveEvent(req, res) {
+    const { id: userId } = req.context
+    const { eventId } = req.params
+
+    await Event.updateOne(
       { _id: eventId },
       {
-        $push: {
+        $pull: {
           participants: {
             userId,
-            name,
-            imageUrl,
           },
         },
       }
     )
-      .then(() => res.json({ success: true }))
-      .catch((error) => res.json(errorHandler(error)))
+    res.json({ success: true })
   }
 
   async eventsCreatedByUser(req, res) {
@@ -127,7 +170,9 @@ class EventController {
 
   async eventsJoinedByUser(req, res) {
     const { id: userId } = req.context
-    const events = await Event.find({ participants: userId })
+    const events = await Event.find({
+      participants: { $elemMatch: { userId } },
+    })
     res.json(events)
   }
 

@@ -1,27 +1,33 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet, Modal, Dimensions } from "react-native";
-import { View, Text, Button } from "native-base";
-import moment from "moment";
-import { LineChart } from "react-native-chart-kit";
-import ColorConstants from "../util/ColorConstants";
+import React, { useState, useEffect } from 'react'
+import { StyleSheet, Modal, Dimensions } from 'react-native'
+import { View, Text, Button } from 'native-base'
+import moment from 'moment'
+import { LineChart } from 'react-native-chart-kit'
+import ColorConstants from '../util/ColorConstants'
+import Constants from '../util/Constants'
 
 const CovidWidget = ({ data }) => {
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false)
   const day = (dt) => {
-    const day = moment(dt).format("ddd").toString();
-    return day;
-  };
+    const day = moment(dt).format('ddd').toString()
+    return day
+  }
 
   const date = (dt) => {
-    const date = moment(dt).format("DD/MM").toString();
-    return date;
-  };
-  let content;
+    const date = moment(dt).format('DD/MM').toString()
+    return date
+  }
+  let content
   if (data.length > 0) {
-    const lastItem = data.length - 1;
-    const pastCumiCases = data[0].attributes.ConfirmedCovidCases;
+    const lastItem = data.length - 1
+    const pastCumiCases = data[0].attributes.ConfirmedCovidCases
     content = (
-      <View style={{ flex: 1 }}>
+      <View
+        style={{
+          flex: 1,
+          paddingHorizontal: Constants.POINTS.marginHorizontal,
+        }}
+      >
         <Button
           button
           danger
@@ -29,14 +35,14 @@ const CovidWidget = ({ data }) => {
             padding: 0,
           }}
           onPress={() => {
-            setModalVisible(true);
+            setModalVisible(true)
           }}
         >
-          <Text style={{ fontWeight: "bold", fontSize: 13 }}>
-            Covid Cases in the last 10 days in{" "}
-            {data[lastItem].attributes.CountyName} as of{" "}
+          <Text style={{ fontWeight: 'bold', fontSize: 13 }}>
+            Covid Cases in the last 10 days in{' '}
+            {data[lastItem].attributes.CountyName} as of{' '}
             {day(data[lastItem].attributes.TimeStamp)} (
-            {date(data[lastItem].attributes.TimeStamp)}) :{" "}
+            {date(data[lastItem].attributes.TimeStamp)}) :{' '}
             {data[lastItem].attributes.ConfirmedCovidCases - pastCumiCases} (+
             {data[lastItem].attributes.ConfirmedCovidCases -
               data[lastItem - 1].attributes.ConfirmedCovidCases}
@@ -46,18 +52,18 @@ const CovidWidget = ({ data }) => {
 
         <Modal
           visible={false}
-          animationType="fade"
-          presentationStyle="overFullScreen"
+          animationType='fade'
+          presentationStyle='overFullScreen'
           transparent
           // style={{ borderBottomColor: "red", borderWidth: 5 }}
           visible={modalVisible}
         >
           <View
             style={{
-              alignItems: "center",
+              alignItems: 'center',
               flex: 1,
-              justifyContent: "center",
-              backgroundColor: ColorConstants.LGreen + "95",
+              justifyContent: 'center',
+              backgroundColor: ColorConstants.LGreen + '95',
             }}
           >
             <LineChart
@@ -65,20 +71,18 @@ const CovidWidget = ({ data }) => {
               data={{
                 labels: data.slice(1).map((item) => {
                   return moment(item.attributes.TimeStamp)
-                    .format("DD/MM")
-                    .toString();
+                    .format('DD/MM')
+                    .toString()
                 }),
                 datasets: [
                   {
                     data: data.slice(1).map((item) => {
-                      return (
-                        item.attributes.ConfirmedCovidCases - pastCumiCases
-                      );
+                      return item.attributes.ConfirmedCovidCases - pastCumiCases
                     }),
                   },
                 ],
               }}
-              width={Dimensions.get("window").width - 10} // from react-native
+              width={Dimensions.get('window').width - 10} // from react-native
               height={300}
               // yAxisLabel="$"
               // yAxisSuffix="k"
@@ -95,9 +99,9 @@ const CovidWidget = ({ data }) => {
                 //   // height: 200,
                 // },
                 propsForDots: {
-                  r: "1",
-                  strokeWidth: "1",
-                  stroke: "#ffa726",
+                  r: '1',
+                  strokeWidth: '1',
+                  stroke: '#ffa726',
                 },
               }}
               bezier
@@ -110,10 +114,10 @@ const CovidWidget = ({ data }) => {
               style={{
                 backgroundColor: ColorConstants.Yellow,
                 marginEnd: 10,
-                alignSelf: "flex-end",
+                alignSelf: 'flex-end',
               }}
               onPress={() => {
-                setModalVisible(!modalVisible);
+                setModalVisible(!modalVisible)
               }}
             >
               <Text>Close</Text>
@@ -121,14 +125,14 @@ const CovidWidget = ({ data }) => {
           </View>
         </Modal>
       </View>
-    );
+    )
   } else {
-    content = <Text>No Covid Data</Text>;
+    content = <Text>No Covid Data</Text>
   }
 
-  return <View>{content}</View>;
-};
+  return <View>{content}</View>
+}
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({})
 
-export default CovidWidget;
+export default CovidWidget

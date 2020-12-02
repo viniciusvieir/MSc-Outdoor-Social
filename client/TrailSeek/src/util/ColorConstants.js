@@ -6,6 +6,7 @@ export default {
   secondayLight: '#FFDCAD',
 
   darkGray: '#777777',
+  red: '#e76f51',
 
   Black: '#1d1d1d',
   Yellow: '#e9c46a',

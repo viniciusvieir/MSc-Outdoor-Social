@@ -1,25 +1,26 @@
 const { body, validationResult } = require('express-validator')
 const { errorHandler } = require('../utils/error-handling')
 
-const User = require('../models/user')
+const UserPsql = require('../models/user.psql')
+const UserMongo = require('../models/user.mongo')
 
 class UserController {
   async user(req, res) {
-    const user = await User.findByPk(req.context.id, {
-      attributes: ['id', 'name', 'dob', 'gender', 'email'],
+    const user = await UserMongo.findOne({
+      userId: req.context.id,
     })
     res.json(user)
   }
 
   async changeUserInfo(req, res) {
+    // TODO: Set changes to both UserPsql and UserMongo
     // const errors = validationResult(req)
     // if (!errors.isEmpty())
     //   return res.status(400).json({ errors: errors.array() })
 
     const { id } = req.context
 
-    const user = await User.findByPk(id)
-
+    const user = await UserPsql.findByPk(id)
     await user.update(req.body)
     res.json({ success: true })
   }

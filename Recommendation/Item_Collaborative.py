@@ -1,11 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Nov 3 16:02:20 2020
-
-@author: Puja
-"""
-
-import pandas as pd 
+import pandas as pd
 from scipy.sparse import csr_matrix
 from sklearn.neighbors import NearestNeighbors
 import pymongo
@@ -13,15 +6,15 @@ from dotenv import load_dotenv
 from pathlib import Path
 import os
 import sys
-
-class itemCollaborative:
+import json
+######### Changing API file
+class ItemCollaborative:
     
     def __init__(self, user_id):
         self.user_id = user_id
-        load_dotenv(dotenv_path = Path('/.env'))
         mongo_url = os.getenv('MONGO_URL')
         client = pymongo.MongoClient(mongo_url)
-        
+
         self.db = client['trailseek']
     
     def fetchMongoDBData(self):
@@ -34,7 +27,7 @@ class itemCollaborative:
         for doc in user_review:
             df = pd.DataFrame(doc['reviews'])
             df2 = df.assign(userID = doc['userID'])
-            user_review_df = user_review_df.append(df2)
+            user_review_df = user_review_df.append(df2, sort=True)
         return user_review_df
 
     def getUserSpecDetails(self, user_spec_data):
@@ -44,7 +37,7 @@ class itemCollaborative:
         user_spec_data.loc[:, 'timestamp'] = pd.to_datetime(user_spec_data.loc[:, 'timestamp'])
         #pd.to_datetime(user_spec_data["timestamp"])
         #user_spec_data.loc[:, 'timestamp']
-        user_spec_data = user_spec_data.sort_values(by='timestamp', ascending=False, kind='quicksort')
+        user_spec_data.sort_values(by='timestamp', ascending=False, kind='quicksort', inplace=True)
         
         user_spec_data = user_spec_data[user_spec_data.rating >=3]
         
@@ -93,29 +86,17 @@ class itemCollaborative:
         recommend = pd.concat([t,d], axis=1)
         
         return recommend
-    
-    def fetchTrailObjectID(self,recommend):
-        # get Trail Object ID of the recommended trail from Trail dev collection:
-        trail_id = list(recommend['trail'])
 
-        collection_trail = self.db['trail_devs']
-        
-        trailObjID = collection_trail.find({ "id": {"$in": trail_id } },{"_id":1})
-
-        return trailObjID
-
-
-if __name__ == '__main__':
+#function that will make recomms
+def get_recommendation(user_id):
     try:
-        arg = sys.argv
         
-        ITcoll = itemCollaborative(int(arg[1]))
+        ITcoll = ItemCollaborative(int(user_id))
     except IndexError:
-        print("Error Occured: Cause 'No Input'")
-        raise
+        raise Exception("Error Occured: Cause 'No Input'")
         
     user_review_df = ITcoll.fetchMongoDBData()
-    
+
     user_spec_data = user_review_df[user_review_df['userID']==ITcoll.user_id]
     #print('data for selected user ', len(user_spec_data))
     if len(user_spec_data) == 0:
@@ -132,17 +113,14 @@ if __name__ == '__main__':
         
         recommend = recommend[~recommend.trail.isin(ITcoll.list_user_spec_data)]
         
-        trailObjID = ITcoll.fetchTrailObjectID(recommend)
-        
-        trailObjID_df = pd.DataFrame(list(trailObjID))
-
-        trailObjID_df = trailObjID_df['_id'].values
+        recommend_idx = recommend['trail'].values
         recommendations = []
         count = 1
-        for idx, id in enumerate(trailObjID_df):
+        for idx, id in enumerate(recommend_idx):
             if count > 10:
                 break
-            recommendations.append(str(trailObjID_df[idx]))
+            recommendations.append(str(recommend_idx[idx]))
             count= count + 1
+    print(recommendations)
+    return recommendations
 
-    print('Recommended for User: ',recommendations)
