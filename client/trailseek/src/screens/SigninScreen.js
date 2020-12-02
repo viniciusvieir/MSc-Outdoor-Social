@@ -34,7 +34,7 @@ const SigninScreen = ({ navigation }) => {
         <View style={{ flex: 1 }}>
           <Image
             source={require('../images/tslogov2.2grey.png')}
-            resizeMode="contain"
+            resizeMode='contain'
             style={styles.image}
           />
         </View>
@@ -101,14 +101,13 @@ const SigninScreen = ({ navigation }) => {
               <Grid>
                 <Row>
                   <TextInput
-                    autoFocus
-                    autoCapitalize="none"
                     onChangeText={props.handleChange('email')}
                     onBlur={props.handleBlur('email')}
                     value={props.values.email}
-                    autoCapitalize="none"
+                    keyboardType='email-address'
+                    autoCapitalize='none'
+                    placeholder='Email'
                     style={styles.input}
-                    placeholder="Email"
                   />
                 </Row>
                 <Row>
@@ -122,11 +121,11 @@ const SigninScreen = ({ navigation }) => {
                     onChangeText={props.handleChange('password')}
                     onBlur={props.handleBlur('password')}
                     value={props.values.password}
-                    autoCapitalize="none"
+                    autoCapitalize='none'
                     style={styles.input}
-                    keyboardType="default"
+                    keyboardType='default'
                     secureTextEntry={true}
-                    placeholder="Password"
+                    placeholder='Password'
                   />
                 </Row>
                 <Row>

@@ -36,47 +36,54 @@ const MyEventScreen = ({ navigation }) => {
 
   return (
     <Container style={{ backgroundColor: ColorConstants.DWhite, flex: 1 }}>
-      <Header hasTabs style={{ height: 0 }} androidStatusBarColor="#ffffff00" />
-      <Tabs activeTextStyle={{ color: ColorConstants.secondary }}>
+      <Header hasTabs style={{ height: 0 }} androidStatusBarColor='#ffffff00' />
+      <Tabs
+        activeTextStyle={{ color: ColorConstants.secondary }}
+        tabBarUnderlineStyle={{ backgroundColor: ColorConstants.White }}
+      >
         <Tab
-          heading="Upcomming"
+          heading='Upcomming'
           tabStyle={{ backgroundColor: ColorConstants.primary }}
           activeTabStyle={{ backgroundColor: ColorConstants.primary }}
+          textStyle={{ color: ColorConstants.White }}
+          activeTextStyle={{ color: ColorConstants.White }}
         >
           <View style={{ flex: 1 }}>
             <MyEventList
               data={myEvents.filter(
                 (item) => !moment(item.date).isBefore(moment(), 'day')
               )}
-              listHeader="Hosted Events"
+              listHeader='Hosted Events'
             />
 
             <MyEventList
               data={joinedEvents.filter(
                 (item) => !moment(item.date).isBefore(moment(), 'day')
               )}
-              listHeader="Joined Events"
+              listHeader='Joined Events'
             />
           </View>
         </Tab>
         <Tab
-          heading="Past"
+          heading='Past'
           tabStyle={{ backgroundColor: ColorConstants.primary }}
           activeTabStyle={{ backgroundColor: ColorConstants.primary }}
+          textStyle={{ color: ColorConstants.White }}
+          activeTextStyle={{ color: ColorConstants.White }}
         >
           <View style={{ flex: 1 }}>
             <MyEventList
               data={myEvents.filter((item) =>
                 moment(item.date).isBefore(moment(), 'day')
               )}
-              listHeader="Hosted Events"
+              listHeader='Hosted Events'
             />
 
             <MyEventList
               data={joinedEvents.filter((item) =>
                 moment(item.date).isBefore(moment(), 'day')
               )}
-              listHeader="Joined Events"
+              listHeader='Joined Events'
             />
           </View>
         </Tab>
