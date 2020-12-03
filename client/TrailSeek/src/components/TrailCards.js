@@ -24,6 +24,10 @@ import Constants from '../util/Constants'
 const TrailCards = ({ trails, filter }) => {
   const navigation = useNavigation()
 
+  const navigateTo = (id, name, index) => {
+    navigation.navigate('ViewTrail', { id, name, index })
+  }
+
   let content = trails ? (
     <View style={{ flex: 1 }}>
       <FlatList
@@ -64,13 +68,7 @@ const TrailCards = ({ trails, filter }) => {
         renderItem={({ item }) => {
           return (
             <TouchableOpacity
-              onPress={() => {
-                navigation.navigate('ViewTrail', {
-                  id: item._id,
-                  name: item.name,
-                  showEvents: false,
-                })
-              }}
+              onPress={() => navigateTo(item._id, item.name, 0)}
             >
               <Card>
                 <CardItem cardBody>
@@ -78,8 +76,8 @@ const TrailCards = ({ trails, filter }) => {
                     source={{ uri: item.img_url }}
                     style={styles.imageStyle}
                     PlaceholderContent={<ActivityIndicator />}
-                    resizeMethod="auto"
-                    resizeMode="cover"
+                    resizeMethod='auto'
+                    resizeMode='cover'
                   />
                 </CardItem>
                 <CardItem>
@@ -88,7 +86,7 @@ const TrailCards = ({ trails, filter }) => {
                       <Text style={styles.nameStyle}>{item.name}</Text>
                     </Row>
                     <Row>
-                      <Entypo name="location-pin" size={16} color="gray" />
+                      <Entypo name='location-pin' size={16} color='gray' />
                       <Text style={{ fontSize: 14 }}>{item.location}</Text>
                     </Row>
                   </Grid>
@@ -129,9 +127,12 @@ const TrailCards = ({ trails, filter }) => {
                   </Left>
 
                   <Right>
-                    <Button transparent>
+                    <Button
+                      transparent
+                      onPress={() => navigateTo(item._id, item.name, 1)}
+                    >
                       <FontAwesome5
-                        name="comments"
+                        name='comments'
                         size={18}
                         color={ColorConstants.darkGray}
                       />
@@ -154,16 +155,10 @@ const TrailCards = ({ trails, filter }) => {
                   <Right>
                     <Button
                       transparent
-                      onPress={() => {
-                        navigation.navigate('ViewTrail', {
-                          id: item._id,
-                          name: item.name,
-                          showEvents: true,
-                        })
-                      }}
+                      onPress={() => navigateTo(item._id, item.name, 2)}
                     >
                       <FontAwesome5
-                        name="hiking"
+                        name='hiking'
                         size={18}
                         color={ColorConstants.primary}
                       />

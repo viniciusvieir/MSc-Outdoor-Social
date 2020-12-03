@@ -135,8 +135,8 @@ const ViewEventScreen = ({ route, navigation }) => {
                   latitudeDelta: 0.0422,
                   longitudeDelta: 0.0121,
                 }}
-                provider="google"
-                mapType="terrain"
+                provider='google'
+                mapType='terrain'
                 loadingEnabled
                 zoomEnabled={false}
                 zoomTapEnabled={false}
@@ -147,7 +147,7 @@ const ViewEventScreen = ({ route, navigation }) => {
               >
                 <Polyline
                   coordinates={trailData.path}
-                  strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
+                  strokeColor='#000' // fallback for when `strokeColors` is not supported by the map-provider
                   strokeWidth={3}
                 />
                 <Marker
@@ -206,13 +206,13 @@ const ViewEventScreen = ({ route, navigation }) => {
                 </Col>
               </Row>
               <Row>
-                <Entypo name="location-pin" size={16} color="gray" />
+                <Entypo name='location-pin' size={16} color='gray' />
                 <Text style={{ fontSize: 14 }}>{trailData.location}</Text>
               </Row>
               <Row style={{ marginTop: 10 }}>
                 <Col>
                   <Row>
-                    <FontAwesome5 name="calendar-alt" size={24} color="black" />
+                    <FontAwesome5 name='calendar-alt' size={24} color='black' />
                     <Text style={styles.textInfo}>
                       {moment(eventData.date).format('DD/MM/YYYY')}
                     </Text>
@@ -221,7 +221,7 @@ const ViewEventScreen = ({ route, navigation }) => {
 
                 <Col>
                   <Row>
-                    <FontAwesome5 name="male" size={24} color="black" />
+                    <FontAwesome5 name='male' size={24} color='black' />
                     <Text style={styles.textInfo}>
                       {eventData.max_participants}
                     </Text>
@@ -244,7 +244,7 @@ const ViewEventScreen = ({ route, navigation }) => {
                 <Col size={1}>
                   <Row>
                     <FontAwesome5
-                      name="hiking"
+                      name='hiking'
                       size={20}
                       color={ColorConstants.Black2}
                     />
@@ -256,7 +256,7 @@ const ViewEventScreen = ({ route, navigation }) => {
                 <Col size={1}>
                   <Row>
                     <FontAwesome5
-                      name="mountain"
+                      name='mountain'
                       size={16}
                       color={ColorConstants.Black2}
                     />
@@ -266,7 +266,7 @@ const ViewEventScreen = ({ route, navigation }) => {
                 <Col size={1}>
                   <Row>
                     <FontAwesome5
-                      name="route"
+                      name='route'
                       size={20}
                       color={ColorConstants.Black2}
                     />
@@ -278,7 +278,7 @@ const ViewEventScreen = ({ route, navigation }) => {
                 <Col size={1}>
                   <Row>
                     <FontAwesome5
-                      name="clock"
+                      name='clock'
                       size={20}
                       color={ColorConstants.Black2}
                     />
@@ -309,43 +309,43 @@ const ViewEventScreen = ({ route, navigation }) => {
             </Grid>
             {/* <Text>{JSON.stringify(eventWeather)}</Text> */}
 
-            <View
-              style={{
-                // backgroundColor: ColorConstants.Black + 40,
-                // alignItems: "center",
-                // justifyContent: "center",
-                height: 50,
-              }}
-            >
+            <View>
               <Text
                 style={{
                   color: ColorConstants.Black,
-                  fontSize: 22,
-                  marginLeft: 20,
+                  fontSize: 16,
+                  marginHorizontal: Constants.POINTS.marginHorizontal,
                 }}
               >
-                Other Participants :
+                Participants ({eventData.participants.length})
               </Text>
             </View>
             <FlatList
+              horizontal
               data={eventData.participants}
               keyExtractor={(item) => {
                 return item.userId.toString()
               }}
-              style={{
-                marginVertical: 10,
+              style={{ marginTop: 12 }}
+              contentContainerStyle={{
+                paddingHorizontal: Constants.POINTS.marginHorizontal,
               }}
               ListEmptyComponent={
-                <Text style={{ marginLeft: 20 }}>No participants</Text>
+                <Text
+                  style={{
+                    paddingHorizontal: Constants.POINTS.marginHorizontal,
+                  }}
+                >
+                  No participants
+                </Text>
               }
-              horizontal
               renderItem={({ item }) => {
                 return (
-                  <View style={{ marginLeft: 10, alignItems: 'center' }}>
+                  <View style={{ alignItems: 'center' }}>
                     <Thumbnail
                       style={{
                         borderColor: ColorConstants.DGreen,
-                        borderWidth: 3,
+                        borderWidth: 1,
                         height: 40,
                         width: 40,
                       }}
@@ -379,8 +379,9 @@ const ViewEventScreen = ({ route, navigation }) => {
             {joinFlag ? (
               <View style={styles.joinShareButtonView}>
                 <Button
+                  rounded
                   style={{
-                    backgroundColor: ColorConstants.Yellow,
+                    backgroundColor: ColorConstants.primary,
                   }}
                   onPress={async () => {
                     if (isAuth) {
@@ -413,7 +414,7 @@ const ViewEventScreen = ({ route, navigation }) => {
                     }
                   }}
                 >
-                  <Text style={{ color: ColorConstants.Black }}>Join</Text>
+                  <Text uppercase={false}>Join Event</Text>
                 </Button>
               </View>
             ) : (
@@ -425,7 +426,7 @@ const ViewEventScreen = ({ route, navigation }) => {
                     }}
                   >
                     {userId !== eventData.userId ? (
-                      <Text style={{ fontSize: 25, marginTop: 5 }}>
+                      <Text style={{ fontSize: 18, marginTop: 5 }}>
                         You are going!
                       </Text>
                     ) : null}
@@ -437,7 +438,7 @@ const ViewEventScreen = ({ route, navigation }) => {
                     }}
                     onPress={() => {}}
                   >
-                    <FontAwesome5 name="share-alt" size={20} color="black" />
+                    <FontAwesome5 name='share-alt' size={20} color='black' />
                     <Text style={{ color: ColorConstants.Black }}>Share</Text>
                   </Button>
                 </View>
