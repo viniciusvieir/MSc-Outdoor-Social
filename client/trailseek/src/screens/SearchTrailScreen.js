@@ -407,7 +407,7 @@ const SearchTrailScreen = ({ navigation }) => {
           <EmptyStateView
             icon="exclamation-triangle"
             title="No Trails"
-            description="Sorry!, Coudnt find any trails matching your description"
+            description="Sorry! Couldn't find any trails matching your query."
           />
         ) : (
           <Spinner color={ColorConstants.primary} animating={spinner} />
