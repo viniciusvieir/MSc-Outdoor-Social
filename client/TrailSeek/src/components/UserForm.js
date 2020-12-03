@@ -64,6 +64,7 @@ const UserForm = ({ onSubmitFunc, userData }) => {
           <Grid>
             <Row>
               <TextInput
+                id='NameTextInput'
                 onChangeText={props.handleChange('name')}
                 onBlur={props.handleBlur('name')}
                 value={props.values.name}
@@ -77,23 +78,6 @@ const UserForm = ({ onSubmitFunc, userData }) => {
                 <Text style={styles.error}>{props.errors.name}</Text>
               ) : null}
             </Row>
-            {/* <Row>
-              <TextInput
-                // onChangeText={props.handleChange('email')}
-                // onBlur={props.handleBlur('email')}
-                keyboardType='number-pad'
-                onChangeText={(v) => {
-                  if (v.match(/^\d{2}$/) !== null) {
-                    this.value = v + '/'
-                  } else if (v.match(/^\d{2}\/\d{2}$/) !== null) {
-                    this.value = v + '/'
-                  }
-                }}
-                value={props.values.dob}
-                style={styles.input}
-                placeholder='Date of Birth'
-              />
-            </Row> */}
 
             <Row>
               <TouchableOpacity

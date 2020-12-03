@@ -6,7 +6,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "eject": "expo eject",
-    "test": "jest"
+    "test": "jest -u"
   },
   "dependencies": {
     "@expo/webpack-config": "^0.12.44",
@@ -57,6 +57,7 @@
     "@babel/core": "^7.12.9",
     "@types/jest": "^26.0.15",
     "babel-jest": "^26.6.3",
+    "faker": "^5.1.0",
     "jest": "^26.6.3",
     "jest-expo": "^39.0.0",
     "jest-fetch-mock": "^3.0.3",
@@ -65,6 +66,24 @@
   },
   "private": true,
   "jest": {
-    "preset": "jest-expo"
+    "preset": "jest-expo",
+    "transformIgnorePatterns": [
+      "node_modules/(?!(jest-)?react-native|react-clone-referenced-element|@react-native-community|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|@sentry/.*|@codler)"
+    ],
+    "testMatch": [
+      "**/__tests__/**/*.test.js?(x)"
+    ],
+    "setupFiles": [
+      "./__tests__/mocks/index.js"
+    ],
+    "coverageDirectory": "__tests__/coverage",
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "**/*.{js,jsx}",
+      "!**/coverage/**",
+      "!**/node_modules/**",
+      "!**/babel.config.js",
+      "!**/jest.setup.js"
+    ]
   }
 }
