@@ -403,7 +403,7 @@ const SearchTrailScreen = ({ navigation }) => {
       >
         {trails.length > 0 ? (
           <TrailCard trails={trails} filter={filter} />
-        ) : trails.length == 0 && trailStatus !== CONSTANTS.LOADING ? (
+        ) : trails.length == 0 && !spinner ? (
           <EmptyStateView
             icon="exclamation-triangle"
             title="No Trails"
