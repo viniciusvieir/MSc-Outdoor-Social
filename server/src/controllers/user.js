@@ -13,7 +13,6 @@ class UserController {
   }
 
   async changeUserInfo(req, res) {
-    // TODO: Set changes to both UserPsql and UserMongo
     // const errors = validationResult(req)
     // if (!errors.isEmpty())
     //   return res.status(400).json({ errors: errors.array() })
@@ -22,6 +21,14 @@ class UserController {
 
     const user = await UserPsql.findByPk(id)
     await user.update(req.body)
+
+    await UserMongo.updateOne(
+      {
+        userId: id,
+      },
+      req.body
+    )
+
     res.json({ success: true })
   }
 }

@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Alert,
+  Platform,
 } from 'react-native'
 import { Text, Button, Container, Content, Toast } from 'native-base'
 import DateTimePicker from '@react-native-community/datetimepicker'
@@ -39,6 +40,7 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
           style={{
             backgroundColor: '#ffffff' + 30,
             flex: 1,
+            marginTop: 20,
           }}
         >
           <Text
@@ -52,7 +54,7 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
           </Text>
           <Text style={{ fontSize: 16 }}>Organized by: {username}</Text>
         </View>
-        <View style={{ margin: 10 }}>
+        <View style={{ marginTop: 20 }}>
           <Formik
             initialValues={
               eventData
@@ -71,8 +73,8 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
               date: Yup.date().required('Required'),
               duration_min: Yup.number(),
               max_participants: Yup.number().lessThan(
-                20,
-                'Please select less than 20 Participants'
+                200,
+                'Please select less than 200 Participants'
               ),
             })}
             onSubmit={async (values, formikActions) => {
@@ -171,9 +173,9 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
                     // placeholder="Event Description"
                     style={styles.multiInput}
                     multiline
-                    numberOfLines={5}
+                    numberOfLines={Platform.OS === 'ios' ? null : 5}
+                    minHeight={Platform.OS === 'ios' ? 20 * 5 : null}
                     placeholderTextColor={ColorConstants.Black}
-
                     // ref={(el) => (this.emailInput = el)}
                   />
                 </Row>
@@ -241,16 +243,6 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
                 >
                   <Text>Submit</Text>
                 </Button>
-                {/* <Button
-                  rounded
-                  danger
-                  block
-                  style={{ marginTop: 16 }}
-                  onPress={props.handleReset}
-                  disabled={props.isSubmitting}
-                >
-                  <Text>Reset</Text>
-                </Button> */}
                 {eventData ? (
                   <Button
                     rounded
