@@ -297,6 +297,9 @@ export const userSlice = createSlice({
     },
     [signUp.fulfilled]: (state, action) => {
       state.profile.status = CONSTANTS.SUCCESS
+      state.isAuth = true
+      state.profile.name = action.payload.name
+      state.profile.token = action.payload.token
     },
     [signUp.rejected]: (state, action) => {
       state.profile.status = CONSTANTS.FAILED

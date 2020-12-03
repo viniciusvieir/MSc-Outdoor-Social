@@ -1,8 +1,8 @@
-import React from "react";
-import { StyleSheet, Linking, Platform, Dimensions, View } from "react-native";
-import { Text, Button } from "native-base";
-import MapView, { Polyline, Marker } from "react-native-maps";
-import ColorConstants from "../util/ColorConstants";
+import React from 'react'
+import { StyleSheet, Linking, Platform, Dimensions, View } from 'react-native'
+import { Text, Button } from 'native-base'
+import MapView, { Polyline, Marker } from 'react-native-maps'
+import ColorConstants from '../util/ColorConstants'
 
 const MapsTab = ({ trailData }) => {
   return (
@@ -24,7 +24,7 @@ const MapsTab = ({ trailData }) => {
             latitude: trailData.start.coordinates[0],
             longitude: trailData.start.coordinates[1],
           }}
-          title={"You Start Here"}
+          title={'You Start Here'}
           // description={marker.description}
         />
         <Polyline
@@ -36,17 +36,17 @@ const MapsTab = ({ trailData }) => {
       <Button
         onPress={() => {
           const scheme = Platform.select({
-            ios: "maps:0,0?q=",
-            android: "geo:0,0?q=",
-          });
-          const latLng = `${trailData.start.coordinates[0]},${trailData.start.coordinates[1]}`;
-          const label = `${trailData.name}`;
+            ios: 'maps:0,0?q=',
+            android: 'geo:0,0?q=',
+          })
+          const latLng = `${trailData.start.coordinates[0]},${trailData.start.coordinates[1]}`
+          const label = `${trailData.name}`
           const url = Platform.select({
             ios: `${scheme}${label}@${latLng}`,
             android: `${scheme}${latLng}(${label})`,
-          });
+          })
 
-          Linking.openURL(url);
+          Linking.openURL(url)
         }}
         block
         style={{ margin: 5, backgroundColor: ColorConstants.Yellow }}
@@ -54,15 +54,15 @@ const MapsTab = ({ trailData }) => {
         <Text style={{ color: ColorConstants.Black }}>Navigate</Text>
       </Button>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   mapStyle: {
     // margin: 10,
-    width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height - 445,
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height - 370,
   },
-});
+})
 
-export default MapsTab;
+export default MapsTab
