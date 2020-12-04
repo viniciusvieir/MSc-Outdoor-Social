@@ -93,44 +93,64 @@ io.of('comments').on('connection', async (socket) => {
     }
   })
 
-  socket.on('disconnect', () => console.log('Socket disconnected'))
+  socket.on('disconnect', () => console.log('Comments socket disconnected'))
 })
 
 // Chat Namespace
-io.of('chat').on('connection', async (socket) => {
-  console.log('New chat socket connected', socket.id)
-  const { eventId } = socket.handshake.headers || socket.handshake.query
-  console.log(eventId)
+io.of('events').on('connection', async (socket) => {
+  const { eventId } = socket.handshake.query
 
-  const room = `event-chat-${eventId}`
+  if (!eventId) {
+    console.log('socket disconnected for not giving sending information')
+    socket.disconnect()
+    return
+  }
+
+  console.log('New events socket connected', socket.id, 'for event', eventId)
+
+  const event = await Event.findById(eventId).select('chat')
+  const room = `events-${event._id}`
   socket.join(room)
 
-  // get the latest chat
-  const event = await Event.findOne({ _id: eventId }).select('chat')
-  socket.emit('chat:all-messages', event.chat)
+  socket.emit('events:all-chat', event.chat)
 
-  socket.on('chat:send', async (payload) => {
-    const user = await User.findOne({ _id: payload.userId })
+  socket.on('events:user-typing', async (data) => {
+    socket.in(room).emit('events:someone-typing')
+  })
 
-    const chatMessage = {
-      userId: payload.userId,
-      name: user.name,
-      profileImage: user.profileImage,
-      content: payload.content,
-      createdAt: new Date(),
-    }
+  socket.on('events:send-new', async (data) => {
+    const { token, eventId, content } = data
+    const userInfo = await getDecodedToken(token)
 
-    await Event.updateOne(
-      { _id: payload.eventId },
-      {
-        $push: {
-          chat: chatMessage,
-        },
-      }
+    if (!userInfo) return
+
+    const user = await User.findOne({ userId: userInfo.id }).select(
+      'name profileImage'
     )
 
-    io.of('/chat').in(room).emit('chat:new-message', chatMessage)
+    if (user) {
+      const message = {
+        content,
+        userId: userInfo.id,
+        date: new Date(),
+        name: user.name,
+        profileImage: user.profileImage,
+      }
+
+      await Event.updateOne(
+        { _id: eventId },
+        {
+          $push: {
+            chat: message,
+          },
+        }
+      )
+
+      io.of('/events').in(room).emit('events:receive-new', message)
+    }
   })
+
+  socket.on('disconnect', () => console.log('Events socket disconnected'))
 })
 
 // Location Namespace
