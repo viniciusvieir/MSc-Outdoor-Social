@@ -5,7 +5,7 @@ import { unwrapResult } from '@reduxjs/toolkit'
 import { Container, Content, Toast } from 'native-base'
 
 import ToastAlert from '../components/ToastAlert'
-import { signUp } from '../app/userSlice'
+import { signUp, fetchUserData } from '../app/userSlice'
 import UserForm from '../components/UserForm'
 import { trailSeekAuth } from '../api/trailSeek'
 
@@ -22,6 +22,8 @@ const SignupScreen = ({ navigation }) => {
         try {
           const res = await dispatch(signUp(response.data))
           const user = unwrapResult(res)
+          const results = await dispatch(fetchUserData())
+          const reS = unwrapResult(results)
         } catch (error) {
           console.log(error)
         }
@@ -30,7 +32,7 @@ const SignupScreen = ({ navigation }) => {
           text: 'Account Created',
           buttonText: 'Ok',
         })
-        navigation.navigate('Signin')
+        navigation.navigate('MainTab')
       })
       .catch((error) => {
         console.log(error.response)

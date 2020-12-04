@@ -22,6 +22,7 @@ import ColorConstants from '../util/ColorConstants'
 import { fetchTrailsByQuery } from '../app/trailSlice'
 import { getLocation } from '../app/userSlice'
 import Constants from '../util/Constants'
+import EmptyStateView from '../components/EmptyStateView'
 
 const SearchTrailScreen = ({ navigation }) => {
   const dispatch = useDispatch()
@@ -402,8 +403,14 @@ const SearchTrailScreen = ({ navigation }) => {
       >
         {trails.length > 0 ? (
           <TrailCard trails={trails} filter={filter} />
+        ) : trails.length == 0 && !spinner ? (
+          <EmptyStateView
+            icon="exclamation-triangle"
+            title="No Trails"
+            description="Sorry! Couldn't find any trails matching your query."
+          />
         ) : (
-          <Spinner color={ColorConstants.primary} />
+          <Spinner color={ColorConstants.primary} animating={spinner} />
         )}
       </View>
     </Container>
