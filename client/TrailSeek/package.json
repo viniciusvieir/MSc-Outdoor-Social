@@ -19,6 +19,7 @@
     "@react-navigation/native": "^5.7.6",
     "@react-navigation/stack": "^5.9.3",
     "@reduxjs/toolkit": "^1.4.0",
+    "appium-uiautomator2-driver": "^1.60.0",
     "axios": "^0.20.0",
     "bufferutil": "^4.0.1",
     "expo": "^39.0.3",

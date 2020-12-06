@@ -155,7 +155,6 @@ const SearchTrailScreen = ({ navigation, route }) => {
         queryParams
       )}`
     )
-    console.log(prevQueryParams.eventID === queryParams.eventID)
     // console.log(queryParams)
     // if (!prevQueryParams.eventID === queryParams.eventID) {
     navigation.push(path, queryParams)

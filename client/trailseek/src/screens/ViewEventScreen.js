@@ -24,7 +24,6 @@ import { Grid, Col, Row } from 'react-native-easy-grid'
 import { useDispatch, useSelector } from 'react-redux'
 import { unwrapResult } from '@reduxjs/toolkit'
 import * as ExpoLinking from 'expo-linking'
-
 import { FontAwesome5 } from '@expo/vector-icons'
 import { Entypo } from '@expo/vector-icons'
 
