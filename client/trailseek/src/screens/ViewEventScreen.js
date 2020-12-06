@@ -5,7 +5,6 @@ import {
   Dimensions,
   Platform,
   Linking,
-  // ScrollView,
   FlatList,
   Share,
 } from 'react-native'
@@ -34,7 +33,6 @@ import {
   fetchSingleEvent,
 } from '../app/eventSlice'
 import { fetchTrailsByID } from '../app/trailSlice'
-// import { addJoinedEvent } from '../app/userSlice'
 import Constants from '../util/Constants'
 import ToastAlert from '../components/ToastAlert'
 
@@ -44,11 +42,11 @@ const ViewEventScreen = ({ route, navigation }) => {
   const isAuth = useSelector((state) => state.user.isAuth)
   // const name = useSelector((state) => state.user.profile.name)
   const [joinFlag, setJoinFlag] = useState(false)
-  const [fullFlag, setFullFlag] = useState(false)
+  const [bottomMessage, setBottomMessage] = useState('')
   const { eventID } = route.params || {}
   const [eventData, setEventData] = useState({})
   const [trailData, setTrailData] = useState({})
-  // console.log(trailData)
+
   const getSingleEvent = async () => {
     try {
       const response = await dispatch(fetchSingleEvent(eventID))
@@ -69,9 +67,8 @@ const ViewEventScreen = ({ route, navigation }) => {
         updateCurrentEvent({ eventData: uResult, trailName: trailData.name })
       )
 
-      // console.log(eventData);
       if (userId !== uResult.userId) {
-        if (uResult.participants.length < uResult.max_participants) {
+        if (uResult.participants.length + 1 < uResult.max_participants) {
           if (
             uResult.participants.findIndex((item) => {
               return item.userId === userId
@@ -79,8 +76,10 @@ const ViewEventScreen = ({ route, navigation }) => {
           ) {
             setJoinFlag(true)
           } else {
-            setFullFlag(true)
+            setBottomMessage('You are Going!')
           }
+        } else {
+          setBottomMessage('Sorry! the event is full.')
         }
       }
     } catch (e) {
@@ -385,7 +384,6 @@ const ViewEventScreen = ({ route, navigation }) => {
             {joinFlag ? (
               <View style={styles.joinShareButtonView}>
                 <Button
-                  disabled={!fullFlag}
                   rounded
                   style={{
                     backgroundColor: ColorConstants.primary,
@@ -432,14 +430,9 @@ const ViewEventScreen = ({ route, navigation }) => {
                       marginRight: 50,
                     }}
                   >
-                    {userId !== eventData.userId ? (
+                    {bottomMessage !== '' ? (
                       <Text style={{ fontSize: 18, marginTop: 5 }}>
-                        You are going!
-                      </Text>
-                    ) : null}
-                    {fullFlag ? (
-                      <Text style={{ fontSize: 18, marginTop: 5 }}>
-                        Sorry, the Event is full!
+                        {bottomMessage}
                       </Text>
                     ) : null}
                   </View>
