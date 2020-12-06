@@ -26,7 +26,6 @@ import Constants from '../util/Constants'
 import EmptyStateView from '../components/EmptyStateView'
 
 const SearchTrailScreen = ({ navigation, route }) => {
-  let prevQueryParams = {}
   const dispatch = useDispatch()
   const trailStatus = useSelector((state) => state.trails.status)
   const error = useSelector((state) => state.trails.error)
@@ -110,8 +109,8 @@ const SearchTrailScreen = ({ navigation, route }) => {
   //   },
   // }
 
-  let content,
-    spinner = true
+  // let content,
+  let spinner = true
 
   const getTrailsByQuery = async ({ location = false, query, skip = 0 }) => {
     if (JSON.stringify(query) === '{}') {
@@ -146,6 +145,7 @@ const SearchTrailScreen = ({ navigation, route }) => {
   }
 
   const urlRedirect = (url) => {
+    // console.log(url)
     if (!url) return
     // parse and redirect to new url
     let { path, queryParams } = Linking.parse(url)
@@ -156,9 +156,9 @@ const SearchTrailScreen = ({ navigation, route }) => {
       )}`
     )
     // console.log(queryParams)
-    // if (!prevQueryParams.eventID === queryParams.eventID) {
-    navigation.push(path, queryParams)
-    // }
+    if (path !== null) {
+      navigation.push(path, queryParams)
+    }
     // prevQueryParams = queryParams
   }
 

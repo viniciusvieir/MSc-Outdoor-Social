@@ -44,6 +44,7 @@ const ViewEventScreen = ({ route, navigation }) => {
   const isAuth = useSelector((state) => state.user.isAuth)
   // const name = useSelector((state) => state.user.profile.name)
   const [joinFlag, setJoinFlag] = useState(false)
+  const [fullFlag, setFullFlag] = useState(false)
   const { eventID } = route.params || {}
   const [eventData, setEventData] = useState({})
   const [trailData, setTrailData] = useState({})
@@ -77,6 +78,8 @@ const ViewEventScreen = ({ route, navigation }) => {
             }) === -1
           ) {
             setJoinFlag(true)
+          } else {
+            setFullFlag(true)
           }
         }
       }
@@ -219,6 +222,23 @@ const ViewEventScreen = ({ route, navigation }) => {
                     </Text>
                   </Row>
                 </Col>
+                <Col size={1}>
+                  <Row>
+                    <FontAwesome5
+                      name="clock"
+                      size={20}
+                      color={ColorConstants.Black2}
+                    />
+                    <Text style={styles.textInfo}>
+                      {moment(eventData.date).format('hh:mm A')}
+                      {/* {moment
+                        .utc()
+                        .startOf('day')
+                        .add({ minutes: trailData.estimate_time_min })
+                        .format('H[h]mm')} */}
+                    </Text>
+                  </Row>
+                </Col>
 
                 <Col>
                   <Row>
@@ -228,6 +248,7 @@ const ViewEventScreen = ({ route, navigation }) => {
                     </Text>
                   </Row>
                 </Col>
+
                 {/* <Col>
                   <Text style={styles.textInfoLabel}>Duration</Text>
                   <Text style={styles.textInfo}>
@@ -273,22 +294,6 @@ const ViewEventScreen = ({ route, navigation }) => {
                     />
                     <Text style={styles.textInfo}>
                       {trailData.length_km} km
-                    </Text>
-                  </Row>
-                </Col>
-                <Col size={1}>
-                  <Row>
-                    <FontAwesome5
-                      name="clock"
-                      size={20}
-                      color={ColorConstants.Black2}
-                    />
-                    <Text style={styles.textInfo}>
-                      {moment
-                        .utc()
-                        .startOf('day')
-                        .add({ minutes: trailData.estimate_time_min })
-                        .format('H[h]mm')}
                     </Text>
                   </Row>
                 </Col>
@@ -380,6 +385,7 @@ const ViewEventScreen = ({ route, navigation }) => {
             {joinFlag ? (
               <View style={styles.joinShareButtonView}>
                 <Button
+                  disabled={!fullFlag}
                   rounded
                   style={{
                     backgroundColor: ColorConstants.primary,
@@ -429,6 +435,11 @@ const ViewEventScreen = ({ route, navigation }) => {
                     {userId !== eventData.userId ? (
                       <Text style={{ fontSize: 18, marginTop: 5 }}>
                         You are going!
+                      </Text>
+                    ) : null}
+                    {fullFlag ? (
+                      <Text style={{ fontSize: 18, marginTop: 5 }}>
+                        Sorry, the Event is full!
                       </Text>
                     ) : null}
                   </View>

@@ -26,6 +26,7 @@ import Constants from '../util/Constants'
 const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
   const username = useSelector((state) => state.user.profile.name)
   const [show, setShow] = useState(false)
+  const [showTime, setShowTime] = useState(false)
   const dispatch = useDispatch()
   const navigation = useNavigation()
   return (
@@ -62,7 +63,7 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
                 : {
                     title: '',
                     description: '',
-                    date: moment().format('YYYY-MM-DD'),
+                    date: moment(),
                     duration_min: 0,
                     max_participants: 0,
                   }
@@ -75,6 +76,10 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
               max_participants: Yup.number().lessThan(
                 200,
                 'Please select less than 200 Participants'
+              ),
+              max_participants: Yup.number().moreThan(
+                1,
+                'Cant create event for a single person!'
               ),
             })}
             onSubmit={async (values, formikActions) => {
@@ -111,6 +116,7 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
                 <Row>
                   <Text style={{ color: ColorConstants.Black }}>Date: </Text>
                 </Row>
+                {/* DATE////////////////////////////////////////////////////////////////////////////////// */}
                 <Row>
                   <TouchableOpacity
                     onPress={() => {
@@ -130,7 +136,7 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
                       }}
                     >
                       <FontAwesome5
-                        name='calendar-alt'
+                        name="calendar-alt"
                         size={24}
                         color={ColorConstants.darkGray}
                       />
@@ -145,17 +151,71 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
 
                 {show && (
                   <DateTimePicker
-                    display='default'
-                    mode='date'
+                    display="default"
+                    mode="date"
                     onChange={(event, selectedDate) => {
                       setShow(Platform.OS === 'ios')
                       props.setFieldValue(
                         'date',
-                        moment(selectedDate).format('YYYY-MM-DD')
+                        moment(props.values.date).set({
+                          year: moment(selectedDate).year(),
+                          month: moment(selectedDate).month(),
+                          date: moment(selectedDate).date(),
+                        })
                       )
                     }}
                     // onCancel={hideDatePicker}
                     minimumDate={moment().toDate()}
+                    value={moment(props.values.date).toDate()}
+                  />
+                )}
+                {/* TIME////////////////////////////////////////////////////////////////////////////////// */}
+                <Row>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setShowTime(true)
+                    }}
+                    style={[styles.input, { flexDirection: 'row' }]}
+                  >
+                    <Col style={{ justifyContent: 'center' }}>
+                      <Text>{moment(props.values.date).format('hh:mm A')}</Text>
+                    </Col>
+                    <Col
+                      style={{
+                        justifyContent: 'center',
+                        alignItems: 'flex-end',
+                      }}
+                    >
+                      <FontAwesome5
+                        name="clock"
+                        size={24}
+                        color={ColorConstants.darkGray}
+                      />
+                    </Col>
+                  </TouchableOpacity>
+                </Row>
+                <Row>
+                  {props.touched.date && props.errors.date ? (
+                    <Text style={styles.error}>{props.errors.date}</Text>
+                  ) : null}
+                </Row>
+
+                {showTime && (
+                  <DateTimePicker
+                    display="default"
+                    mode="time"
+                    onChange={(event, selectedDate) => {
+                      setShowTime(Platform.OS === 'ios')
+                      props.setFieldValue(
+                        'date',
+                        moment(props.values.date).set({
+                          hour: moment(selectedDate).hour(),
+                          minute: moment(selectedDate).minute(),
+                        })
+                      )
+                    }}
+                    // onCancel={hideDatePicker}
+                    // minimumDate={moment().toDate()}
                     value={moment(props.values.date).toDate()}
                   />
                 )}
@@ -196,7 +256,7 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
                     value={props.values.duration_min.toString()}
                     style={styles.input}
                     onSubmitEditing={() => {}}
-                    keyboardType='number-pad'
+                    keyboardType="number-pad"
                     placeholderTextColor={ColorConstants.Black}
                   />
                 </Row>
@@ -219,7 +279,7 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
                     value={props.values.max_participants.toString()}
                     style={styles.input}
                     onSubmitEditing={() => {}}
-                    keyboardType='number-pad'
+                    keyboardType="number-pad"
                     placeholderTextColor={ColorConstants.Black}
                   />
                 </Row>
