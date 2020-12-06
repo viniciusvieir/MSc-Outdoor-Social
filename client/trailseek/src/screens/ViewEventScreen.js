@@ -5,8 +5,9 @@ import {
   Dimensions,
   Platform,
   Linking,
-  ScrollView,
+  // ScrollView,
   FlatList,
+  Share,
 } from 'react-native'
 import moment from 'moment'
 import MapView, { Marker, Polyline } from 'react-native-maps'
@@ -22,6 +23,7 @@ import {
 import { Grid, Col, Row } from 'react-native-easy-grid'
 import { useDispatch, useSelector } from 'react-redux'
 import { unwrapResult } from '@reduxjs/toolkit'
+import * as ExpoLinking from 'expo-linking'
 
 import { FontAwesome5 } from '@expo/vector-icons'
 import { Entypo } from '@expo/vector-icons'
@@ -135,8 +137,8 @@ const ViewEventScreen = ({ route, navigation }) => {
                   latitudeDelta: 0.0422,
                   longitudeDelta: 0.0121,
                 }}
-                provider='google'
-                mapType='terrain'
+                provider="google"
+                mapType="terrain"
                 loadingEnabled
                 zoomEnabled={false}
                 zoomTapEnabled={false}
@@ -147,7 +149,7 @@ const ViewEventScreen = ({ route, navigation }) => {
               >
                 <Polyline
                   coordinates={trailData.path}
-                  strokeColor='#000' // fallback for when `strokeColors` is not supported by the map-provider
+                  strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
                   strokeWidth={3}
                 />
                 <Marker
@@ -206,13 +208,13 @@ const ViewEventScreen = ({ route, navigation }) => {
                 </Col>
               </Row>
               <Row>
-                <Entypo name='location-pin' size={16} color='gray' />
+                <Entypo name="location-pin" size={16} color="gray" />
                 <Text style={{ fontSize: 14 }}>{trailData.location}</Text>
               </Row>
               <Row style={{ marginTop: 10 }}>
                 <Col>
                   <Row>
-                    <FontAwesome5 name='calendar-alt' size={24} color='black' />
+                    <FontAwesome5 name="calendar-alt" size={24} color="black" />
                     <Text style={styles.textInfo}>
                       {moment(eventData.date).format('DD/MM/YYYY')}
                     </Text>
@@ -221,7 +223,7 @@ const ViewEventScreen = ({ route, navigation }) => {
 
                 <Col>
                   <Row>
-                    <FontAwesome5 name='male' size={24} color='black' />
+                    <FontAwesome5 name="male" size={24} color="black" />
                     <Text style={styles.textInfo}>
                       {eventData.max_participants}
                     </Text>
@@ -244,7 +246,7 @@ const ViewEventScreen = ({ route, navigation }) => {
                 <Col size={1}>
                   <Row>
                     <FontAwesome5
-                      name='hiking'
+                      name="hiking"
                       size={20}
                       color={ColorConstants.Black2}
                     />
@@ -256,7 +258,7 @@ const ViewEventScreen = ({ route, navigation }) => {
                 <Col size={1}>
                   <Row>
                     <FontAwesome5
-                      name='mountain'
+                      name="mountain"
                       size={16}
                       color={ColorConstants.Black2}
                     />
@@ -266,7 +268,7 @@ const ViewEventScreen = ({ route, navigation }) => {
                 <Col size={1}>
                   <Row>
                     <FontAwesome5
-                      name='route'
+                      name="route"
                       size={20}
                       color={ColorConstants.Black2}
                     />
@@ -278,7 +280,7 @@ const ViewEventScreen = ({ route, navigation }) => {
                 <Col size={1}>
                   <Row>
                     <FontAwesome5
-                      name='clock'
+                      name="clock"
                       size={20}
                       color={ColorConstants.Black2}
                     />
@@ -436,9 +438,35 @@ const ViewEventScreen = ({ route, navigation }) => {
                       backgroundColor: ColorConstants.Yellow,
                       paddingStart: 10,
                     }}
-                    onPress={() => {}}
+                    onPress={async () => {
+                      try {
+                        const result = await Share.share({
+                          title: 'Share Event',
+                          message: `Click on this link to view the event : ${ExpoLinking.makeUrl(
+                            '/ViewEvent',
+                            {
+                              eventID: eventData._id,
+                            }
+                          ).substring(6)}`,
+                          url: `${ExpoLinking.makeUrl('/ViewEvent', {
+                            eventID: eventData._id,
+                          }).substring(6)}`,
+                        })
+                        if (result.action === Share.sharedAction) {
+                          if (result.activityType) {
+                            // shared with activity type of result.activityType
+                          } else {
+                            // shared
+                          }
+                        } else if (result.action === Share.dismissedAction) {
+                          // dismissed
+                        }
+                      } catch (error) {
+                        alert(error.message)
+                      }
+                    }}
                   >
-                    <FontAwesome5 name='share-alt' size={20} color='black' />
+                    <FontAwesome5 name="share-alt" size={20} color="black" />
                     <Text style={{ color: ColorConstants.Black }}>Share</Text>
                   </Button>
                 </View>

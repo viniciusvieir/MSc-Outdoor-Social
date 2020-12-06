@@ -11,9 +11,10 @@ import {
   Body,
   Spinner,
   Button,
-  Icon,
-  Segment,
+  // Icon,
+  // Segment,
 } from 'native-base'
+import * as Linking from 'expo-linking'
 
 import ToastAlert from '../components/ToastAlert'
 import TrailCard from '../components/TrailCards'
@@ -24,9 +25,9 @@ import { getLocation } from '../app/userSlice'
 import Constants from '../util/Constants'
 import EmptyStateView from '../components/EmptyStateView'
 
-const SearchTrailScreen = ({ navigation }) => {
+const SearchTrailScreen = ({ navigation, route }) => {
+  let prevQueryParams = {}
   const dispatch = useDispatch()
-
   const trailStatus = useSelector((state) => state.trails.status)
   const error = useSelector((state) => state.trails.error)
   const user = useSelector((state) => state.user.profile.name)
@@ -143,6 +144,37 @@ const SearchTrailScreen = ({ navigation }) => {
       ToastAlert(error)
     }
   }
+
+  const urlRedirect = (url) => {
+    if (!url) return
+    // parse and redirect to new url
+    let { path, queryParams } = Linking.parse(url)
+
+    console.log(
+      `Linked to app with path: ${path} and data: ${JSON.stringify(
+        queryParams
+      )}`
+    )
+    console.log(prevQueryParams.eventID === queryParams.eventID)
+    // console.log(queryParams)
+    // if (!prevQueryParams.eventID === queryParams.eventID) {
+    navigation.push(path, queryParams)
+    // }
+    // prevQueryParams = queryParams
+  }
+
+  useEffect(() => {
+    Linking.getInitialURL().then(urlRedirect)
+    Linking.addEventListener('url', ({ url }) => {
+      urlRedirect(url)
+    })
+    const unsubscribe = () => {
+      Linking.removeEventListener('url', ({ url }) => {
+        urlRedirect(url)
+      })
+    }
+    return unsubscribe
+  }, [])
 
   //Initial Trail Fetch
   useEffect(() => {

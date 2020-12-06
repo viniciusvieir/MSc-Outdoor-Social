@@ -49,11 +49,11 @@ const CovidWidget = ({ data }) => {
             )
           </Text>
         </Button>
-
+        <Text style={{ alignSelf: 'center' }}>Click here for more info.</Text>
         <Modal
           visible={false}
-          animationType='fade'
-          presentationStyle='overFullScreen'
+          animationType="fade"
+          presentationStyle="overFullScreen"
           transparent
           // style={{ borderBottomColor: "red", borderWidth: 5 }}
           visible={modalVisible}
