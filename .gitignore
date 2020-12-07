@@ -21,3 +21,7 @@ client/trailseek/yarn.lock
 
 #ignore local cache files
 __pycache__
+client/TrailSeek/Appium/package.json
+client/TrailSeek/Appium/Exponent-2.17.4.apk
+client/TrailSeek/Appium/index.js
+client/TrailSeek/Appium/package-lock.json

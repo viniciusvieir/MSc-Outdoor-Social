@@ -24,6 +24,7 @@
       "favicon": "./assets/favicon.png"
     },
     "description": "",
-    "githubUrl": "https://github.com/viniciusvieir/MSc-Outdoor-Social"
+    "githubUrl": "https://github.com/viniciusvieir/MSc-Outdoor-Social",
+    "scheme": "trailseek"
   }
 }

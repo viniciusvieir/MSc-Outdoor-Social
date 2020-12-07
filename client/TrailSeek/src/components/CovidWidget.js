@@ -1,13 +1,17 @@
-import React, { useState, useEffect } from 'react'
-import { StyleSheet, Modal, Dimensions } from 'react-native'
+import React, { useRef } from 'react'
+import { StyleSheet, Dimensions } from 'react-native'
 import { View, Text, Button } from 'native-base'
 import moment from 'moment'
+import { Modalize } from 'react-native-modalize'
+import { Portal } from 'react-native-portalize'
+
 import { LineChart } from 'react-native-chart-kit'
 import ColorConstants from '../util/ColorConstants'
 import Constants from '../util/Constants'
 
 const CovidWidget = ({ data }) => {
-  const [modalVisible, setModalVisible] = useState(false)
+  const modelizeRef = useRef(null)
+
   const day = (dt) => {
     const day = moment(dt).format('ddd').toString()
     return day
@@ -34,9 +38,10 @@ const CovidWidget = ({ data }) => {
           style={{
             padding: 0,
           }}
-          onPress={() => {
-            setModalVisible(true)
-          }}
+          onPress={() => modelizeRef.current?.open()}
+          // onPress={() => {
+          //   setModalVisible(true)
+          // }}
         >
           <Text style={{ fontWeight: 'bold', fontSize: 13 }}>
             Covid Cases in the last 10 days in{' '}
@@ -49,81 +54,71 @@ const CovidWidget = ({ data }) => {
             )
           </Text>
         </Button>
-
-        <Modal
-          visible={false}
-          animationType='fade'
-          presentationStyle='overFullScreen'
-          transparent
-          // style={{ borderBottomColor: "red", borderWidth: 5 }}
-          visible={modalVisible}
-        >
-          <View
-            style={{
-              alignItems: 'center',
-              flex: 1,
-              justifyContent: 'center',
-              backgroundColor: ColorConstants.LGreen + '95',
-            }}
-          >
-            <LineChart
-              fromZero={true}
-              data={{
-                labels: data.slice(1).map((item) => {
-                  return moment(item.attributes.TimeStamp)
-                    .format('DD/MM')
-                    .toString()
-                }),
-                datasets: [
-                  {
-                    data: data.slice(1).map((item) => {
-                      return item.attributes.ConfirmedCovidCases - pastCumiCases
-                    }),
-                  },
-                ],
-              }}
-              width={Dimensions.get('window').width - 10} // from react-native
-              height={300}
-              // yAxisLabel="$"
-              // yAxisSuffix="k"
-              yAxisInterval={1} // optional, defaults to 1
-              chartConfig={{
-                backgroundColor: ColorConstants.DGreen,
-                //   backgroundGradientFrom: "#fb8c00",
-                //   backgroundGradientTo: "#ffa726",
-                decimalPlaces: 0, // optional, defaults to 2dp
-                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                // style: {
-                //   // borderRadius: 10,
-                //   // height: 200,
-                // },
-                propsForDots: {
-                  r: '1',
-                  strokeWidth: '1',
-                  stroke: '#ffa726',
-                },
-              }}
-              bezier
+        <Text style={{ alignSelf: 'center' }}>Click here for more info.</Text>
+        <Portal>
+          <Modalize ref={modelizeRef} snapPoint={320}>
+            <View
               style={{
-                marginVertical: 10,
-                borderRadius: 10,
-              }}
-            />
-            <Button
-              style={{
-                backgroundColor: ColorConstants.Yellow,
-                marginEnd: 10,
-                alignSelf: 'flex-end',
-              }}
-              onPress={() => {
-                setModalVisible(!modalVisible)
+                alignItems: 'center',
+                flex: 1,
+                justifyContent: 'center',
+                // backgroundColor: ColorConstants.LGreen + '95',
               }}
             >
-              <Text>Close</Text>
-            </Button>
-          </View>
-        </Modal>
+              <LineChart
+                fromZero={true}
+                data={{
+                  labels: data.slice(1).map((item) => {
+                    return moment(item.attributes.TimeStamp)
+                      .format('DD/MM')
+                      .toString()
+                  }),
+                  datasets: [
+                    {
+                      data: data.slice(1).map((item) => {
+                        return (
+                          item.attributes.ConfirmedCovidCases - pastCumiCases
+                        )
+                      }),
+                    },
+                  ],
+                }}
+                width={Dimensions.get('window').width - 10} // from react-native
+                height={300}
+                // yAxisLabel="$"
+                // yAxisSuffix="k"
+                yAxisInterval={1} // optional, defaults to 1
+                chartConfig={{
+                  backgroundColor: ColorConstants.DGreen,
+                  //   backgroundGradientFrom: "#fb8c00",
+                  //   backgroundGradientTo: "#ffa726",
+                  decimalPlaces: 0, // optional, defaults to 2dp
+                  color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                  labelColor: (opacity = 1) =>
+                    `rgba(255, 255, 255, ${opacity})`,
+                  // style: {
+                  //   // borderRadius: 10,
+                  //   // height: 200,
+                  // },
+                  propsForDots: {
+                    r: '1',
+                    strokeWidth: '1',
+                    stroke: '#ffa726',
+                  },
+                }}
+                bezier
+                style={{
+                  marginVertical: 10,
+                  borderRadius: 10,
+                }}
+              />
+              <Text style={{ alignSelf: 'center', margin: 10 }}>
+                The numbers on the Y-axis are the increased covid cases and the
+                X-axis represents the date.
+              </Text>
+            </View>
+          </Modalize>
+        </Portal>
       </View>
     )
   } else {
