@@ -49,7 +49,7 @@ class EventController {
     if (!errors.isEmpty())
       return res.status(400).json({ errors: errors.array() })
 
-    const { id: userId } = req.context
+    const { id: userId, name } = req.context
     const { trailId } = req.params
     const {
       title,
@@ -68,6 +68,8 @@ class EventController {
     const trail = await Trail.findById(trailId).select('estimate_time_min')
     if (!trail) return res.status(403).json(errorHandler('Trail not found'))
 
+    const user = await UserMongo.findById(userId).select('profileImage')
+
     const event = await Event.create({
       userId,
       trailId,
@@ -76,6 +78,14 @@ class EventController {
       date,
       duration_min: duration_min || trail.estimate_time_min,
       max_participants,
+      participants: [
+        {
+          userId,
+          name,
+          profileImage: user.profileImage,
+          lastLocation: null,
+        },
+      ],
     })
 
     res.json({ eventId: event.id, success: true })

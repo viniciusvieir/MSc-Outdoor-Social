@@ -139,6 +139,7 @@ class TrailController {
       trail.path = trail.path.map((loc) => ({
         latitude: loc.coordinates[0],
         longitude: loc.coordinates[1],
+        elevation: loc.elevation,
       }))
     }
 

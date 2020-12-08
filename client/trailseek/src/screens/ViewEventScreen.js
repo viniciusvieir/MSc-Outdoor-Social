@@ -18,6 +18,10 @@ import {
   Container,
   Content,
   Footer,
+  Switch,
+  Icon,
+  Left,
+  Right,
 } from 'native-base'
 import { Grid, Col, Row } from 'react-native-easy-grid'
 import { useDispatch, useSelector } from 'react-redux'
@@ -35,17 +39,21 @@ import {
 import { fetchTrailsByID } from '../app/trailSlice'
 import Constants from '../util/Constants'
 import ToastAlert from '../components/ToastAlert'
+import { capitalizeFirstLetter } from '../util/string'
 
 const ViewEventScreen = ({ route, navigation }) => {
+  const { eventID } = route.params || {}
   const dispatch = useDispatch()
+
   const userId = useSelector((state) => state.user.profile.id)
   const isAuth = useSelector((state) => state.user.isAuth)
   // const name = useSelector((state) => state.user.profile.name)
+
   const [joinFlag, setJoinFlag] = useState(false)
   const [bottomMessage, setBottomMessage] = useState('')
-  const { eventID } = route.params || {}
   const [eventData, setEventData] = useState({})
   const [trailData, setTrailData] = useState({})
+  const [isSharingLocation, setIsSharingLocation] = useState(false)
 
   const getSingleEvent = async () => {
     try {
@@ -76,16 +84,22 @@ const ViewEventScreen = ({ route, navigation }) => {
           ) {
             setJoinFlag(true)
           } else {
-            setBottomMessage('You are Going!')
+            setBottomMessage('You are going!')
           }
         } else {
-          setBottomMessage('Sorry! the event is full.')
+          setBottomMessage('Sorry, the event is full')
         }
       }
     } catch (e) {
       Toast.show({ text: e.message, type: 'danger', duration: 2000 })
     }
   }
+
+  const openChatScreen = () =>
+    navigation.navigate('Chat', { eventId: eventData._id })
+
+  const changeSharingLocation = () =>
+    setIsSharingLocation((previousValue) => !previousValue)
 
   useEffect(() => {
     navigation.setParams({ refresh: () => getSingleEvent() })
@@ -138,8 +152,8 @@ const ViewEventScreen = ({ route, navigation }) => {
                   latitudeDelta: 0.0422,
                   longitudeDelta: 0.0121,
                 }}
-                provider="google"
-                mapType="terrain"
+                provider='google'
+                mapType='terrain'
                 loadingEnabled
                 zoomEnabled={false}
                 zoomTapEnabled={false}
@@ -150,7 +164,7 @@ const ViewEventScreen = ({ route, navigation }) => {
               >
                 <Polyline
                   coordinates={trailData.path}
-                  strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
+                  strokeColor='#000' // fallback for when `strokeColors` is not supported by the map-provider
                   strokeWidth={3}
                 />
                 <Marker
@@ -209,22 +223,25 @@ const ViewEventScreen = ({ route, navigation }) => {
                 </Col>
               </Row>
               <Row>
-                <Entypo name="location-pin" size={16} color="gray" />
-                <Text style={{ fontSize: 14 }}>{trailData.location}</Text>
+                <Entypo name='location-pin' size={16} color='gray' />
+                <Text style={{ fontSize: 14, marginRight: 20 }}>
+                  {trailData.name} • {trailData.location}
+                </Text>
               </Row>
-              <Row style={{ marginTop: 10 }}>
+
+              <Row style={{ marginTop: 16 }}>
                 <Col>
                   <Row>
-                    <FontAwesome5 name="calendar-alt" size={24} color="black" />
+                    <FontAwesome5 name='calendar-alt' size={24} color='black' />
                     <Text style={styles.textInfo}>
-                      {moment(eventData.date).format('DD/MM/YYYY')}
+                      {moment(eventData.date).format('DD/MM/YY')}
                     </Text>
                   </Row>
                 </Col>
                 <Col size={1}>
                   <Row>
                     <FontAwesome5
-                      name="clock"
+                      name='clock'
                       size={20}
                       color={ColorConstants.Black2}
                     />
@@ -241,7 +258,7 @@ const ViewEventScreen = ({ route, navigation }) => {
 
                 <Col>
                   <Row>
-                    <FontAwesome5 name="male" size={24} color="black" />
+                    <FontAwesome5 name='male' size={24} color='black' />
                     <Text style={styles.textInfo}>
                       {eventData.max_participants}
                     </Text>
@@ -261,11 +278,56 @@ const ViewEventScreen = ({ route, navigation }) => {
                 </Col> */}
               </Row>
 
-              <Row style={{ marginTop: 16 }}>
+              <Row style={{ flex: 1, marginTop: 16 }}>
+                <Col>
+                  <Button iconLeft block small bordered>
+                    <Icon name='close' />
+                    <Text>Leave</Text>
+                  </Button>
+                </Col>
+
+                <Col>
+                  <Button
+                    iconLeft
+                    block
+                    small
+                    bordered
+                    style={{ marginLeft: 8 }}
+                    onPress={openChatScreen}
+                  >
+                    <Icon name='home' />
+                    <Text>Chat</Text>
+                  </Button>
+                </Col>
+
+                <Col>
+                  <Button
+                    iconLeft
+                    block
+                    small
+                    bordered
+                    style={{ marginLeft: 8 }}
+                  >
+                    <Icon name='share' />
+                    <Text>Share</Text>
+                  </Button>
+                </Col>
+              </Row>
+
+              <Row style={{ marginTop: 20 }}>
+                <Text>Share your location</Text>
+                <Right>
+                  <Switch
+                    value={isSharingLocation}
+                    onValueChange={changeSharingLocation}
+                  />
+                </Right>
+              </Row>
+              {/* <Row style={{ marginTop: 16 }}>
                 <Col size={1}>
                   <Row>
                     <FontAwesome5
-                      name="hiking"
+                      name='hiking'
                       size={20}
                       color={ColorConstants.Black2}
                     />
@@ -277,26 +339,31 @@ const ViewEventScreen = ({ route, navigation }) => {
                 <Col size={1}>
                   <Row>
                     <FontAwesome5
-                      name="mountain"
+                      name='mountain'
                       size={16}
                       color={ColorConstants.Black2}
                     />
-                    <Text style={styles.textInfo}>{trailData.difficulty}</Text>
+                    <Text style={styles.textInfo}>
+                      {capitalizeFirstLetter(trailData.difficulty)}
+                    </Text>
                   </Row>
                 </Col>
                 <Col size={1}>
                   <Row>
                     <FontAwesome5
-                      name="route"
+                      name='route'
                       size={20}
                       color={ColorConstants.Black2}
                     />
                     <Text style={styles.textInfo}>
-                      {trailData.length_km} km
+                      {trailData.length_km >= 10
+                        ? trailData.length_km.toFixed(0)
+                        : trailData.length_km.toFixed(1)}
+                      {'km'}
                     </Text>
                   </Row>
                 </Col>
-              </Row>
+              </Row> */}
 
               <View
                 style={{
@@ -346,7 +413,7 @@ const ViewEventScreen = ({ route, navigation }) => {
               }
               renderItem={({ item }) => {
                 return (
-                  <View style={{ alignItems: 'center' }}>
+                  <View style={{ alignItems: 'center', paddingRight: 8 }}>
                     <Thumbnail
                       style={{
                         borderColor: ColorConstants.DGreen,
@@ -361,7 +428,15 @@ const ViewEventScreen = ({ route, navigation }) => {
                           : `https://eu.ui-avatars.com/api/?name=${item.name}`,
                       }}
                     />
-                    <Text style={{ color: ColorConstants.Black, fontSize: 10 }}>
+                    <Text
+                      style={{
+                        marginTop: 2,
+                        color: ColorConstants.Black,
+                        fontSize: 10,
+                        maxWidth: 46,
+                        textAlign: 'center',
+                      }}
+                    >
                       {item.name}
                     </Text>
                   </View>
@@ -469,7 +544,7 @@ const ViewEventScreen = ({ route, navigation }) => {
                       }
                     }}
                   >
-                    <FontAwesome5 name="share-alt" size={20} color="black" />
+                    <FontAwesome5 name='share-alt' size={20} color='black' />
                     <Text style={{ color: ColorConstants.Black }}>Share</Text>
                   </Button>
                 </View>

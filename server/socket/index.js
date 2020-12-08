@@ -44,7 +44,7 @@ io.of('comments').on('connection', async (socket) => {
   const { trailId } = socket.handshake.query
 
   if (!trailId) {
-    console.log('socket disconnected for not giving sending information')
+    console.log('socket disconnected for not sending trail data')
     socket.disconnect()
     return
   }
@@ -101,7 +101,7 @@ io.of('events').on('connection', async (socket) => {
   const { eventId } = socket.handshake.query
 
   if (!eventId) {
-    console.log('socket disconnected for not giving sending information')
+    console.log('socket disconnected for not sending event data')
     socket.disconnect()
     return
   }
