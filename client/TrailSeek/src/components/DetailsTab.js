@@ -114,7 +114,7 @@ const DetaiTabs = ({ trailData, covData, weatherData }) => {
           style={{
             flex: 1,
             flexDirection: 'row',
-            justifyContent: 'space-between',
+            // justifyContent: 'space-between',
             marginTop: 16,
             paddingHorizontal: Constants.POINTS.marginHorizontal,
           }}
@@ -132,7 +132,7 @@ const DetaiTabs = ({ trailData, covData, weatherData }) => {
             </Row>
           </View>
 
-          <View>
+          <View style={{ marginLeft: 20 }}>
             <Row>
               <FontAwesome5
                 name='route'
@@ -148,7 +148,7 @@ const DetaiTabs = ({ trailData, covData, weatherData }) => {
             </Row>
           </View>
 
-          <View>
+          <View style={{ marginLeft: 20 }}>
             <Row>
               <FontAwesome5
                 name='clock'
