@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native'
-import { Text, CardItem, Card, Right, Body } from 'native-base'
+import { Text, CardItem, Card, Right, Button } from 'native-base'
 import StarRating from 'react-native-star-rating'
 import { Col, Row, Grid } from 'react-native-easy-grid'
 import { useNavigation } from '@react-navigation/native'
@@ -16,7 +16,6 @@ import moment from 'moment'
 import { useSelector } from 'react-redux'
 
 import { FontAwesome5 } from '@expo/vector-icons'
-import { Entypo } from '@expo/vector-icons'
 
 import WeatherWidget from './WeatherWidget'
 import CovidWidget from './CovidWidget'
@@ -77,79 +76,111 @@ const DetaiTabs = ({ trailData, covData, weatherData }) => {
           </Col>
         </Row>
 
-        <Row style={{ paddingHorizontal: Constants.POINTS.marginHorizontal }}>
-          <Entypo name='location-pin' size={16} color='gray' />
-          <Text style={{ fontSize: 14 }}>{trailData.location}</Text>
-        </Row>
+        <FlatList
+          nestedScrollEnabled
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          data={trailData.activity_types}
+          contentContainerStyle={{
+            marginTop: 4,
+            paddingHorizontal: Constants.POINTS.marginHorizontal,
+          }}
+          keyExtractor={(trails) => {
+            return trails._id
+          }}
+          renderItem={({ item }) => {
+            return (
+              <Button
+                small
+                rounded
+                bordered
+                style={{
+                  marginRight: 4,
+                  borderColor: ColorConstants.primary,
+                }}
+              >
+                <Text
+                  uppercase={false}
+                  style={{ color: ColorConstants.primary }}
+                >
+                  {item}
+                </Text>
+              </Button>
+            )
+          }}
+        />
 
-        <Row
+        <View
           style={{
+            flex: 1,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
             marginTop: 16,
             paddingHorizontal: Constants.POINTS.marginHorizontal,
           }}
         >
-          <Col size={1}>
+          <View>
             <Row>
               <FontAwesome5
-                name='hiking'
+                name='mountain'
+                size={16}
+                color={ColorConstants.Black2}
+              />
+              <Text style={styles.textInfo}>
+                {capitalizeFirstLetter(trailData.difficulty)}
+              </Text>
+            </Row>
+          </View>
+
+          <View>
+            <Row>
+              <FontAwesome5
+                name='route'
                 size={20}
                 color={ColorConstants.Black2}
               />
-              <Text style={styles.textInfo}>{trailData.activity_type}</Text>
+              <Text style={styles.textInfo}>
+                {trailData.length_km >= 10
+                  ? trailData.length_km.toFixed(0)
+                  : trailData.length_km.toFixed(1)}
+                {'km'}
+              </Text>
             </Row>
-          </Col>
+          </View>
 
-          <Body>
-            <Col size={1}>
-              <Row>
-                <FontAwesome5
-                  name='mountain'
-                  size={16}
-                  color={ColorConstants.Black2}
-                />
-                <Text style={styles.textInfo}>
-                  {capitalizeFirstLetter(trailData.difficulty)}
-                </Text>
-              </Row>
-            </Col>
-          </Body>
+          <View>
+            <Row>
+              <FontAwesome5
+                name='clock'
+                size={20}
+                color={ColorConstants.Black2}
+              />
+              <Text style={styles.textInfo}>
+                {moment
+                  .utc()
+                  .startOf('day')
+                  .add({ minutes: trailData.estimate_time_min })
+                  .format('H[h]mm')}
+              </Text>
+            </Row>
+          </View>
+        </View>
 
-          <Body>
-            <Col size={1}>
-              <Row>
-                <FontAwesome5
-                  name='route'
-                  size={20}
-                  color={ColorConstants.Black2}
-                />
-                <Text style={styles.textInfo}>
-                  {trailData.length_km >= 10
-                    ? trailData.length_km.toFixed(0)
-                    : trailData.length_km.toFixed(1)}
-                  {'km'}
-                </Text>
-              </Row>
-            </Col>
-          </Body>
-
-          <Right>
-            <Col size={1}>
-              <Row>
-                <FontAwesome5
-                  name='clock'
-                  size={20}
-                  color={ColorConstants.Black2}
-                />
-                <Text style={styles.textInfo}>
-                  {moment
-                    .utc()
-                    .startOf('day')
-                    .add({ minutes: trailData.estimate_time_min })
-                    .format('H[h]mm')}
-                </Text>
-              </Row>
-            </Col>
-          </Right>
+        <Row
+          style={{
+            marginTop: 12,
+            marginLeft: 3,
+            paddingHorizontal: Constants.POINTS.marginHorizontal,
+          }}
+        >
+          <FontAwesome5
+            name='map-marker-alt'
+            size={18}
+            color={ColorConstants.Black2}
+          />
+          <Text style={{ ...styles.textInfo, marginLeft: 8 }}>
+            {trailData.location}
+          </Text>
         </Row>
 
         <View

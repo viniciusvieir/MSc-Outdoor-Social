@@ -18,7 +18,7 @@ import Constants from '../util/Constants'
 import WeatherModal from './WeatherModal'
 
 const WeatherWidget = ({ data }) => {
-  console.log(data)
+  // console.log(data)
   if (!data || JSON.stringify(data) === '{}') {
     return (
       <View style={{ flex: 1, alignItems: 'center' }}>
@@ -126,7 +126,7 @@ const WeatherWidget = ({ data }) => {
       />
       <Portal>
         <Modalize ref={modelizeRef} snapPoint={320}>
-          {console.log(selectedW)}
+          {/* {console.log(selectedW)} */}
           <WeatherModal dailyData={selectedW} />
         </Modalize>
       </Portal>

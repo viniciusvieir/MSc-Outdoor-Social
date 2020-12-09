@@ -61,7 +61,9 @@ const CovidWidget = ({ data }) => {
             )
           </Text>
         </Button>
-        <Text style={{ alignSelf: 'center' }}>Click here for more info.</Text>
+        <Text style={{ alignSelf: 'center', color: ColorConstants.darkGray }}>
+          Click here for more info
+        </Text>
         <Portal>
           <Modalize ref={modelizeRef} snapPoint={320}>
             <View
