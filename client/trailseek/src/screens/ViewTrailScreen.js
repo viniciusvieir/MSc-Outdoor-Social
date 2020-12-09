@@ -34,7 +34,7 @@ const ViewTrailScreen = ({ route }) => {
   const trailStatus = useSelector((state) => state.trails.status)
   const error = useSelector((state) => state.trails.error)
   const fields =
-    'name,weighted_rating,location,path,bbox,img_url,difficulty,length_km,description,activity_type,estimate_time_min,start,recommended'
+    'name,weighted_rating,location,path,bbox,img_url,difficulty,length_km,description,activity_type,activity_types,estimate_time_min,start,recommended'
 
   const getTrailDetail = async () => {
     try {
@@ -100,7 +100,7 @@ const ViewTrailScreen = ({ route }) => {
         <Header
           hasTabs
           style={{ height: 0 }}
-          androidStatusBarColor="#ffffff00"
+          androidStatusBarColor='#ffffff00'
         />
 
         <Tabs
@@ -110,7 +110,7 @@ const ViewTrailScreen = ({ route }) => {
           tabBarUnderlineStyle={{ backgroundColor: ColorConstants.White }}
         >
           <Tab
-            heading="Details"
+            heading='Details'
             tabStyle={{ backgroundColor: ColorConstants.primary }}
             activeTabStyle={{ backgroundColor: ColorConstants.primary }}
             textStyle={{ color: ColorConstants.White }}
@@ -123,7 +123,7 @@ const ViewTrailScreen = ({ route }) => {
             />
           </Tab>
           <Tab
-            heading="Comments"
+            heading='Comments'
             tabStyle={{ backgroundColor: ColorConstants.primary }}
             activeTabStyle={{ backgroundColor: ColorConstants.primary }}
             textStyle={{ color: ColorConstants.White }}
@@ -132,7 +132,7 @@ const ViewTrailScreen = ({ route }) => {
             <CommentsTabs trailData={trailData} />
           </Tab>
           <Tab
-            heading="Events"
+            heading='Events'
             tabStyle={{ backgroundColor: ColorConstants.primary }}
             activeTabStyle={{ backgroundColor: ColorConstants.primary }}
             textStyle={{ color: ColorConstants.White }}
@@ -141,7 +141,7 @@ const ViewTrailScreen = ({ route }) => {
             <EventsTab trailData={trailData} />
           </Tab>
           <Tab
-            heading="Maps"
+            heading='Maps'
             tabStyle={{ backgroundColor: ColorConstants.primary }}
             activeTabStyle={{ backgroundColor: ColorConstants.primary }}
             textStyle={{ color: ColorConstants.White }}
