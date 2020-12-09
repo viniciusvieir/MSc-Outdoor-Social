@@ -17,10 +17,8 @@ import {
   Toast,
   Container,
   Content,
-  Footer,
   Switch,
   Icon,
-  Left,
   Right,
 } from 'native-base'
 import { Grid, Col, Row } from 'react-native-easy-grid'
@@ -39,7 +37,7 @@ import {
 import { fetchTrailsByID } from '../app/trailSlice'
 import Constants from '../util/Constants'
 import ToastAlert from '../components/ToastAlert'
-import { capitalizeFirstLetter } from '../util/string'
+import CalendarView from '../components/CalendarView'
 
 const ViewEventScreen = ({ route, navigation }) => {
   const { eventID } = route.params || {}
@@ -49,19 +47,23 @@ const ViewEventScreen = ({ route, navigation }) => {
   const isAuth = useSelector((state) => state.user.isAuth)
   // const name = useSelector((state) => state.user.profile.name)
 
+  const [region, setRegion] = useState({})
+
   const [joinFlag, setJoinFlag] = useState(false)
   const [bottomMessage, setBottomMessage] = useState('')
   const [eventData, setEventData] = useState({})
   const [trailData, setTrailData] = useState({})
   const [isSharingLocation, setIsSharingLocation] = useState(false)
+  const [userLocations, setUserLocations] = useState([])
 
   const getSingleEvent = async () => {
     try {
       const response = await dispatch(fetchSingleEvent(eventID))
       const uResult = unwrapResult(response)
       setEventData(uResult)
+
       const fields =
-        'name,location,path,bbox,difficulty,length_km,activity_type,estimate_time_min,start'
+        'name,location,path,bbox,difficulty,length_km,activity_type,duration_min,start'
       const id = uResult.trailId
       const responseTrails = await dispatch(
         fetchTrailsByID({
@@ -71,6 +73,8 @@ const ViewEventScreen = ({ route, navigation }) => {
       )
       const uResultTrails = unwrapResult(responseTrails)
       setTrailData(uResultTrails)
+      setRegion(regionContainingPoints(uResultTrails.path))
+
       dispatch(
         updateCurrentEvent({ eventData: uResult, trailName: trailData.name })
       )
@@ -87,7 +91,7 @@ const ViewEventScreen = ({ route, navigation }) => {
             setBottomMessage('You are going!')
           }
         } else {
-          setBottomMessage('Sorry, the event is full')
+          setBottomMessage('Sorry, this event is full')
         }
       }
     } catch (e) {
@@ -98,8 +102,119 @@ const ViewEventScreen = ({ route, navigation }) => {
   const openChatScreen = () =>
     navigation.navigate('Chat', { eventId: eventData._id })
 
-  const changeSharingLocation = () =>
+  const joinEventAction = async () => {
+    if (isAuth) {
+      try {
+        const response = await dispatch(
+          joinEvent({
+            trailID: trailData._id,
+            eventID,
+          })
+        )
+        const h = unwrapResult(response)
+        getSingleEvent()
+        navigation.s
+        //Add Modal
+        Toast.show({
+          text: 'Event Joined',
+          buttonText: 'Ok',
+          type: 'success',
+        })
+        setJoinFlag(false)
+
+        // navigation.goBack(); // Comment this
+      } catch (e) {
+        ToastAlert(e.message)
+      }
+    } else {
+      navigation.navigate('Authentication', {
+        screen: 'Signin',
+      })
+    }
+  }
+
+  const shareEvent = async () => {
+    try {
+      const result = await Share.share({
+        title: 'Share Event',
+        message: `Check out this event from Trailseek!\n${ExpoLinking.makeUrl(
+          '/ViewEvent',
+          {
+            eventID: eventData._id,
+          }
+        ).substring(6)}`,
+        url: `${ExpoLinking.makeUrl('/ViewEvent', {
+          eventID: eventData._id,
+        }).substring(6)}`,
+      })
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      alert(error.message)
+    }
+  }
+
+  const changeSharingLocation = () => {
+    if (isSharingLocation) {
+      // turn off location sharing
+      setUserLocations([])
+    } else {
+      // turn on location sharing
+
+      // add current location to map
+      const currentLocation =
+        trailData.path[Math.floor(Math.random() * trailData.path.length)]
+      setUserLocations((old) => [...old, currentLocation])
+    }
+
     setIsSharingLocation((previousValue) => !previousValue)
+  }
+
+  // https://stackoverflow.com/questions/32557474/how-to-calculate-delta-latitude-and-longitude-for-mapview-component-in-react-nat
+  const regionContainingPoints = (points) => {
+    let minLat,
+      maxLat,
+      minLng,
+      maxLng
+
+      // init first point
+    ;((point) => {
+      minLat = point.latitude
+      maxLat = point.latitude
+      minLng = point.longitude
+      maxLng = point.longitude
+    })(points[0])
+
+    // calculate rect
+    points.forEach((point) => {
+      minLat = Math.min(minLat, point.latitude)
+      maxLat = Math.max(maxLat, point.latitude)
+      minLng = Math.min(minLng, point.longitude)
+      maxLng = Math.max(maxLng, point.longitude)
+    })
+
+    const midLat = (minLat + maxLat) / 2
+    const midLng = (minLng + maxLng) / 2
+
+    const deltaLat = maxLat - minLat
+    const deltaLng = maxLng - minLng
+
+    return {
+      latitude: midLat,
+      longitude: midLng,
+      latitudeDelta: deltaLat * 1.2,
+      longitudeDelta: deltaLng * 1.2,
+    }
+  }
+
+  const addLocationMarkers = () => {}
 
   useEffect(() => {
     navigation.setParams({ refresh: () => getSingleEvent() })
@@ -127,6 +242,28 @@ const ViewEventScreen = ({ route, navigation }) => {
   // }
 
   // console.log(eventWeather);
+
+  const userMarkers = userLocations.map((location) => (
+    <Marker
+      coordinate={{
+        latitude: location.latitude,
+        longitude: location.longitude,
+      }}
+      title={'me'}
+    >
+      <Thumbnail
+        style={{
+          borderColor: ColorConstants.DGreen,
+          borderWidth: 1,
+          height: 30,
+          width: 30,
+        }}
+        large
+        source={{ uri: 'https://eu.ui-avatars.com/api/?name=$test' }}
+      />
+    </Marker>
+  ))
+
   return (
     <Container>
       <Content
@@ -140,27 +277,28 @@ const ViewEventScreen = ({ route, navigation }) => {
           <>
             <View
               style={{
-                borderBottomWidth: 2,
+                borderBottomWidth: 1,
                 borderBottomColor: ColorConstants.Black2,
               }}
             >
               <MapView
                 style={styles.mapStyle}
-                initialRegion={{
-                  latitude: trailData.start.coordinates[0],
-                  longitude: trailData.start.coordinates[1],
-                  latitudeDelta: 0.0422,
-                  longitudeDelta: 0.0121,
-                }}
+                // initialRegion={{
+                //   latitude: trailData.start.coordinates[0],
+                //   longitude: trailData.start.coordinates[1],
+                //   latitudeDelta: 0.5,
+                //   longitudeDelta: 0.5,
+                // }}
+                region={region}
                 provider='google'
                 mapType='terrain'
                 loadingEnabled
-                zoomEnabled={false}
-                zoomTapEnabled={false}
+                zoomEnabled={true}
+                zoomTapEnabled={true}
                 zoomControlEnabled={false}
                 rotateEnabled={false}
-                scrollEnabled={false}
-                pitchEnabled={false}
+                scrollEnabled={true}
+                pitchEnabled={true}
               >
                 <Polyline
                   coordinates={trailData.path}
@@ -173,8 +311,10 @@ const ViewEventScreen = ({ route, navigation }) => {
                     longitude: trailData.start.coordinates[1],
                   }}
                   title={'You Meet Here'}
+                  // image={'https://placeimg.com/140/140/any'}
                   // description={marker.description}
                 />
+                {userMarkers}
               </MapView>
               <View
                 style={{
@@ -204,7 +344,12 @@ const ViewEventScreen = ({ route, navigation }) => {
                     Linking.openURL(url)
                   }}
                 >
-                  <Text>Navigate</Text>
+                  <Text
+                    style={{ fontSize: 14, fontWeight: 'bold' }}
+                    uppercase={false}
+                  >
+                    Navigate
+                  </Text>
                 </Button>
               </View>
             </View>
@@ -229,60 +374,48 @@ const ViewEventScreen = ({ route, navigation }) => {
                 </Text>
               </Row>
 
-              <Row style={{ marginTop: 16 }}>
-                <Col>
-                  <Row>
-                    <FontAwesome5 name='calendar-alt' size={24} color='black' />
-                    <Text style={styles.textInfo}>
-                      {moment(eventData.date).format('DD/MM/YY')}
-                    </Text>
-                  </Row>
-                </Col>
-                <Col size={1}>
-                  <Row>
-                    <FontAwesome5
-                      name='clock'
-                      size={20}
-                      color={ColorConstants.Black2}
-                    />
-                    <Text style={styles.textInfo}>
-                      {moment(eventData.date).format('hh:mm A')}
-                      {/* {moment
-                        .utc()
-                        .startOf('day')
-                        .add({ minutes: trailData.estimate_time_min })
-                        .format('H[h]mm')} */}
-                    </Text>
-                  </Row>
-                </Col>
+              <Row style={{ marginTop: 20, alignItems: 'center' }}>
+                <CalendarView
+                  date={eventData.date}
+                  eventDuration={eventData.duration_min}
+                />
 
-                <Col>
-                  <Row>
-                    <FontAwesome5 name='male' size={24} color='black' />
-                    <Text style={styles.textInfo}>
-                      {eventData.max_participants}
-                    </Text>
-                  </Row>
-                </Col>
-
-                {/* <Col>
-                  <Text style={styles.textInfoLabel}>Duration</Text>
-                  <Text style={styles.textInfo}>
-                    {moment
-                      .utc()
-                      .startOf("day")
-                      .add({ minutes: eventData.duration_min })
-                      .format("H:mm")}{" "}
-                    hr
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginLeft: 32,
+                  }}
+                >
+                  <FontAwesome5 name='users' size={18} color='black' />
+                  <Text style={{ ...styles.textInfo, marginLeft: 8 }}>
+                    {eventData.max_participants} people max
                   </Text>
-                </Col> */}
+                </View>
               </Row>
 
-              <Row style={{ flex: 1, marginTop: 16 }}>
+              <Row style={{ marginTop: 20 }}>
+                <Text style={{ fontWeight: 'bold', fontSize: 16 }}>About</Text>
+              </Row>
+
+              <Row>
+                <Text style={styles.textInfoDescription}>
+                  {eventData.description.trim()}
+                </Text>
+              </Row>
+
+              <Row style={{ flex: 1, marginTop: 20 }}>
                 <Col>
-                  <Button iconLeft block small bordered>
-                    <Icon name='close' />
-                    <Text>Leave</Text>
+                  <Button
+                    iconLeft
+                    block
+                    small
+                    onPress={joinEventAction}
+                    style={{ backgroundColor: ColorConstants.primary }}
+                  >
+                    <Icon name='exit' />
+                    <Text uppercase={false}>Join</Text>
                   </Button>
                 </Col>
 
@@ -291,12 +424,14 @@ const ViewEventScreen = ({ route, navigation }) => {
                     iconLeft
                     block
                     small
-                    bordered
-                    style={{ marginLeft: 8 }}
+                    style={{
+                      marginLeft: 8,
+                      backgroundColor: ColorConstants.primary,
+                    }}
                     onPress={openChatScreen}
                   >
                     <Icon name='home' />
-                    <Text>Chat</Text>
+                    <Text uppercase={false}>Chat</Text>
                   </Button>
                 </Col>
 
@@ -305,78 +440,27 @@ const ViewEventScreen = ({ route, navigation }) => {
                     iconLeft
                     block
                     small
-                    bordered
-                    style={{ marginLeft: 8 }}
+                    style={{
+                      marginLeft: 8,
+                      backgroundColor: ColorConstants.primary,
+                    }}
+                    onPress={shareEvent}
                   >
                     <Icon name='share' />
-                    <Text>Share</Text>
+                    <Text uppercase={false}>Share</Text>
                   </Button>
                 </Col>
               </Row>
 
               <Row style={{ marginTop: 20 }}>
-                <Text>Share your location</Text>
+                <Text>Enable location tracking</Text>
                 <Right>
                   <Switch
+                    trackColor={{ true: ColorConstants.primary }}
                     value={isSharingLocation}
                     onValueChange={changeSharingLocation}
                   />
                 </Right>
-              </Row>
-              {/* <Row style={{ marginTop: 16 }}>
-                <Col size={1}>
-                  <Row>
-                    <FontAwesome5
-                      name='hiking'
-                      size={20}
-                      color={ColorConstants.Black2}
-                    />
-                    <Text style={styles.textInfo}>
-                      {trailData.activity_type}
-                    </Text>
-                  </Row>
-                </Col>
-                <Col size={1}>
-                  <Row>
-                    <FontAwesome5
-                      name='mountain'
-                      size={16}
-                      color={ColorConstants.Black2}
-                    />
-                    <Text style={styles.textInfo}>
-                      {capitalizeFirstLetter(trailData.difficulty)}
-                    </Text>
-                  </Row>
-                </Col>
-                <Col size={1}>
-                  <Row>
-                    <FontAwesome5
-                      name='route'
-                      size={20}
-                      color={ColorConstants.Black2}
-                    />
-                    <Text style={styles.textInfo}>
-                      {trailData.length_km >= 10
-                        ? trailData.length_km.toFixed(0)
-                        : trailData.length_km.toFixed(1)}
-                      {'km'}
-                    </Text>
-                  </Row>
-                </Col>
-              </Row> */}
-
-              <View
-                style={{
-                  marginTop: 16,
-                  borderBottomColor: ColorConstants.darkGray,
-                  borderBottomWidth: 1,
-                }}
-              />
-
-              <Row style={{ marginTop: 16 }}>
-                <Text style={styles.textInfoDescription}>
-                  {eventData.description}
-                </Text>
               </Row>
             </Grid>
             {/* <Text>{JSON.stringify(eventWeather)}</Text> */}
@@ -384,69 +468,71 @@ const ViewEventScreen = ({ route, navigation }) => {
             <View>
               <Text
                 style={{
-                  color: ColorConstants.Black,
                   fontSize: 16,
+                  fontWeight: 'bold',
                   marginHorizontal: Constants.POINTS.marginHorizontal,
                 }}
               >
                 Participants ({eventData.participants.length})
               </Text>
+
+              <FlatList
+                horizontal
+                data={eventData.participants}
+                keyExtractor={(item) => {
+                  return item.userId.toString()
+                }}
+                style={{ marginTop: 6 }}
+                contentContainerStyle={{
+                  paddingHorizontal: Constants.POINTS.marginHorizontal,
+                }}
+                ListEmptyComponent={
+                  <Text
+                    style={{
+                      paddingHorizontal: Constants.POINTS.marginHorizontal,
+                    }}
+                  >
+                    No participants
+                  </Text>
+                }
+                renderItem={({ item }) => {
+                  return (
+                    <View style={{ alignItems: 'center', paddingRight: 8 }}>
+                      <Thumbnail
+                        style={{
+                          borderColor: ColorConstants.DGreen,
+                          borderWidth: 1,
+                          height: 40,
+                          width: 40,
+                        }}
+                        large
+                        source={{
+                          uri: item.profileImage
+                            ? item.profileImage
+                            : `https://eu.ui-avatars.com/api/?name=${item.name}`,
+                        }}
+                      />
+                      <Text
+                        style={{
+                          marginTop: 2,
+                          color: ColorConstants.Black,
+                          fontSize: 10,
+                          maxWidth: 46,
+                          textAlign: 'center',
+                        }}
+                      >
+                        {item.name}
+                      </Text>
+                    </View>
+                  )
+                }}
+              />
             </View>
-            <FlatList
-              horizontal
-              data={eventData.participants}
-              keyExtractor={(item) => {
-                return item.userId.toString()
-              }}
-              style={{ marginTop: 12 }}
-              contentContainerStyle={{
-                paddingHorizontal: Constants.POINTS.marginHorizontal,
-              }}
-              ListEmptyComponent={
-                <Text
-                  style={{
-                    paddingHorizontal: Constants.POINTS.marginHorizontal,
-                  }}
-                >
-                  No participants
-                </Text>
-              }
-              renderItem={({ item }) => {
-                return (
-                  <View style={{ alignItems: 'center', paddingRight: 8 }}>
-                    <Thumbnail
-                      style={{
-                        borderColor: ColorConstants.DGreen,
-                        borderWidth: 1,
-                        height: 40,
-                        width: 40,
-                      }}
-                      large
-                      source={{
-                        uri: item.profileImage
-                          ? item.profileImage
-                          : `https://eu.ui-avatars.com/api/?name=${item.name}`,
-                      }}
-                    />
-                    <Text
-                      style={{
-                        marginTop: 2,
-                        color: ColorConstants.Black,
-                        fontSize: 10,
-                        maxWidth: 46,
-                        textAlign: 'center',
-                      }}
-                    >
-                      {item.name}
-                    </Text>
-                  </View>
-                )
-              }}
-            />
           </>
         ) : null}
       </Content>
-      <Footer
+
+      {/* <Footer
         style={{
           backgroundColor: '#ffffff',
           height: 60,
@@ -552,7 +638,7 @@ const ViewEventScreen = ({ route, navigation }) => {
             )}
           </View>
         )}
-      </Footer>
+      </Footer> */}
     </Container>
   )
 }

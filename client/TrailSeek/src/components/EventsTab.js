@@ -25,6 +25,7 @@ import Constants from '../util/Constants'
 import EmptyStateView from './EmptyStateView'
 
 import moment from 'moment'
+import CalendarView from './CalendarView'
 
 const EventsTab = ({ trailData }) => {
   const isAuth = useSelector((state) => state.user.isAuth)
@@ -129,22 +130,11 @@ const EventsTab = ({ trailData }) => {
                     noIndent
                     style={{ backgroundColor: ColorConstants.DWhite }}
                   >
-                    <Body>
-                      <Row>
-                        <Left>
-                          <Text style={styles.titleText}>{item.title}</Text>
-                        </Left>
-                        <Right>
-                          <Text style={styles.dateText}>
-                            {moment(item.date).format('DD/MM/YY HH:mm')}
-                          </Text>
-                        </Right>
-                      </Row>
-
-                      <Row>
-                        <Text style={styles.subtitleText}>{item.subtitle}</Text>
-                      </Row>
-                    </Body>
+                    <CalendarView date={item.date} />
+                    <View>
+                      <Text style={styles.titleText}>{item.title}</Text>
+                      <Text style={styles.subtitleText}>{item.subtitle}</Text>
+                    </View>
                   </ListItem>
                 )
               }
@@ -161,14 +151,14 @@ const styles = StyleSheet.create({
   titleText: {
     color: ColorConstants.Black2,
     fontWeight: 'bold',
-  },
-  dateText: {
-    color: ColorConstants.darkGray,
-    fontSize: 10,
+    alignSelf: 'flex-start',
+    marginLeft: 12,
   },
   subtitleText: {
     color: ColorConstants.Black2,
     fontSize: 12,
+    alignSelf: 'flex-start',
+    marginLeft: 12,
   },
 })
 

@@ -19,6 +19,11 @@ const TrailSchema = new mongoose.Schema({
     required: true,
     index: true,
   },
+  activity_types: {
+    type: [String],
+    required: true,
+    index: true,
+  },
   location: {
     type: String,
     required: true,

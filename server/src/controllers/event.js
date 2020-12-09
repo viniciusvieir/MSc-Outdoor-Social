@@ -22,7 +22,7 @@ class EventController {
       .lean()
 
     for (let i = 0; i < events.length; i++) {
-      const participants = events[i].participants.length + 1
+      const participants = events[i].participants.length
       const duration = eventDuration(events[i].duration_min)
       const peopleGoing =
         participants > 1 ? `${participants} people going` : '1 person going'

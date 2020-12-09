@@ -26,10 +26,11 @@ const ChatScreen = ({ route }) => {
 
     socket.current.on('events:all-chat', (data) => {
       const messages = data.map((message, index) => {
+        console.log('***', message)
         return {
           _id: index,
           text: message.content,
-          createdAt: new Date(message.date),
+          createdAt: new Date(message.createdAt),
           user: {
             _id: uuidv4(),
             name: message.name || `User ${index + 1}`,
@@ -53,7 +54,7 @@ const ChatScreen = ({ route }) => {
       const message = {
         _id: uuidv4(),
         text: data.content,
-        createdAt: new Date(data.date),
+        createdAt: new Date(data.createdAt),
         user: {
           _id: data.userId,
           name: data.name,
@@ -67,7 +68,7 @@ const ChatScreen = ({ route }) => {
 
   const onSend = async (messages) => {
     if (!isAuth) {
-      Toast.show({ text: 'You need to be authenticated to comment' })
+      Toast.show({ text: 'You need to be authenticated to send a message' })
       return
     }
 
@@ -83,21 +84,21 @@ const ChatScreen = ({ route }) => {
   }, [])
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center' }}>
+    <View
+      style={{ flex: 1, justifyContent: 'center', backgroundColor: 'white' }}
+    >
       {isLoading ? (
         <Spinner color={ColorConstants.primary} />
       ) : (
         <GiftedChat
           messages={messages}
           onSend={(messages) => onSend(messages)}
-          showAvatarForEveryMessage={true}
-          renderUsernameOnMessage={true}
+          showAvatarForEveryMessage={false}
+          renderUsernameOnMessage={false}
           isTyping={isTyping}
-          //   renderDay={() => null}
-          //   renderTime={() => null}
-          onInputTextChanged={(text) => {
-            if (text.length > 0) socket.current.emit('events:user-typing')
-          }}
+          onInputTextChanged={(text) =>
+            text.length > 0 && socket.current.emit('events:user-typing')
+          }
           user={{
             _id: 1,
             name: 'Me',
