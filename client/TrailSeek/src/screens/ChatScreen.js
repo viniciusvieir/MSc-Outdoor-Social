@@ -1,14 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { View } from 'react-native'
+import { useSelector } from 'react-redux'
 import { GiftedChat } from 'react-native-gifted-chat'
 import { Spinner, Toast } from 'native-base'
-import { useSelector } from 'react-redux'
 import { uuidv4 } from '../util/uuid'
 import ColorConstants from '../util/ColorConstants'
 
 import defaultSocket from '../api/socket'
 
-const CommentsTabs = ({ trailData }) => {
+const ChatScreen = ({ route }) => {
+  const { eventId } = route.params
+
   const isAuth = useSelector((state) => state.user.isAuth)
   const token = useSelector((state) => state.user.profile.token)
 
@@ -20,26 +22,27 @@ const CommentsTabs = ({ trailData }) => {
   const timeout = useRef(null)
 
   const manageSocket = () => {
-    socket.current = defaultSocket('/comments', { trailId: trailData._id })
+    socket.current = defaultSocket('/events', { eventId })
 
-    socket.current.on('comments:all-comments', (data) => {
-      const comments = data.map((comment, index) => {
+    socket.current.on('events:all-chat', (data) => {
+      const messages = data.map((message, index) => {
+        console.log('***', message)
         return {
           _id: index,
-          text: comment.content,
-          createdAt: new Date(comment.date),
+          text: message.content,
+          createdAt: new Date(message.createdAt),
           user: {
             _id: uuidv4(),
-            name: comment.name || `User ${index + 1}`,
-            avatar: comment.profileImage || 'https://placeimg.com/140/140/any',
+            name: message.name || `User ${index + 1}`,
+            avatar: message.profileImage || 'https://placeimg.com/140/140/any',
           },
         }
       })
-      setMessages(comments.reverse())
+      setMessages(messages.reverse())
       setIsLoading(false)
     })
 
-    socket.current.on('comments:someone-typing', () => {
+    socket.current.on('events:someone-typing', () => {
       setIsTyping(true)
       clearTimeout(timeout.current)
       timeout.current = setTimeout(() => {
@@ -47,11 +50,11 @@ const CommentsTabs = ({ trailData }) => {
       }, 2000)
     })
 
-    socket.current.on('comments:receive-new', (data) => {
-      const comment = {
+    socket.current.on('events:receive-new', (data) => {
+      const message = {
         _id: uuidv4(),
         text: data.content,
-        createdAt: new Date(data.date),
+        createdAt: new Date(data.createdAt),
         user: {
           _id: data.userId,
           name: data.name,
@@ -59,20 +62,18 @@ const CommentsTabs = ({ trailData }) => {
         },
       }
       setIsTyping(false)
-      setMessages((old) => GiftedChat.append(old, [comment]))
+      setMessages((old) => GiftedChat.append(old, [message]))
     })
   }
 
-  const onSend = async (comments) => {
+  const onSend = async (messages) => {
     if (!isAuth) {
-      Toast.show({ text: 'You need to be authenticated to comment' })
+      Toast.show({ text: 'You need to be authenticated to send a message' })
       return
     }
 
-    const trailId = trailData._id
-    const content = comments[0].text
-
-    socket.current.emit('comments:send-new', { token, trailId, content })
+    const content = messages[0].text
+    socket.current.emit('events:send-new', { token, eventId, content })
   }
 
   useEffect(() => {
@@ -83,22 +84,21 @@ const CommentsTabs = ({ trailData }) => {
   }, [])
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center' }}>
+    <View
+      style={{ flex: 1, justifyContent: 'center', backgroundColor: 'white' }}
+    >
       {isLoading ? (
         <Spinner color={ColorConstants.primary} />
       ) : (
         <GiftedChat
           messages={messages}
-          onSend={(comments) => onSend(comments)}
-          showAvatarForEveryMessage={true}
-          renderUsernameOnMessage={true}
+          onSend={(messages) => onSend(messages)}
+          showAvatarForEveryMessage={false}
+          renderUsernameOnMessage={false}
           isTyping={isTyping}
-          //   inverted={false}
-          renderDay={() => null}
-          renderTime={() => null}
-          onInputTextChanged={(text) => {
-            if (text.length > 0) socket.current.emit('comments:user-typing')
-          }}
+          onInputTextChanged={(text) =>
+            text.length > 0 && socket.current.emit('events:user-typing')
+          }
           user={{
             _id: 1,
             name: 'Me',
@@ -110,4 +110,4 @@ const CommentsTabs = ({ trailData }) => {
   )
 }
 
-export default CommentsTabs
+export default ChatScreen
