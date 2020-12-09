@@ -68,7 +68,7 @@ class EventController {
     const trail = await Trail.findById(trailId).select('estimate_time_min')
     if (!trail) return res.status(403).json(errorHandler('Trail not found'))
 
-    const user = await UserMongo.findById(userId).select('profileImage')
+    const user = await UserMongo.findOne({ userId }).select('profileImage')
 
     const event = await Event.create({
       userId,
