@@ -10,10 +10,7 @@ import { Text } from 'native-base'
 import moment from 'moment'
 import { Modalize } from 'react-native-modalize'
 import { Portal } from 'react-native-portalize'
-import { Col, Row, Grid } from 'react-native-easy-grid'
-import { Feather } from '@expo/vector-icons'
-import { AntDesign } from '@expo/vector-icons'
-import { Entypo } from '@expo/vector-icons'
+import { Row, Grid } from 'react-native-easy-grid'
 
 import ColorConstants from '../util/ColorConstants'
 import NoData from './NoData'
@@ -21,6 +18,14 @@ import Constants from '../util/Constants'
 import WeatherModal from './WeatherModal'
 
 const WeatherWidget = ({ data }) => {
+  console.log(data)
+  if (!data || JSON.stringify(data) === '{}') {
+    return (
+      <View style={{ flex: 1, alignItems: 'center' }}>
+        <Text style={{ alignSelf: 'center' }}>No Weather Data</Text>
+      </View>
+    )
+  }
   const [selectedW, setSelectedW] = useState({})
 
   const modelizeRef = useRef(null)
