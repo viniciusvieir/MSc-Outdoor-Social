@@ -159,7 +159,7 @@ export const fetchCovidData = createAsyncThunk(
 export const fetchWeatherData = createAsyncThunk(
   'trails/fetchWeatherData',
   async (
-    { latitude, longitude, excludeWeather = 'hourly,current,minutely,alerts' },
+    { latitude, longitude, excludeWeather = 'current,minutely,alerts' },
     { rejectWithValue }
   ) => {
     console.log(latitude + '' + longitude)
