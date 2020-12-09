@@ -10,6 +10,13 @@ import ColorConstants from '../util/ColorConstants'
 import Constants from '../util/Constants'
 
 const CovidWidget = ({ data }) => {
+  if (!data || JSON.stringify(data) === '{}') {
+    return (
+      <View style={{ flex: 1, alignItems: 'center' }}>
+        <Text style={{ alignSelf: 'center' }}>No Covid Data</Text>
+      </View>
+    )
+  }
   const modelizeRef = useRef(null)
 
   const day = (dt) => {
@@ -121,8 +128,6 @@ const CovidWidget = ({ data }) => {
         </Portal>
       </View>
     )
-  } else {
-    content = <Text>No Covid Data</Text>
   }
 
   return <View>{content}</View>

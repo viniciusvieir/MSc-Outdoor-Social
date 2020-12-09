@@ -121,7 +121,7 @@ const SearchTrailScreen = ({ navigation, route }) => {
         query,
       }))
     }
-    console.log(query)
+    // console.log(query)
     try {
       let results, gpsLoc
       if (location) {
@@ -245,6 +245,8 @@ const SearchTrailScreen = ({ navigation, route }) => {
         onChangeText={(text) => {
           setSearchTerm(text)
         }}
+        accessible={true}
+        accessibilityLabel="HomeSearchBar"
         inputContainerStyle={{ height: 29, marginLeft: 2 }}
         autoCapitalize="none"
         platform="android"

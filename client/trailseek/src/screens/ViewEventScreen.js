@@ -611,10 +611,10 @@ const ViewEventScreen = ({ route, navigation }) => {
                             {
                               eventID: eventData._id,
                             }
-                          ).substring(6)}`,
+                          )}`,
                           url: `${ExpoLinking.makeUrl('/ViewEvent', {
                             eventID: eventData._id,
-                          }).substring(6)}`,
+                          })}`,
                         })
                         if (result.action === Share.sharedAction) {
                           if (result.activityType) {

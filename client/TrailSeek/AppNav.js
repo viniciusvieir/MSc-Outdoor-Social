@@ -271,6 +271,7 @@ const MainTabFlow = () => {
         })}
         options={{
           tabBarLabel: 'Profile',
+          tabBarAccessibilityLabel: 'ProfileTab',
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name='account-circle' size={24} color={color} />
           ),

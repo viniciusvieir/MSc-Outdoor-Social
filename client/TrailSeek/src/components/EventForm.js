@@ -318,7 +318,7 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
                         [
                           {
                             text: 'Cancel',
-                            onPress: () => console.log('Cancel Pressed'),
+                            // onPress: () => console.log('Cancel Pressed'),
                             style: 'cancel',
                           },
                           {
@@ -327,7 +327,7 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
                               try {
                                 const trailID = eventData.trailId
                                 const eventID = eventData._id
-                                console.log(trailID + '  ' + eventID)
+                                // console.log(trailID + '  ' + eventID)
                                 const response = await dispatch(
                                   deleteEvent({
                                     trailID,
