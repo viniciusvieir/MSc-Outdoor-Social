@@ -19,6 +19,7 @@ class EventController {
       date: { $gte: today },
     })
       .select((fields && fields.replace(/,|;/g, ' ')) || '-chat -trailId')
+      .sort('date')
       .lean()
 
     for (let i = 0; i < events.length; i++) {
