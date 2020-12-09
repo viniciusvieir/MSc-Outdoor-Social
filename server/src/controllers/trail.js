@@ -139,6 +139,7 @@ class TrailController {
       trail.path = trail.path.map((loc) => ({
         latitude: loc.coordinates[0],
         longitude: loc.coordinates[1],
+        elevation: loc.elevation,
       }))
     }
 
@@ -325,6 +326,29 @@ class TrailController {
     })
 
     await Trail.insertMany(trailsValidated)
+
+    res.json({ success: 123 })
+  }
+
+  async fixDescriptionDifficultyActivityTypes(req, res) {
+    const trails = require('../../../trails_corrected.json')
+
+    for (let i = 0; i < trails.length; i++) {
+      const corrected = trails[i]
+      await Trail.updateOne(
+        {
+          id: corrected.id,
+        },
+        {
+          difficulty: corrected.difficulty.toLowerCase().trim(),
+          description: corrected.description.trim(),
+          activity_types: corrected.activity_type.map((i) =>
+            i.toLowerCase().trim()
+          ),
+        }
+      )
+      console.log(i)
+    }
 
     res.json({ success: 123 })
   }
