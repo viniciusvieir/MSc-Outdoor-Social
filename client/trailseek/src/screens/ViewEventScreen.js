@@ -290,8 +290,8 @@ const ViewEventScreen = ({ route, navigation }) => {
                 //   longitudeDelta: 0.5,
                 // }}
                 region={region}
-                provider='google'
-                mapType='terrain'
+                provider="google"
+                mapType="terrain"
                 loadingEnabled
                 zoomEnabled={true}
                 zoomTapEnabled={true}
@@ -302,7 +302,7 @@ const ViewEventScreen = ({ route, navigation }) => {
               >
                 <Polyline
                   coordinates={trailData.path}
-                  strokeColor='#000' // fallback for when `strokeColors` is not supported by the map-provider
+                  strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
                   strokeWidth={3}
                 />
                 <Marker
@@ -368,7 +368,7 @@ const ViewEventScreen = ({ route, navigation }) => {
                 </Col>
               </Row>
               <Row>
-                <Entypo name='location-pin' size={16} color='gray' />
+                <Entypo name="location-pin" size={16} color="gray" />
                 <Text style={{ fontSize: 14, marginRight: 20 }}>
                   {trailData.name} • {trailData.location}
                 </Text>
@@ -388,7 +388,7 @@ const ViewEventScreen = ({ route, navigation }) => {
                     marginLeft: 32,
                   }}
                 >
-                  <FontAwesome5 name='users' size={18} color='black' />
+                  <FontAwesome5 name="users" size={18} color="black" />
                   <Text style={{ ...styles.textInfo, marginLeft: 8 }}>
                     {eventData.max_participants} people max
                   </Text>
@@ -414,7 +414,7 @@ const ViewEventScreen = ({ route, navigation }) => {
                     onPress={joinEventAction}
                     style={{ backgroundColor: ColorConstants.primary }}
                   >
-                    <Icon name='exit' />
+                    <Icon name="exit" />
                     <Text uppercase={false}>Join</Text>
                   </Button>
                 </Col>
@@ -430,7 +430,7 @@ const ViewEventScreen = ({ route, navigation }) => {
                     }}
                     onPress={openChatScreen}
                   >
-                    <Icon name='home' />
+                    <Icon name="home" />
                     <Text uppercase={false}>Chat</Text>
                   </Button>
                 </Col>
@@ -446,7 +446,7 @@ const ViewEventScreen = ({ route, navigation }) => {
                     }}
                     onPress={shareEvent}
                   >
-                    <Icon name='share' />
+                    <Icon name="share" />
                     <Text uppercase={false}>Share</Text>
                   </Button>
                 </Col>
