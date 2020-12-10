@@ -427,44 +427,7 @@ const AppNav = () => {
                           />
                         </TouchableOpacity>
                       )
-                    } else if (
-                      currentEventParticipants?.findIndex((item) => {
-                        return item.userId === userId
-                      }) !== -1
-                    ) {
-                      return (
-                        <Button
-                          danger
-                          rounded
-                          onPress={async () => {
-                            try {
-                              const res = await dispatch(
-                                leaveEvent({ trailID, eventID })
-                              )
-                              unwrapResult(res)
-                              route.params.refresh()
-                            } catch (e) {
-                              console.log(e.message)
-                            }
-                          }}
-                          style={{ marginRight: 10, height: 25, width: 65 }}
-                        >
-                          <Text style={{ fontSize: 10 }}>Leave</Text>
-                        </Button>
-                        // <TouchableOpacity
-                        //   onPress={() => {
-                        //     navigation.navigate("EditEvent");
-                        //   }}
-                        // >
-                        //   <Octicons
-                        //     name="kebab-vertical"
-                        //     size={24}
-                        //     color="#000000"
-                        //     style={{ marginRight: 20 }}
-                        //   />
-                        // </TouchableOpacity>
-                      )
-                    } else return null
+                    }
                   } else return null
                 },
               })}
