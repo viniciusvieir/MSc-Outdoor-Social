@@ -116,7 +116,13 @@ const ViewProfileScreen = ({ navigation }) => {
           <View style={{ flex: 1 }}>
             <View style={styles.infoContainers}>
               <Text style={styles.textInfoLabel}>Email</Text>
-              <Text style={styles.textInfo}>{userData.email}</Text>
+              <Text
+                accessible={true}
+                accessibilityLabel="EmailProperty"
+                style={styles.textInfo}
+              >
+                {userData.email}
+              </Text>
             </View>
             <View style={styles.infoContainers}>
               <Text style={styles.textInfoLabel}>Gender</Text>
@@ -149,6 +155,8 @@ const ViewProfileScreen = ({ navigation }) => {
           {/* </Grid> */}
           {isAuth ? (
             <Button
+              accessible={true}
+              accessibilityLabel="LogoutButton"
               danger
               block
               style={{ marginTop: 30 }}
