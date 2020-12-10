@@ -34,7 +34,7 @@ const ViewTrailScreen = ({ route }) => {
   const trailStatus = useSelector((state) => state.trails.status)
   const error = useSelector((state) => state.trails.error)
   const fields =
-    'name,weighted_rating,location,path,bbox,img_url,difficulty,length_km,description,activity_type,activity_types,estimate_time_min,start,recommended'
+    'name,weighted_rating,location,path,bbox,img_url,difficulty,length_km,description,activity_types,estimate_time_min,start,recommended'
 
   const getTrailDetail = async () => {
     try {
