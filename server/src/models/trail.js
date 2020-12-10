@@ -8,7 +8,7 @@ const TrailSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    index: 'text',
+    // index: 'text',
   },
   description: {
     type: String,
@@ -126,5 +126,6 @@ const TrailSchema = new mongoose.Schema({
 
 TrailSchema.index({ start: '2dsphere' })
 TrailSchema.index({ end: '2dsphere' })
+TrailSchema.index({ name: 'text', location: 'text', county: 'text' })
 
 module.exports = mongoose.model('Trail', TrailSchema)
