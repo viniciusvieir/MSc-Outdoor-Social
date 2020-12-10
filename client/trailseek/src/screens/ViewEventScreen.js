@@ -20,6 +20,7 @@ import {
   Switch,
   Icon,
   Right,
+  Spinner,
 } from 'native-base'
 import { Grid, Col, Row } from 'react-native-easy-grid'
 import { useDispatch, useSelector } from 'react-redux'
@@ -33,6 +34,7 @@ import {
   updateCurrentEvent,
   joinEvent,
   fetchSingleEvent,
+  leaveEvent,
 } from '../app/eventSlice'
 import { fetchTrailsByID } from '../app/trailSlice'
 import Constants from '../util/Constants'
@@ -43,16 +45,21 @@ const ViewEventScreen = ({ route, navigation }) => {
   const { eventID } = route.params || {}
   const dispatch = useDispatch()
 
-  const userId = useSelector((state) => state.user.profile.id)
   const isAuth = useSelector((state) => state.user.isAuth)
+  const userId = useSelector((state) => state.user.profile.id)
   // const name = useSelector((state) => state.user.profile.name)
 
   const [region, setRegion] = useState({})
 
-  const [joinFlag, setJoinFlag] = useState(false)
-  const [bottomMessage, setBottomMessage] = useState('')
   const [eventData, setEventData] = useState({})
   const [trailData, setTrailData] = useState({})
+
+  const [isEventAvailable, setIsEventAvailable] = useState(true)
+
+  const [hasJoined, setHasJoined] = useState(false)
+  const [isEventOwner, setIsEventOwner] = useState(false)
+  const [isLoadingJoinButton, setIsLoadingJoinButton] = useState(false)
+
   const [isSharingLocation, setIsSharingLocation] = useState(false)
   const [userLocations, setUserLocations] = useState([])
 
@@ -61,6 +68,20 @@ const ViewEventScreen = ({ route, navigation }) => {
       const response = await dispatch(fetchSingleEvent(eventID))
       const uResult = unwrapResult(response)
       setEventData(uResult)
+
+      setIsEventAvailable(!moment(uResult.date).isBefore(moment(), 'day'))
+
+      setHasJoined(
+        isAuth &&
+          uResult.participants &&
+          uResult.participants.some((el) => el.userId === userId)
+      )
+      setIsEventOwner(
+        isAuth &&
+          uResult.participants &&
+          uResult.participants.length > 0 &&
+          uResult.participants[0].userId === userId
+      )
 
       const fields =
         'name,location,path,bbox,difficulty,length_km,activity_type,duration_min,start'
@@ -78,22 +99,6 @@ const ViewEventScreen = ({ route, navigation }) => {
       dispatch(
         updateCurrentEvent({ eventData: uResult, trailName: trailData.name })
       )
-
-      if (userId !== uResult.userId) {
-        if (uResult.participants.length + 1 < uResult.max_participants) {
-          if (
-            uResult.participants.findIndex((item) => {
-              return item.userId === userId
-            }) === -1
-          ) {
-            setJoinFlag(true)
-          } else {
-            setBottomMessage('You are going!')
-          }
-        } else {
-          setBottomMessage('Sorry, this event is full')
-        }
-      }
     } catch (e) {
       Toast.show({ text: e.message, type: 'danger', duration: 2000 })
     }
@@ -105,6 +110,7 @@ const ViewEventScreen = ({ route, navigation }) => {
   const joinEventAction = async () => {
     if (isAuth) {
       try {
+        setIsLoadingJoinButton(true)
         const response = await dispatch(
           joinEvent({
             trailID: trailData._id,
@@ -114,15 +120,9 @@ const ViewEventScreen = ({ route, navigation }) => {
         const h = unwrapResult(response)
         getSingleEvent()
         navigation.s
-        //Add Modal
-        Toast.show({
-          text: 'Event Joined',
-          buttonText: 'Ok',
-          type: 'success',
-        })
-        setJoinFlag(false)
 
-        // navigation.goBack(); // Comment this
+        setHasJoined(true)
+        setIsLoadingJoinButton(false)
       } catch (e) {
         ToastAlert(e.message)
       }
@@ -131,6 +131,19 @@ const ViewEventScreen = ({ route, navigation }) => {
         screen: 'Signin',
       })
     }
+  }
+
+  const leaveEventAction = async () => {
+    if (!isAuth) return
+
+    setIsLoadingJoinButton(true)
+    const res = await dispatch(leaveEvent({ trailID: trailData._id, eventID }))
+    unwrapResult(res)
+
+    getSingleEvent()
+
+    setHasJoined(false)
+    setIsLoadingJoinButton(false)
   }
 
   const shareEvent = async () => {
@@ -209,8 +222,8 @@ const ViewEventScreen = ({ route, navigation }) => {
     return {
       latitude: midLat,
       longitude: midLng,
-      latitudeDelta: deltaLat * 1.2,
-      longitudeDelta: deltaLng * 1.2,
+      latitudeDelta: deltaLat * 1.25,
+      longitudeDelta: deltaLng * 1.25,
     }
   }
 
@@ -406,34 +419,49 @@ const ViewEventScreen = ({ route, navigation }) => {
               </Row>
 
               <Row style={{ flex: 1, marginTop: 20 }}>
-                <Col>
-                  <Button
-                    iconLeft
-                    block
-                    small
-                    onPress={joinEventAction}
-                    style={{ backgroundColor: ColorConstants.primary }}
-                  >
-                    <Icon name="exit" />
-                    <Text uppercase={false}>Join</Text>
-                  </Button>
-                </Col>
+                {!isEventOwner && isEventAvailable && (
+                  <Col>
+                    <Button
+                      iconLeft
+                      block
+                      small
+                      disabled={isLoadingJoinButton}
+                      onPress={() =>
+                        hasJoined ? leaveEventAction() : joinEventAction()
+                      }
+                      style={{ backgroundColor: ColorConstants.primary }}
+                    >
+                      {isLoadingJoinButton ? (
+                        <Spinner size={12} color={ColorConstants.White} />
+                      ) : (
+                        <>
+                          <Icon name={hasJoined ? 'exit' : 'person-add'} />
+                          <Text uppercase={false}>
+                            {hasJoined ? 'Leave' : 'Join'}
+                          </Text>
+                        </>
+                      )}
+                    </Button>
+                  </Col>
+                )}
 
-                <Col>
-                  <Button
-                    iconLeft
-                    block
-                    small
-                    style={{
-                      marginLeft: 8,
-                      backgroundColor: ColorConstants.primary,
-                    }}
-                    onPress={openChatScreen}
-                  >
-                    <Icon name="home" />
-                    <Text uppercase={false}>Chat</Text>
-                  </Button>
-                </Col>
+                {isAuth && hasJoined && (
+                  <Col>
+                    <Button
+                      iconLeft
+                      block
+                      small
+                      style={{
+                        marginLeft: isEventOwner || !isEventAvailable ? 0 : 8,
+                        backgroundColor: ColorConstants.primary,
+                      }}
+                      onPress={openChatScreen}
+                    >
+                      <Icon name="chat" type="Entypo" />
+                      <Text uppercase={false}>Chat</Text>
+                    </Button>
+                  </Col>
+                )}
 
                 <Col>
                   <Button
@@ -452,7 +480,7 @@ const ViewEventScreen = ({ route, navigation }) => {
                 </Col>
               </Row>
 
-              <Row style={{ marginTop: 20 }}>
+              {/* <Row style={{ marginTop: 20 }}>
                 <Text>Enable location tracking</Text>
                 <Right>
                   <Switch
@@ -461,7 +489,7 @@ const ViewEventScreen = ({ route, navigation }) => {
                     onValueChange={changeSharingLocation}
                   />
                 </Right>
-              </Row>
+              </Row> */}
             </Grid>
             {/* <Text>{JSON.stringify(eventWeather)}</Text> */}
 
@@ -522,6 +550,9 @@ const ViewEventScreen = ({ route, navigation }) => {
                         }}
                       >
                         {item.name}
+                        {eventData.participants[0]._id === item._id
+                          ? ' (hoster)'
+                          : ''}
                       </Text>
                     </View>
                   )
@@ -567,7 +598,6 @@ const ViewEventScreen = ({ route, navigation }) => {
                           buttonText: 'Okay',
                           type: 'success',
                         })
-                        setJoinFlag(false)
 
                         // navigation.goBack(); // Comment this
                       } catch (e) {
