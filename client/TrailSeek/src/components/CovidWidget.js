@@ -51,7 +51,7 @@ const CovidWidget = ({ data }) => {
           // }}
         >
           <Text style={{ fontWeight: 'bold', fontSize: 13 }}>
-            Covid Cases in the last 10 days in{' '}
+            Covid Cases in the last 7 days in{' '}
             {data[lastItem].attributes.CountyName} as of{' '}
             {day(data[lastItem].attributes.TimeStamp)} (
             {date(data[lastItem].attributes.TimeStamp)}) :{' '}
@@ -62,7 +62,7 @@ const CovidWidget = ({ data }) => {
           </Text>
         </Button>
         <Text style={{ alignSelf: 'center', color: ColorConstants.darkGray }}>
-          Click here for more info
+          Click for more info
         </Text>
         <Portal>
           <Modalize ref={modelizeRef} snapPoint={320}>

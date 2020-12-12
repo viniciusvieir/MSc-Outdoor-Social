@@ -150,13 +150,13 @@ const ViewEventScreen = ({ route, navigation }) => {
     try {
       const result = await Share.share({
         title: 'Share Event',
-        message: `Check out this event from Trailseek!\n${ExpoLinking.makeUrl(
+        message: `Check out this event from Trailseek!\nhttp://${ExpoLinking.makeUrl(
           '/ViewEvent',
           {
             eventID: eventData._id,
           }
         ).substring(6)}`,
-        url: `${ExpoLinking.makeUrl('/ViewEvent', {
+        url: `http://${ExpoLinking.makeUrl('/ViewEvent', {
           eventID: eventData._id,
         }).substring(6)}`,
       })

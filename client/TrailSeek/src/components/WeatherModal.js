@@ -227,8 +227,8 @@ const WeatherModal = ({ dailyData }) => {
           </Col>
         </Row>
       </Grid>
-      <ScrollView horizontal>
-        {/* <LineChart
+      {/* <ScrollView horizontal> */}
+      {/* <LineChart
           fromZero={true}
           data={{
             labels: [10, 20],
@@ -277,8 +277,8 @@ const WeatherModal = ({ dailyData }) => {
             borderRadius: 10,
           }}
         /> */}
-      </ScrollView>
-      <ScrollView horizontal></ScrollView>
+      {/* </ScrollView>
+      <ScrollView horizontal></ScrollView> */}
     </View>
   )
 }
