@@ -175,15 +175,16 @@ class EventController {
 
   async eventsCreatedByUser(req, res) {
     const { id: userId } = req.context
-    const events = await Event.find({ userId })
+    const events = await Event.find({ userId }).sort('date')
     res.json(events)
   }
 
   async eventsJoinedByUser(req, res) {
     const { id: userId } = req.context
     const events = await Event.find({
+      userId: { $ne: userId },
       participants: { $elemMatch: { userId } },
-    })
+    }).sort('date')
     res.json(events)
   }
 

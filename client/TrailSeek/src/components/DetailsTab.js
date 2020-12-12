@@ -85,9 +85,7 @@ const DetaiTabs = ({ trailData, covData, weatherData }) => {
             marginTop: 4,
             paddingHorizontal: Constants.POINTS.marginHorizontal,
           }}
-          keyExtractor={(trails) => {
-            return trails._id
-          }}
+          keyExtractor={(item) => item}
           renderItem={({ item }) => {
             return (
               <Button
