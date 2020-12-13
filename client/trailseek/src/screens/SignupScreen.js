@@ -63,12 +63,12 @@ const SignupScreen = ({ navigation }) => {
         <View
           style={{
             flex: 1,
-            paddingTop: 40,
+            paddingTop: 65,
           }}
         >
           <View>
             <Image
-              source={require('../images/tslogov2.2grey.png')}
+              source={require('../images/Standee.png')}
               resizeMode="contain"
               style={styles.image}
             />
