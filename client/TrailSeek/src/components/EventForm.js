@@ -254,7 +254,7 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
                 </Row>
                 <Row>
                   <Text style={{ color: ColorConstants.Black }}>
-                    Event Duration in minutes:
+                    Event Duration :
                   </Text>
                 </Row>
                 <Row>
