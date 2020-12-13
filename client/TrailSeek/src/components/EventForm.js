@@ -275,11 +275,12 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
                   </Text>
                   <TextInput
                     onChangeText={(mins) => {
+                      props.setFieldError('duration_min', '')
                       mins < 60
                         ? setMins(mins)
                         : props.setFieldError(
                             'duration_min',
-                            'minuites should be less than 60'
+                            'Minutes should be less than 60'
                           )
                     }}
                     onBlur={props.handleBlur('duration_min')}
