@@ -120,13 +120,13 @@ export const postEvents = createAsyncThunk(
 export const putEvents = createAsyncThunk(
   'event/putEvents',
   async ({ trailID, inputs, eventID }, { rejectWithValue }) => {
-    console.log(inputs)
+    // console.log(inputs)
     try {
       const response = await trailSeek.put(
         `/trails/${trailID}/events/${eventID}`,
         inputs
       )
-      console.log(response.data)
+      // console.log(response.data)
       return { eventData: response.data }
     } catch (e) {
       console.log(e)

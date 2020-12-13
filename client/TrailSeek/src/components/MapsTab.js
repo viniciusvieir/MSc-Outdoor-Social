@@ -1,12 +1,13 @@
 import React from 'react'
-import { StyleSheet, Linking, Platform, Dimensions, View } from 'react-native'
+import { StyleSheet, Linking, Platform, View } from 'react-native'
 import { Text, Button } from 'native-base'
 import MapView, { Polyline, Marker } from 'react-native-maps'
 import ColorConstants from '../util/ColorConstants'
+import { FontAwesome5 } from '@expo/vector-icons'
 
 const MapsTab = ({ trailData }) => {
   return (
-    <View style={{ backgroundColor: ColorConstants.LGreen, flex: 1 }}>
+    <View style={{ backgroundColor: ColorConstants.primary, flex: 1 }}>
       <MapView
         style={styles.mapStyle}
         initialRegion={{
@@ -33,35 +34,47 @@ const MapsTab = ({ trailData }) => {
           strokeWidth={3}
         />
       </MapView>
-      <Button
-        onPress={() => {
-          const scheme = Platform.select({
-            ios: 'maps:0,0?q=',
-            android: 'geo:0,0?q=',
-          })
-          const latLng = `${trailData.start.coordinates[0]},${trailData.start.coordinates[1]}`
-          const label = `${trailData.name}`
-          const url = Platform.select({
-            ios: `${scheme}${label}@${latLng}`,
-            android: `${scheme}${latLng}(${label})`,
-          })
-
-          Linking.openURL(url)
+      <View
+        style={{
+          position: 'absolute', //use absolute position to show button on top of the map
+          bottom: '5%', //for center align
+          right: 10,
+          alignSelf: 'flex-end',
+          flexDirection: 'row-reverse',
         }}
-        block
-        style={{ margin: 5, backgroundColor: ColorConstants.Yellow }}
       >
-        <Text style={{ color: ColorConstants.Black }}>Navigate</Text>
-      </Button>
+        <Button
+          style={{
+            borderRadius: 50,
+            backgroundColor: ColorConstants.secondary,
+            paddingHorizontal: 20,
+          }}
+          onPress={() => {
+            const scheme = Platform.select({
+              ios: 'maps:0,0?q=',
+              android: 'geo:0,0?q=',
+            })
+            const latLng = `${trailData.start.coordinates[0]},${trailData.start.coordinates[1]}`
+            const label = `${trailData.name}`
+            const url = Platform.select({
+              ios: `${scheme}${label}@${latLng}`,
+              android: `${scheme}${latLng}(${label})`,
+            })
+
+            Linking.openURL(url)
+          }}
+        >
+          <FontAwesome5 name="route" size={18} color="white" />
+          <Text>Navigate</Text>
+        </Button>
+      </View>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   mapStyle: {
-    // margin: 10,
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height - 370,
+    flex: 1,
   },
 })
 

@@ -11,16 +11,20 @@ import MyEventList from '../components/MyEventsList'
 
 const MyEventScreen = ({ navigation }) => {
   const dispatch = useDispatch()
-  const [myEvents, setMyEvents] = useState([])
-  const [joinedEvents, setJoinedEvents] = useState([])
+  const [myEvents, setMyEvents] = useState([
+    { title: '', data: [] },
+    { title: '', data: [] },
+  ])
   const getUserEvents = async () => {
     try {
       const response = await dispatch(getUserCreatedEvents())
       const response2 = await dispatch(getUserJoinedEvents())
       const uMyEvents = unwrapResult(response)
-      setMyEvents(uMyEvents)
       const uJoinedEvents = unwrapResult(response2)
-      setJoinedEvents(uJoinedEvents)
+      setMyEvents([
+        { title: 'Hosted Events', data: uMyEvents },
+        { title: 'Joined Events', data: uJoinedEvents },
+      ])
     } catch (e) {
       console.log(e.message)
     }
@@ -50,17 +54,12 @@ const MyEventScreen = ({ navigation }) => {
         >
           <View style={{ flex: 1 }}>
             <MyEventList
-              data={myEvents.filter(
-                (item) => !moment(item.date).isBefore(moment(), 'day')
-              )}
-              listHeader="Hosted Events"
-            />
-
-            <MyEventList
-              data={joinedEvents.filter(
-                (item) => !moment(item.date).isBefore(moment(), 'day')
-              )}
-              listHeader="Joined Events"
+              data={myEvents.map((item) => ({
+                title: item.title,
+                data: item.data.filter(
+                  (dItem) => !moment(dItem.date).isBefore(moment(), 'day')
+                ),
+              }))}
             />
           </View>
         </Tab>
@@ -73,17 +72,12 @@ const MyEventScreen = ({ navigation }) => {
         >
           <View style={{ flex: 1 }}>
             <MyEventList
-              data={myEvents.filter((item) =>
-                moment(item.date).isBefore(moment(), 'day')
-              )}
-              listHeader="Hosted Events"
-            />
-
-            <MyEventList
-              data={joinedEvents.filter((item) =>
-                moment(item.date).isBefore(moment(), 'day')
-              )}
-              listHeader="Joined Events"
+              data={myEvents.map((item) => ({
+                title: item.title,
+                data: item.data.filter((dItem) =>
+                  moment(dItem.date).isBefore(moment(), 'day')
+                ),
+              }))}
             />
           </View>
         </Tab>

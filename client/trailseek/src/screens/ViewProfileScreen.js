@@ -1,8 +1,7 @@
-import React, { useState } from 'react'
-import { StyleSheet, Platform, Switch, View } from 'react-native'
+import React from 'react'
+import { StyleSheet, Switch, View } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
 import { CommonActions } from '@react-navigation/native'
-// import NetInfo from "@react-native-community/netinfo";
 import { Button, Text, Container, Thumbnail, Content } from 'native-base'
 import moment from 'moment'
 
@@ -50,26 +49,6 @@ const ViewProfileScreen = ({ navigation }) => {
       break
   }
 
-  // const checNet = () => {
-  //   // For Android devices
-  //   if (Platform.OS === "android") {
-  //     NetInfo.fetch().then((state) => {
-  //       if (!state.isConnected) {
-  //         ToastAlert("Please make sure your internet is connected.");
-  //       } else {
-  //         ToastAlert("Internet is connected.");
-  //       }
-  //     });
-  //   } else {
-  //     // // For iOS devices
-  //     // NetInfo.isConnected.addEventListener(
-  //     //   "connectionChange",
-  //     //   this.handleFirstConnectivityChange
-  //     // );
-  //     console.log("in iphone");
-  //   }
-  // };
-
   return (
     <Container style={{ backgroundColor: ColorConstants.DWhite }}>
       <Content>
@@ -114,6 +93,7 @@ const ViewProfileScreen = ({ navigation }) => {
           </Text>
           {/* <Grid> */}
           <View style={{ flex: 1 }}>
+            <Text style={styles.sectionText}>Personal Information : </Text>
             <View style={styles.infoContainers}>
               <Text style={styles.textInfoLabel}>Email</Text>
               <Text
@@ -135,6 +115,14 @@ const ViewProfileScreen = ({ navigation }) => {
                 {moment(userData.dob).format('MM/DD/YYYY')}
               </Text>
             </View>
+            <View
+              style={{
+                marginVertical: 16,
+                borderBottomColor: ColorConstants.darkGray,
+                borderBottomWidth: 1,
+              }}
+            />
+            <Text style={styles.sectionText}>Settings : </Text>
             <View
               style={[
                 styles.infoContainers,
@@ -191,6 +179,11 @@ const styles = StyleSheet.create({
   },
   infoContainers: {
     flex: 1,
+  },
+  sectionText: {
+    marginVertical: 5,
+    color: ColorConstants.darkGray,
+    fontSize: 18,
   },
 })
 

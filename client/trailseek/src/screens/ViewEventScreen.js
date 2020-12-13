@@ -17,9 +17,7 @@ import {
   Toast,
   Container,
   Content,
-  Switch,
   Icon,
-  Right,
   Spinner,
 } from 'native-base'
 import { Grid, Col, Row } from 'react-native-easy-grid'
@@ -341,6 +339,7 @@ const ViewEventScreen = ({ route, navigation }) => {
                   style={{
                     borderRadius: 50,
                     backgroundColor: ColorConstants.secondary,
+                    paddingHorizontal: 12,
                   }}
                   onPress={() => {
                     const scheme = Platform.select({
@@ -357,6 +356,7 @@ const ViewEventScreen = ({ route, navigation }) => {
                     Linking.openURL(url)
                   }}
                 >
+                  <FontAwesome5 name="route" size={18} color="white" />
                   <Text
                     style={{ fontSize: 14, fontWeight: 'bold' }}
                     uppercase={false}
