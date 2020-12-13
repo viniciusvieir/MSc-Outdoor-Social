@@ -133,7 +133,7 @@ export const fetchUserData = createAsyncThunk(
     try {
       //TODO: handle offline
       const response = await trailSeek.get('/user')
-      console.log(response.data)
+      // console.log(response.data)
       return response.data
     } catch (error) {
       console.log(error.response)

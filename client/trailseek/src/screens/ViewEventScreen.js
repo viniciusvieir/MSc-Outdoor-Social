@@ -17,9 +17,7 @@ import {
   Toast,
   Container,
   Content,
-  Switch,
   Icon,
-  Right,
   Spinner,
 } from 'native-base'
 import { Grid, Col, Row } from 'react-native-easy-grid'
@@ -150,13 +148,13 @@ const ViewEventScreen = ({ route, navigation }) => {
     try {
       const result = await Share.share({
         title: 'Share Event',
-        message: `Check out this event from Trailseek!\n${ExpoLinking.makeUrl(
+        message: `Check out this event from Trailseek!\nhttp://${ExpoLinking.makeUrl(
           '/ViewEvent',
           {
             eventID: eventData._id,
           }
         ).substring(6)}`,
-        url: `${ExpoLinking.makeUrl('/ViewEvent', {
+        url: `http://${ExpoLinking.makeUrl('/ViewEvent', {
           eventID: eventData._id,
         }).substring(6)}`,
       })
@@ -341,6 +339,7 @@ const ViewEventScreen = ({ route, navigation }) => {
                   style={{
                     borderRadius: 50,
                     backgroundColor: ColorConstants.secondary,
+                    paddingHorizontal: 12,
                   }}
                   onPress={() => {
                     const scheme = Platform.select({
@@ -357,6 +356,7 @@ const ViewEventScreen = ({ route, navigation }) => {
                     Linking.openURL(url)
                   }}
                 >
+                  <FontAwesome5 name="route" size={18} color="white" />
                   <Text
                     style={{ fontSize: 14, fontWeight: 'bold' }}
                     uppercase={false}

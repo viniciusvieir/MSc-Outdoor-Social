@@ -1,14 +1,14 @@
-import React, { useState } from 'react'
+import React from 'react'
 import {
   View,
   StyleSheet,
   TextInput,
   Image,
-  ImageBackground,
+  // ImageBackground,
 } from 'react-native'
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { unwrapResult } from '@reduxjs/toolkit'
-import { Formik, ErrorMessage } from 'formik'
+import { Formik } from 'formik'
 import * as Yup from 'yup'
 import { Grid, Row } from 'react-native-easy-grid'
 import { Container, Button, Text, Content, Spinner, Toast } from 'native-base'

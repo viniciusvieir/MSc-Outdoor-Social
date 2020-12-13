@@ -11,7 +11,7 @@ import { Text, Button, Container, Content, Toast } from 'native-base'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import moment from 'moment'
 import { useSelector, useDispatch } from 'react-redux'
-import { Formik, ErrorMessage } from 'formik'
+import { Formik } from 'formik'
 import * as Yup from 'yup'
 import { Grid, Col, Row } from 'react-native-easy-grid'
 import { FontAwesome5 } from '@expo/vector-icons'
@@ -29,6 +29,12 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
   const [showTime, setShowTime] = useState(false)
   const dispatch = useDispatch()
   const navigation = useNavigation()
+  const [hrs, setHrs] = eventData
+    ? useState(Math.floor(eventData.duration_min / 60))
+    : useState(0)
+  const [mins, setMins] = eventData
+    ? useState(eventData.duration_min % 60)
+    : useState(0)
   return (
     <Container>
       <Content
@@ -84,7 +90,9 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
             })}
             onSubmit={async (values, formikActions) => {
               formikActions.setSubmitting(false)
-              onSubmitFunc(values)
+              const duration_min = parseInt(hrs) * 60 + parseInt(mins)
+              const valuesToSend = { ...values, duration_min }
+              onSubmitFunc(valuesToSend)
             }}
           >
             {(props) => (
@@ -246,11 +254,43 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
                 </Row>
                 <Row>
                   <Text style={{ color: ColorConstants.Black }}>
-                    Event Duration in minutes:
+                    Event Duration :
                   </Text>
                 </Row>
                 <Row>
+                  <Text style={{ alignSelf: 'center', marginRight: 5 }}>
+                    Hours :
+                  </Text>
                   <TextInput
+                    onChangeText={(hrs) => setHrs(hrs)}
+                    onBlur={props.handleBlur('duration_min')}
+                    value={hrs.toString()}
+                    style={styles.input}
+                    onSubmitEditing={() => {}}
+                    keyboardType="number-pad"
+                    placeholderTextColor={ColorConstants.Black}
+                  />
+                  <Text style={{ alignSelf: 'center', marginHorizontal: 5 }}>
+                    Minutes :
+                  </Text>
+                  <TextInput
+                    onChangeText={(mins) => {
+                      props.setFieldError('duration_min', '')
+                      mins < 60
+                        ? setMins(mins)
+                        : props.setFieldError(
+                            'duration_min',
+                            'Minutes should be less than 60'
+                          )
+                    }}
+                    onBlur={props.handleBlur('duration_min')}
+                    value={mins.toString()}
+                    style={styles.input}
+                    onSubmitEditing={() => {}}
+                    keyboardType="number-pad"
+                    placeholderTextColor={ColorConstants.Black}
+                  />
+                  {/* <TextInput
                     onChangeText={props.handleChange('duration_min')}
                     onBlur={props.handleBlur('duration_min')}
                     value={props.values.duration_min.toString()}
@@ -258,7 +298,7 @@ const EventForm = ({ trailName, eventData, onSubmitFunc }) => {
                     onSubmitEditing={() => {}}
                     keyboardType="number-pad"
                     placeholderTextColor={ColorConstants.Black}
-                  />
+                  /> */}
                 </Row>
                 <Row>
                   {props.touched.duration_min && props.errors.duration_min ? (

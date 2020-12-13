@@ -158,11 +158,15 @@ const TrailCards = ({ trails, filter }) => {
                       transparent
                       onPress={() => navigateTo(item._id, item.name, 2)}
                     >
-                      <FontAwesome5
+                      <Image
+                        source={require('../images/FlatLogoPrimary.png')}
+                        style={{ width: 27, height: 27 }}
+                      />
+                      {/* <FontAwesome5
                         name="hiking"
                         size={18}
                         color={ColorConstants.primary}
-                      />
+                      /> */}
                       <Text
                         uppercase={false}
                         style={{
