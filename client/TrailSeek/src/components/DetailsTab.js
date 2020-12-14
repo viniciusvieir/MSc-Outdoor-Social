@@ -38,7 +38,7 @@ const DetaiTabs = ({ trailData, covData, weatherData }) => {
           borderBottomWidth: 1,
         }}
       />
-      <Row>
+      <Row style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
         <CovidWidget data={covData} />
       </Row>
     </>
@@ -120,7 +120,7 @@ const DetaiTabs = ({ trailData, covData, weatherData }) => {
           <View>
             <Row>
               <FontAwesome5
-                name='mountain'
+                name="mountain"
                 size={16}
                 color={ColorConstants.Black2}
               />
@@ -133,7 +133,7 @@ const DetaiTabs = ({ trailData, covData, weatherData }) => {
           <View style={{ marginLeft: 20 }}>
             <Row>
               <FontAwesome5
-                name='route'
+                name="route"
                 size={20}
                 color={ColorConstants.Black2}
               />
@@ -149,7 +149,7 @@ const DetaiTabs = ({ trailData, covData, weatherData }) => {
           <View style={{ marginLeft: 20 }}>
             <Row>
               <FontAwesome5
-                name='clock'
+                name="clock"
                 size={20}
                 color={ColorConstants.Black2}
               />
@@ -172,7 +172,7 @@ const DetaiTabs = ({ trailData, covData, weatherData }) => {
           }}
         >
           <FontAwesome5
-            name='map-marker-alt'
+            name="map-marker-alt"
             size={18}
             color={ColorConstants.Black2}
           />
@@ -258,8 +258,8 @@ const DetaiTabs = ({ trailData, covData, weatherData }) => {
                       source={{ uri: item.img_url }}
                       style={styles.imageStyle}
                       PlaceholderContent={<ActivityIndicator />}
-                      resizeMethod='auto'
-                      resizeMode='cover'
+                      resizeMethod="auto"
+                      resizeMode="cover"
                     />
                   </CardItem>
                   <CardItem style={{ backgroundColor: ColorConstants.DWhite }}>
