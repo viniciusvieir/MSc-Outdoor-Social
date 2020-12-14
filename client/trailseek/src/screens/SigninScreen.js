@@ -27,13 +27,13 @@ const SigninScreen = ({ navigation }) => {
     <Container>
       <Content
         style={{
-          paddingTop: 60,
+          paddingTop: 160,
           flex: 1,
         }}
       >
         <View style={{ flex: 1 }}>
           <Image
-            source={require('../images/tslogov2.2grey.png')}
+            source={require('../images/Standee.png')}
             resizeMode="contain"
             style={styles.image}
           />
