@@ -163,7 +163,7 @@ class TrailController {
             _id: {
               $in: items,
             },
-          }).select('name img_url avg_rating')
+          }).select('name img_url weighted_rating')
         }
         res.json(trail)
       })
