@@ -137,6 +137,13 @@ class EventController {
     }).countDocuments()
 
     if (!joined) {
+      const event = await Event.findOne({ _id: eventId }).select(
+        'participants max_participants'
+      )
+      if (event.participants.length >= event.max_participants) {
+        return res.status(403).json(errorHandler('Event is full'))
+      }
+
       const user = await UserMongo.findOne({ userId }).select('profileImage')
       await Event.updateOne(
         { _id: eventId },
