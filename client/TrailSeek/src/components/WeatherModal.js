@@ -173,9 +173,13 @@ const WeatherModal = ({ dailyData }) => {
               style={styles.colorProperty}
             />
             <Text style={styles.colorProperty}>Rain</Text>
-            <Text style={styles.propertyText}>
-              {parseInt(dailyData.rain).toFixed(0)} mm
-            </Text>
+            {dailyData.rain ? (
+              <Text style={styles.propertyText}>
+                {parseInt(dailyData.rain).toFixed(0)} mm
+              </Text>
+            ) : (
+              <Text style={styles.propertyText}>N/A</Text>
+            )}
           </Col>
         </Row>
         <Row style={{ marginBottom: 20 }}>
@@ -222,8 +226,15 @@ const WeatherModal = ({ dailyData }) => {
               color="black"
               style={styles.colorProperty}
             />
+            {console.log(dailyData.pop)}
             <Text style={styles.colorProperty}>Prob. of Rain</Text>
-            <Text style={styles.propertyText}>{dailyData.pop * 100} %</Text>
+            {dailyData.rain ? (
+              <Text style={styles.propertyText}>
+                {parseFloat(dailyData.pop * 100).toFixed(0)} %
+              </Text>
+            ) : (
+              <Text style={styles.propertyText}>N/A</Text>
+            )}
           </Col>
         </Row>
       </Grid>

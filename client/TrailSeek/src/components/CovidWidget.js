@@ -1,13 +1,12 @@
 import React, { useRef } from 'react'
 import { StyleSheet, Dimensions } from 'react-native'
-import { View, Text, Button } from 'native-base'
+import { View, Text, Button, Icon } from 'native-base'
 import moment from 'moment'
 import { Modalize } from 'react-native-modalize'
 import { Portal } from 'react-native-portalize'
-
 import { LineChart } from 'react-native-chart-kit'
+
 import ColorConstants from '../util/ColorConstants'
-import Constants from '../util/Constants'
 
 const CovidWidget = ({ data }) => {
   if (!data || JSON.stringify(data) === '{}') {
@@ -35,23 +34,22 @@ const CovidWidget = ({ data }) => {
     content = (
       <View
         style={{
-          flex: 1,
-          paddingHorizontal: Constants.POINTS.marginHorizontal,
+          paddingHorizontal: 20,
         }}
       >
         <Button
           button
           danger
+          iconLeft
+          block
           style={{
-            padding: 0,
+            padding: 20,
           }}
           onPress={() => modelizeRef.current?.open()}
-          // onPress={() => {
-          //   setModalVisible(true)
-          // }}
         >
+          <Icon name="ios-warning" />
           <Text style={{ fontWeight: 'bold', fontSize: 13 }}>
-            Covid Cases in the last 7 days in{' '}
+            Covid Cases in the last {data?.length || 7} days in{' '}
             {data[lastItem].attributes.CountyName} as of{' '}
             {day(data[lastItem].attributes.TimeStamp)} (
             {date(data[lastItem].attributes.TimeStamp)}) :{' '}
@@ -65,7 +63,7 @@ const CovidWidget = ({ data }) => {
           Click for more info
         </Text>
         <Portal>
-          <Modalize ref={modelizeRef} snapPoint={320}>
+          <Modalize ref={modelizeRef} snapPoint={380}>
             <View
               style={{
                 alignItems: 'center',
@@ -84,6 +82,8 @@ const CovidWidget = ({ data }) => {
                   }),
                   datasets: [
                     {
+                      color: (opacity = 1) => `rgb(231, 111, 81, ${opacity})`,
+                      strokeWidth: 4,
                       data: data.slice(1).map((item) => {
                         return (
                           item.attributes.ConfirmedCovidCases - pastCumiCases
@@ -98,30 +98,28 @@ const CovidWidget = ({ data }) => {
                 // yAxisSuffix="k"
                 yAxisInterval={1} // optional, defaults to 1
                 chartConfig={{
-                  backgroundColor: ColorConstants.DGreen,
-                  //   backgroundGradientFrom: "#fb8c00",
-                  //   backgroundGradientTo: "#ffa726",
+                  backgroundColor: '#F58F00',
+                  backgroundGradientFrom: '#e9c46a',
+                  backgroundGradientTo: '#FFDCAD',
+                  // backgroundColor: ColorConstants.DWhite,
+                  // backgroundGradientFrom: ColorConstants.DWhite,
+                  // backgroundGradientTo: ColorConstants.DWhite,
                   decimalPlaces: 0, // optional, defaults to 2dp
                   color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                  labelColor: (opacity = 1) =>
-                    `rgba(255, 255, 255, ${opacity})`,
-                  // style: {
-                  //   // borderRadius: 10,
-                  //   // height: 200,
-                  // },
+                  labelColor: (opacity = 1) => `rgba(0,0,0, ${opacity})`,
                   propsForDots: {
-                    r: '1',
+                    r: '2',
                     strokeWidth: '1',
-                    stroke: '#ffa726',
+                    stroke: ColorConstants.red,
                   },
                 }}
-                bezier
+                // bezier
                 style={{
                   marginVertical: 10,
                   borderRadius: 10,
                 }}
               />
-              <Text style={{ alignSelf: 'center', margin: 10 }}>
+              <Text style={{ alignContent: 'center', margin: 10 }}>
                 The numbers on the Y-axis are the increased covid cases and the
                 X-axis represents the date.
               </Text>

@@ -24,8 +24,6 @@ const ViewTrailScreen = ({ route }) => {
   const [trailData, setTrailData] = useState({})
   const [covData, setCovData] = useState([])
   const [weathData, setWeathData] = useState({})
-  // const [latitude, setLatitude] = useState(0)
-  // const [longitude, setLongitude] = useState(0)
 
   let spinner = true
   let content
@@ -100,7 +98,7 @@ const ViewTrailScreen = ({ route }) => {
         <Header
           hasTabs
           style={{ height: 0 }}
-          androidStatusBarColor='#ffffff00'
+          androidStatusBarColor="#ffffff00"
         />
 
         <Tabs
@@ -110,7 +108,7 @@ const ViewTrailScreen = ({ route }) => {
           tabBarUnderlineStyle={{ backgroundColor: ColorConstants.White }}
         >
           <Tab
-            heading='Details'
+            heading="Details"
             tabStyle={{ backgroundColor: ColorConstants.primary }}
             activeTabStyle={{ backgroundColor: ColorConstants.primary }}
             textStyle={{ color: ColorConstants.White }}
@@ -123,7 +121,7 @@ const ViewTrailScreen = ({ route }) => {
             />
           </Tab>
           <Tab
-            heading='Comments'
+            heading="Comments"
             tabStyle={{ backgroundColor: ColorConstants.primary }}
             activeTabStyle={{ backgroundColor: ColorConstants.primary }}
             textStyle={{ color: ColorConstants.White }}
@@ -132,7 +130,7 @@ const ViewTrailScreen = ({ route }) => {
             <CommentsTabs trailData={trailData} />
           </Tab>
           <Tab
-            heading='Events'
+            heading="Events"
             tabStyle={{ backgroundColor: ColorConstants.primary }}
             activeTabStyle={{ backgroundColor: ColorConstants.primary }}
             textStyle={{ color: ColorConstants.White }}
@@ -141,7 +139,7 @@ const ViewTrailScreen = ({ route }) => {
             <EventsTab trailData={trailData} />
           </Tab>
           <Tab
-            heading='Maps'
+            heading="Maps"
             tabStyle={{ backgroundColor: ColorConstants.primary }}
             activeTabStyle={{ backgroundColor: ColorConstants.primary }}
             textStyle={{ color: ColorConstants.White }}

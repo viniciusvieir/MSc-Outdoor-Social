@@ -2,8 +2,10 @@ import React from 'react'
 import { FlatList, SectionList, View, StyleSheet } from 'react-native'
 import { List, ListItem, Text } from 'native-base'
 import { useNavigation } from '@react-navigation/native'
+
 import CalendarView from './CalendarView'
 import ColorConstants from '../util/ColorConstants'
+import EmptyStateView from './EmptyStateView'
 
 const MyEventsList = ({ data }) => {
   const navigation = useNavigation()
@@ -24,7 +26,9 @@ const MyEventsList = ({ data }) => {
         : `${people === 0 ? `No one going` : `${people} person going`}`
     } • ${max_people} max`
   }
-  return (
+  return data[0].data.length === 0 && data[1].data.length === 0 ? (
+    <EmptyStateView icon="frown" title="No events to show" />
+  ) : (
     <List style={{ flex: 1 }}>
       <SectionList
         style={{ flex: 1 }}
