@@ -27,7 +27,11 @@ const MyEventsList = ({ data }) => {
     } • ${max_people} max`
   }
   return data[0].data.length === 0 && data[1].data.length === 0 ? (
-    <EmptyStateView icon="frown" title="No events to show" />
+    <EmptyStateView
+      icon="frown"
+      title="No events to show"
+      description="Join an event or host one by opening up a trail."
+    />
   ) : (
     <List style={{ flex: 1 }}>
       <SectionList
