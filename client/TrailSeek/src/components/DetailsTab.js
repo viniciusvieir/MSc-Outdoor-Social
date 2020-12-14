@@ -263,7 +263,7 @@ const DetaiTabs = ({ trailData, covData, weatherData }) => {
                     />
                   </CardItem>
                   <CardItem style={{ backgroundColor: ColorConstants.DWhite }}>
-                    <Text style={{ maxWidth: 160 }}>{item.name}</Text>
+                    <Text style={{ maxWidth: 152 }}>{item.name}</Text>
 
                     <View
                       style={{
