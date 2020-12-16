@@ -120,7 +120,7 @@ const DetaiTabs = ({ trailData, covData, weatherData }) => {
           <View>
             <Row>
               <FontAwesome5
-                name="mountain"
+                name='mountain'
                 size={16}
                 color={ColorConstants.Black2}
               />
@@ -133,7 +133,7 @@ const DetaiTabs = ({ trailData, covData, weatherData }) => {
           <View style={{ marginLeft: 20 }}>
             <Row>
               <FontAwesome5
-                name="route"
+                name='route'
                 size={20}
                 color={ColorConstants.Black2}
               />
@@ -149,7 +149,7 @@ const DetaiTabs = ({ trailData, covData, weatherData }) => {
           <View style={{ marginLeft: 20 }}>
             <Row>
               <FontAwesome5
-                name="clock"
+                name='clock'
                 size={20}
                 color={ColorConstants.Black2}
               />
@@ -172,7 +172,7 @@ const DetaiTabs = ({ trailData, covData, weatherData }) => {
           }}
         >
           <FontAwesome5
-            name="map-marker-alt"
+            name='map-marker-alt'
             size={18}
             color={ColorConstants.Black2}
           />
@@ -258,31 +258,45 @@ const DetaiTabs = ({ trailData, covData, weatherData }) => {
                       source={{ uri: item.img_url }}
                       style={styles.imageStyle}
                       PlaceholderContent={<ActivityIndicator />}
-                      resizeMethod="auto"
-                      resizeMode="cover"
+                      resizeMethod='auto'
+                      resizeMode='cover'
                     />
                   </CardItem>
                   <CardItem style={{ backgroundColor: ColorConstants.DWhite }}>
-                    <Grid>
-                      <Col size={4}>
-                        <Text>{item.name}</Text>
-                      </Col>
-                      <Right>
-                        <Col size={2}>
-                          <StarRating
-                            disabled={true}
-                            emptyStar={'ios-star-outline'}
-                            fullStar={'ios-star'}
-                            halfStar={'ios-star-half'}
-                            iconSet={'Ionicons'}
-                            maxStars={1}
-                            rating={1}
-                            fullStarColor={'gold'}
-                            starSize={16}
-                          />
-                        </Col>
-                      </Right>
-                    </Grid>
+                    <Text style={{ maxWidth: 152 }}>{item.name}</Text>
+
+                    <View
+                      style={{
+                        flex: 1,
+                        flexDirection: 'row',
+                        justifyContent: 'flex-end',
+                        alignSelf: 'flex-start',
+                      }}
+                    >
+                      <StarRating
+                        disabled={true}
+                        emptyStar={'ios-star-outline'}
+                        fullStar={'ios-star'}
+                        halfStar={'ios-star-half'}
+                        iconSet={'Ionicons'}
+                        maxStars={1}
+                        rating={1}
+                        fullStarColor={ColorConstants.secondary}
+                        starSize={16}
+                      />
+                      <Text
+                        style={{
+                          marginLeft: 4,
+                          color: ColorConstants.secondary,
+                          fontSize: item.weighted_rating > 0 ? 16 : 12,
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        {item.weighted_rating > 0
+                          ? item.weighted_rating.toFixed(1)
+                          : 'No\nRating'}
+                      </Text>
+                    </View>
                   </CardItem>
                 </TouchableOpacity>
               </Card>
